@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Engineer Roadmap — Hassan</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --card: #1c1f28;
+    --border: #2a2e3a;
+    --text: #e4e6eb;
+    --muted: #9aa1b1;
+    --accent0: #fdba74;
+    --accent1: #7dd3fc;
+    --accent2: #c4b5fd;
+    --gold: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+  }
+  a { color: var(--accent1); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 48px 24px 100px; }
+  header h1 { font-size: 28px; margin: 0 0 8px; }
+  header .sub { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+  .jumpnav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .jumpnav a {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .jumpnav a.p0 { border-color: var(--accent0); color: var(--accent0); }
+  .jumpnav a.p1 { border-color: var(--accent1); color: var(--accent1); }
+  .jumpnav a.p2 { border-color: var(--accent2); color: var(--accent2); }
+  .intro-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 20px 0 8px;
+    font-size: 14.5px;
+  }
+  .intro-block b { color: var(--gold); }
+  .phase-banner {
+    margin: 48px 0 6px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 19px;
+    font-weight: 700;
+    scroll-margin-top: 20px;
+  }
+  .phase-banner .tag { display:block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top:3px; }
+  .phase-banner.p0 { background: linear-gradient(90deg,#7c2d12,#0f1115); border-left: 4px solid var(--accent0); }
+  .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
+  .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
+  .timeline { position: relative; margin-top: 10px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .node { position: relative; padding-left: 38px; margin-bottom: 22px; }
+  .node-dot {
+    position: absolute;
+    left: 3px;
+    top: 6px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--accent1);
+  }
+  .p0 .node-dot { border-color: var(--accent0); }
+  .p2 .node-dot { border-color: var(--accent2); }
+  .node-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .node-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .node-top h3 { margin: 0; font-size: 16.5px; }
+  .duration {
+    font-size: 11.5px;
+    color: var(--muted);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+  .why { font-size: 14px; margin: 0 0 10px; color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+  .p0 .chip { color: var(--accent0); }
+  .p1 .chip { color: var(--accent1); }
+  .p2 .chip { color: var(--accent2); }
+  .res, .build {
+    font-size: 13px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+  }
+  .res b { color: var(--muted); }
+  .build b { color: var(--gold); }
+  .res a:not(:last-child)::after { content: " · "; color: var(--muted); }
+  .checkpoint {
+    background: #062b1a;
+    border: 1px solid #14532d;
+    border-left: 4px solid #86efac;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin: 20px 0 0 38px;
+    font-size: 14px;
+  }
+  .checkpoint b { color: #86efac; }
+  .risk-box {
+    background: #2a0e0e;
+    border: 1px solid #5c1a1a;
+    border-left: 4px solid #f87171;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 50px 0 0;
+    font-size: 14.5px;
+  }
+  .risk-box b { color: #f87171; }
+  footer.foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AI Engineer Roadmap</h1>
+  <div class="sub">A sequence, not a textbook: what to learn, in what order, why, and what to build with it.</div>
+  <div class="jumpnav">
+    <a class="p0" href="#phase0">Phase 0 · Python</a>
+    <a class="p1" href="#phase1">Phase 1 · AI Engineering</a>
+    <a class="p2" href="#phase2">Phase 2 · ML + MLOps</a>
+  </div>
+  <div class="intro-block">
+    <b>How to read this:</b> go top to bottom, one stage at a time. Each stage names the libraries to learn (not concepts to memorize), one line on why it matters, the best 1–2 free resources to actually learn it from, and the project it feeds into. Don't move to the next stage until the current project works. Total pace: 5–10 hrs/week, ~62 weeks (~14 months) end to end.
+  </div>
+</header>
+
+<div class="phase-banner p0" id="phase0">PHASE 0 — PYTHON FUNDAMENTALS <span class="tag">Weeks 1–4</span></div>
+<div class="timeline">
+
+  <div class="node p0">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>Python & Programming Basics</h3><span class="duration">Weeks 1–4</span></div>
+      <p class="why">You know JS/React/Next.js well, but Python itself is rusty — and every single library from here on is Python. This closes that gap first, translating from what you already know instead of starting at zero.</p>
+      <div class="chips"><span class="chip">Python syntax</span><span class="chip">functions & classes</span><span class="chip">venv & pip</span><span class="chip">files & JSON</span><span class="chip">type hints</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://docs.python.org/3/tutorial/">Official Python Tutorial (docs.python.org)</a><a href="https://www.freecodecamp.org/news/learn-python-for-javascript-developers-handbook/">freeCodeCamp — Python for JavaScript Developers Handbook</a></div>
+      <div class="build"><b>Build:</b> A small script — a few variables, one function, one class, reading a JSON file — with no syntax lookups needed.</div>
+    </div>
+  </div>
+
+</div>
+<div class="checkpoint"><b>Checkpoint:</b> you can write basic Python without translating from JS in your head. Not fast — just not foreign.</div>
+
+<div class="phase-banner p1" id="phase1">PHASE 1 — AI ENGINEERING <span class="tag">Weeks 5–34 · RAG, agents, evals, deployment</span></div>
+<div class="timeline">
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>1. Talking to LLMs</h3><span class="duration">Weeks 5–8</span></div>
+      <p class="why">This is the actual day-to-day toolkit of AI engineering: calling a model from code, and getting reliable structured data back instead of loose text you have to parse by hand.</p>
+      <div class="chips"><span class="chip">Anthropic / OpenAI SDK</span><span class="chip">Pydantic</span><span class="chip">asyncio</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial">Anthropic's interactive prompt engineering tutorial (free)</a><a href="https://www.deeplearning.ai/courses/chatgpt-prompt-eng">DeepLearning.AI — ChatGPT Prompt Engineering for Developers (free)</a></div>
+      <div class="build"><b>Build (Project 1):</b> A CLI tool that calls an LLM and returns validated, structured (Pydantic) output — not just printed text.</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>2. RAG & Vector Databases</h3><span class="duration">Weeks 9–14</span></div>
+      <p class="why">Lets an LLM answer questions using your own data instead of just what it was trained on — the single most common real-world AI engineering pattern.</p>
+      <div class="chips"><span class="chip">Postgres + pgvector</span><span class="chip">FastAPI</span><span class="chip">LangChain text splitters</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://www.deeplearning.ai/courses/retrieval-augmented-generation">DeepLearning.AI — Retrieval Augmented Generation (free)</a><a href="https://github.com/pgvector/pgvector">pgvector official docs</a></div>
+      <div class="build"><b>Build (Project 2):</b> A RAG knowledge assistant over a real corpus you actually care about (your own docs, a topic you know).</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>3. Evals</h3><span class="duration">Weeks 15–18</span></div>
+      <p class="why">Proves your system actually works instead of "seemed fine when I tried it a few times" — the single biggest differentiator in the current AI hiring market.</p>
+      <div class="chips"><span class="chip">RAGAS</span><span class="chip">LangSmith</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://docs.ragas.io/en/stable/getstarted/quickstart/">Ragas — Quick Start (free)</a><a href="https://docs.smith.langchain.com/">LangSmith docs</a></div>
+      <div class="build"><b>Build:</b> Add a versioned, scored eval suite (30–50 questions) to Project 2 — turn "it works" into a number you can track.</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>4. Agents</h3><span class="duration">Weeks 19–24</span></div>
+      <p class="why">Moves from a fixed "always do A then B then C" pipeline to a system that decides its own next step based on what it finds — think recipe vs. cook.</p>
+      <div class="chips"><span class="chip">LangGraph</span><span class="chip">CrewAI</span><span class="chip">MCP</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://academy.langchain.com/courses/intro-to-langgraph">LangChain Academy — Intro to LangGraph (free)</a><a href="https://www.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai">DeepLearning.AI — Multi AI Agent Systems with CrewAI (free)</a></div>
+      <div class="build"><b>Build (Project 3):</b> A multi-step agent with real tool use that can resume after a crash.</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>5. Agentic RAG (Flagship)</h3><span class="duration">Weeks 25–28</span></div>
+      <p class="why">Merges retrieval and agents into one system — the project you'll actually lead with in interviews and freelance pitches. No new libraries; this is combining Stages 2–4.</p>
+      <div class="chips"><span class="chip">LangGraph + RAGAS combined</span></div>
+      <div class="res"><b>Best resources:</b> reuse Stage 2–4 resources — this stage is integration, not new tools.</div>
+      <div class="build"><b>Build (Project 4):</b> Merge Projects 2 and 3 into one agentic, fully-evaluated RAG system. This is your flagship.</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>6. Shipping It</h3><span class="duration">Weeks 29–32</span></div>
+      <p class="why">A project that only runs on your laptop doesn't count as production experience — get it live at a real URL.</p>
+      <div class="chips"><span class="chip">Docker</span><span class="chip">Fly.io / Render / Railway</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freeCodeCamp — Docker & Kubernetes Fundamentals (free)</a></div>
+      <div class="build"><b>Build:</b> Deploy Project 4 to a live URL with basic auth, rate limiting, and logging.</div>
+    </div>
+  </div>
+
+  <div class="node p1">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>7. Portfolio & Positioning</h3><span class="duration">Weeks 33–34</span></div>
+      <p class="why">Makes the work legible to someone who didn't watch you build it. No new tech here — this is writing.</p>
+      <div class="chips"><span class="chip">no new tools</span></div>
+      <div class="build"><b>Build:</b> A technical case study per project (architecture, decisions, eval results) and a resume rewrite leading with the eval story.</div>
+    </div>
+  </div>
+
+</div>
+<div class="checkpoint"><b>Phase 1 checkpoint:</b> three working, deployed projects — a RAG assistant with evals, a LangGraph agent, and a flagship agentic RAG system — each with a case study you can explain unaided.</div>
+
+<div class="phase-banner p2" id="phase2">PHASE 2 — ML THEORY + MLOPS <span class="tag">Weeks 35–62 · The math and infrastructure underneath Phase 1</span></div>
+<div class="timeline">
+
+  <div class="node p2">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>8. Math & Classical ML</h3><span class="duration">Weeks 35–40</span></div>
+      <p class="why">The math underneath everything you built in Phase 1 — now it has real systems to anchor to instead of being abstract theory.</p>
+      <div class="chips"><span class="chip">NumPy</span><span class="chip">pandas</span><span class="chip">Matplotlib</span><span class="chip">scikit-learn</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://www.coursera.org/specializations/machine-learning-introduction">Andrew Ng — Machine Learning Specialization (free to audit)</a><a href="https://www.khanacademy.org/math/linear-algebra">Khan Academy — Linear Algebra (free)</a></div>
+      <div class="build"><b>Build (Project 5):</b> A small classical ML project on real data you already own.</div>
+    </div>
+  </div>
+
+  <div class="node p2">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>9. Deep Learning & Transformers</h3><span class="duration">Weeks 41–48</span></div>
+      <p class="why">The actual mechanism (attention) behind every LLM you've been calling since Stage 1 — Stage 8's math, stacked and repeated at scale.</p>
+      <div class="chips"><span class="chip">PyTorch</span><span class="chip">Hugging Face PEFT</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://karpathy.ai/zero-to-hero.html">Andrej Karpathy — Neural Networks: Zero to Hero (free)</a><a href="https://jalammar.github.io/illustrated-transformer/">Jay Alammar — The Illustrated Transformer (free)</a></div>
+      <div class="build"><b>Build (Project 6):</b> A mini transformer built from scratch, or a small model fine-tuned with LoRA.</div>
+    </div>
+  </div>
+
+  <div class="node p2">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>10. MLOps Core</h3><span class="duration">Weeks 49–54</span></div>
+      <p class="why">Turns "works on my machine" into "runs reliably without me watching it."</p>
+      <div class="chips"><span class="chip">Docker Compose</span><span class="chip">Kubernetes</span><span class="chip">MLflow</span><span class="chip">GitHub Actions</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://github.com/DataTalksClub/mlops-zoomcamp">MLOps Zoomcamp — DataTalks.Club (free, 9 weeks)</a></div>
+      <div class="build"><b>Build (Project 7):</b> Containerize and deploy a model with a real CI/CD pipeline and model registry.</div>
+    </div>
+  </div>
+
+  <div class="node p2">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>11. Observability</h3><span class="duration">Weeks 55–60</span></div>
+      <p class="why">Know when production is breaking before your users tell you.</p>
+      <div class="chips"><span class="chip">Prometheus</span><span class="chip">Grafana</span><span class="chip">Feast</span><span class="chip">Terraform</span><span class="chip">ArgoCD</span></div>
+      <div class="res"><b>Best resources:</b> <a href="https://prometheus.io/docs/introduction/overview/">Prometheus official docs</a><a href="https://github.com/DataTalksClub/mlops-zoomcamp">MLOps Zoomcamp — Module 5 (monitoring)</a></div>
+      <div class="build"><b>Build (Project 8):</b> Full monitoring/alerting added to your flagship agentic RAG system.</div>
+    </div>
+  </div>
+
+  <div class="node p2">
+    <div class="node-dot"></div>
+    <div class="node-card">
+      <div class="node-top"><h3>12. Integration</h3><span class="duration">Weeks 61–62</span></div>
+      <p class="why">One coherent story, not two separate portfolios. No new tools — this is folding Phase 2 back into your Phase 1 flagship.</p>
+      <div class="chips"><span class="chip">no new tools</span></div>
+      <div class="build"><b>Build:</b> Rewrite the flagship case study to include the MLOps layer, and reposition your resume around the combined skillset.</div>
+    </div>
+  </div>
+
+</div>
+<div class="checkpoint"><b>Done:</b> a production-grade, monitored, agentic RAG system with a full eval suite — backed by real understanding of the math and infrastructure underneath it.</div>
+
+<div class="risk-box">
+  <b>One standing risk:</b> the danger isn't failing to learn AI engineering — it's stopping once Phase 1 "works well enough" and never doing Phase 2. Put a real date on Stage 8 now, before Phase 1 feels finished.
+</div>
+
+<footer class="foot">
+  Prepared for Hassan — 4th semester, FAST NUCES Lahore · Pace: 5–10 hrs/week · ~62 weeks total.<br>
+  This is the navigation layer: what to learn, in what order, and where to start. Each library's own docs/course (linked above) is where the actual depth lives — that's by design, so this stays a map you can hold in your head, not another textbook.
+</footer>
+
+</div>
+</body>
+</html>

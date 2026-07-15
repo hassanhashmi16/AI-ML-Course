@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Engineer + ML Engineer — Step by Step</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --card: #1c1f28;
+    --border: #2a2e3a;
+    --text: #e4e6eb;
+    --muted: #9aa1b1;
+    --accent0: #fdba74;
+    --accent1: #7dd3fc;
+    --accent2: #c4b5fd;
+    --gold: #fbbf24;
+    --green: #86efac;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 15.5px;
+  }
+  a { color: var(--accent1); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 44px 24px 100px; }
+  header h1 { font-size: 26px; margin: 0 0 6px; }
+  header .sub { color: var(--muted); font-size: 14.5px; margin-bottom: 16px; }
+  .intro-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .intro-block b { color: var(--gold); }
+  .phase-banner {
+    margin: 40px 0 4px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .phase-banner .tag { display:block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top:2px; }
+  .phase-banner.p0 { background: linear-gradient(90deg,#7c2d12,#0f1115); border-left: 4px solid var(--accent0); }
+  .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
+  .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
+  .steps { margin-top: 8px; border-left: 2px solid var(--border); margin-left: 13px; }
+  .step {
+    position: relative;
+    padding: 9px 0 9px 24px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    position: absolute;
+    left: -14px;
+    top: 9px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent1);
+    color: var(--accent1);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .p0 .step-num { border-color: var(--accent0); color: var(--accent0); }
+  .p2 .step-num { border-color: var(--accent2); color: var(--accent2); }
+  .step b.title { color: var(--text); }
+  .step .why { color: var(--muted); }
+  .step .link { margin-left: 6px; white-space: nowrap; font-size: 13px; }
+  .milestone {
+    position: relative;
+    margin: 6px 0 6px 24px;
+    padding: 8px 14px;
+    background: #1a1408;
+    border: 1px solid #4a3a10;
+    border-left: 3px solid var(--gold);
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: var(--gold);
+  }
+  .milestone b { color: var(--gold); }
+  .checkpoint {
+    background: #062b1a;
+    border: 1px solid #14532d;
+    border-left: 4px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 16px 0 0;
+    font-size: 13.5px;
+  }
+  .checkpoint b { color: var(--green); }
+  .risk-box {
+    background: #2a0e0e;
+    border: 1px solid #5c1a1a;
+    border-left: 4px solid #f87171;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 44px 0 0;
+    font-size: 13.5px;
+  }
+  .risk-box b { color: #f87171; }
+  footer.foot {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AI Engineer + ML Engineer — Step by Step</h1>
+  <div class="sub">One numbered list, top to bottom, zero to complete. Every step: what to learn, one line on why, one link. No lectures.</div>
+  <div class="intro-block">
+    <b>How to use this:</b> go in order. Don't skip. Each step is small on purpose — when a step says "learn X," go to the linked resource, learn just enough to do the next milestone, then move on. Milestones (gold boxes) are the actual proof you're ready for the next step — don't pass one you can't do. AI Engineering = the front end: building products on top of AI (APIs, RAG, agents). ML Engineering = the back end: understanding and running the models underneath (math, training, infrastructure). This takes you through both, in that order.
+  </div>
+</header>
+
+<div class="phase-banner p0">PHASE 0 — PYTHON, FROM SCRATCH</div>
+<div class="steps p0">
+  <div class="step"><span class="step-num">1</span><b class="title">Python syntax basics</b> — <span class="why">variables, printing, comments, indentation-based blocks.</span> <a class="link" href="https://docs.python.org/3/tutorial/introduction.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">2</span><b class="title">Control flow</b> — <span class="why">if/elif/else, for, while, list comprehensions.</span> <a class="link" href="https://docs.python.org/3/tutorial/controlflow.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">3</span><b class="title">Core data structures</b> — <span class="why">list, tuple, dict, set — everything later is built on these.</span> <a class="link" href="https://docs.python.org/3/tutorial/datastructures.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">4</span><b class="title">Functions</b> — <span class="why">def, default args, *args/**kwargs.</span> <a class="link" href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions">docs.python.org</a></div>
+  <div class="step"><span class="step-num">5</span><b class="title">Classes & OOP</b> — <span class="why">self, __init__, inheritance — every library you'll use is class-based.</span> <a class="link" href="https://realpython.com/python3-object-oriented-programming/">realpython.com</a></div>
+  <div class="step"><span class="step-num">6</span><b class="title">Modules & imports</b> — <span class="why">how real projects are organized across files.</span> <a class="link" href="https://docs.python.org/3/tutorial/modules.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">7</span><b class="title">Virtual environments & pip</b> — <span class="why">isolated dependencies per project — like node_modules.</span> <a class="link" href="https://docs.python.org/3/tutorial/venv.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">8</span><b class="title">Files, JSON, try/except</b> — <span class="why">reading data and handling failures without crashing.</span> <a class="link" href="https://docs.python.org/3/tutorial/errors.html">docs.python.org</a></div>
+  <div class="step"><span class="step-num">9</span><b class="title">Type hints</b> — <span class="why">sets up Pydantic, which you use starting Step 11.</span> <a class="link" href="https://realpython.com/python-type-checking/">realpython.com</a></div>
+</div>
+<div class="milestone">🏁 Milestone: write a script with a function, a class, and file/JSON handling — no syntax lookups.</div>
+
+<div class="phase-banner p1">PHASE 1 — AI ENGINEERING <span class="tag">the front end: building products on AI</span></div>
+<div class="steps p1">
+  <div class="step"><span class="step-num">10</span><b class="title">Anthropic / OpenAI SDK</b> — <span class="why">how you actually call an LLM from code.</span> <a class="link" href="https://github.com/anthropics/prompt-eng-interactive-tutorial">github.com</a></div>
+  <div class="step"><span class="step-num">11</span><b class="title">Pydantic</b> — <span class="why">get validated structured data back, not raw text to parse.</span> <a class="link" href="https://docs.pydantic.dev/latest/">docs.pydantic.dev</a></div>
+  <div class="step"><span class="step-num">12</span><b class="title">asyncio</b> — <span class="why">run multiple LLM calls at once instead of waiting one by one.</span> <a class="link" href="https://realpython.com/async-io-python/">realpython.com</a></div>
+  <div class="milestone">🏁 Project 1: a CLI tool that calls an LLM and returns validated structured output.</div>
+  <div class="step"><span class="step-num">13</span><b class="title">Embeddings & similarity search</b> — <span class="why">how "search by meaning" actually works.</span> <a class="link" href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></div>
+  <div class="step"><span class="step-num">14</span><b class="title">Chunking strategies</b> — <span class="why">bad chunking silently breaks every RAG system.</span> <a class="link" href="https://python.langchain.com/docs/concepts/text_splitters/">python.langchain.com</a></div>
+  <div class="step"><span class="step-num">15</span><b class="title">Postgres + pgvector</b> — <span class="why">stores and searches your embeddings, fits your existing stack.</span> <a class="link" href="https://github.com/pgvector/pgvector">github.com</a></div>
+  <div class="step"><span class="step-num">16</span><b class="title">FastAPI</b> — <span class="why">the backend you'll actually serve everything through.</span> <a class="link" href="https://fastapi.tiangolo.com/tutorial/">fastapi.tiangolo.com</a></div>
+  <div class="milestone">🏁 Project 2: a RAG knowledge assistant over a real corpus you care about.</div>
+  <div class="step"><span class="step-num">17</span><b class="title">RAGAS</b> — <span class="why">proves your RAG system works — a number, not a vibe.</span> <a class="link" href="https://docs.ragas.io/en/stable/getstarted/quickstart/">docs.ragas.io</a></div>
+  <div class="step"><span class="step-num">18</span><b class="title">LangSmith</b> — <span class="why">shows you exactly what happened inside a bad answer.</span> <a class="link" href="https://docs.smith.langchain.com/">docs.smith.langchain.com</a></div>
+  <div class="milestone">🏁 Add a scored, versioned eval suite (30–50 questions) to Project 2.</div>
+  <div class="step"><span class="step-num">19</span><b class="title">Tool calling / function calling</b> — <span class="why">how a model actually takes actions, not just talks.</span></div>
+  <div class="step"><span class="step-num">20</span><b class="title">LangGraph</b> — <span class="why">the standard way to build production agents with real control flow.</span> <a class="link" href="https://academy.langchain.com/courses/intro-to-langgraph">academy.langchain.com</a></div>
+  <div class="step"><span class="step-num">21</span><b class="title">CrewAI</b> — <span class="why">for tasks that split cleanly across specialist agents.</span> <a class="link" href="https://learn.crewai.com/">learn.crewai.com</a></div>
+  <div class="step"><span class="step-num">22</span><b class="title">MCP</b> — <span class="why">standardizes how tools connect to any AI app, not just one framework.</span> <a class="link" href="https://modelcontextprotocol.io">modelcontextprotocol.io</a></div>
+  <div class="milestone">🏁 Project 3: a multi-step agent with real tool use that can resume after a crash.</div>
+  <div class="step"><span class="step-num">23</span><b class="title">Agentic RAG</b> — <span class="why">merge retrieval + agents into one system (Steps 13–22 combined).</span></div>
+  <div class="milestone">🏁 Project 4 (flagship): merge Projects 2 & 3 into one agentic, evaluated RAG system.</div>
+  <div class="step"><span class="step-num">24</span><b class="title">Docker</b> — <span class="why">makes your app run the same everywhere, not just your machine.</span> <a class="link" href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freecodecamp.org</a></div>
+  <div class="step"><span class="step-num">25</span><b class="title">Deploy (Fly.io / Render / Railway)</b> — <span class="why">gets Project 4 onto a real, working URL.</span></div>
+  <div class="milestone">🏁 Project 4 is live and usable by a stranger.</div>
+  <div class="step"><span class="step-num">26</span><b class="title">Case studies & resume</b> — <span class="why">makes the work legible to someone who didn't watch you build it.</span></div>
+</div>
+<div class="checkpoint"><b>Phase 1 done:</b> 3 working, deployed projects — RAG + evals, an agent, a flagship agentic RAG system.</div>
+
+<div class="phase-banner p2">PHASE 2 — ML ENGINEERING <span class="tag">the back end: understanding what's underneath</span></div>
+<div class="steps p2">
+  <div class="step"><span class="step-num">27</span><b class="title">NumPy</b> — <span class="why">the array math underneath every ML library.</span> <a class="link" href="https://numpy.org/doc/stable/user/quickstart.html">numpy.org</a></div>
+  <div class="step"><span class="step-num">28</span><b class="title">pandas</b> — <span class="why">how you'll load and clean real datasets.</span> <a class="link" href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas.pydata.org</a></div>
+  <div class="step"><span class="step-num">29</span><b class="title">Matplotlib</b> — <span class="why">how you'll visualize what a model is actually doing.</span> <a class="link" href="https://matplotlib.org/stable/tutorials/pyplot.html">matplotlib.org</a></div>
+  <div class="step"><span class="step-num">30</span><b class="title">scikit-learn</b> — <span class="why">tested implementations to check your own code against.</span> <a class="link" href="https://scikit-learn.org/stable/getting_started.html">scikit-learn.org</a></div>
+  <div class="step"><span class="step-num">31</span><b class="title">Linear algebra</b> — <span class="why">the actual math behind the embeddings you used in Step 13.</span> <a class="link" href="https://www.khanacademy.org/math/linear-algebra">khanacademy.org</a></div>
+  <div class="step"><span class="step-num">32</span><b class="title">Probability & softmax</b> — <span class="why">how a model turns raw scores into a "choice."</span> <a class="link" href="https://www.khanacademy.org/math/statistics-probability/probability-library">khanacademy.org</a></div>
+  <div class="step"><span class="step-num">33</span><b class="title">Gradient descent</b> — <span class="why">literally how every model you use gets trained.</span> <a class="link" href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></div>
+  <div class="step"><span class="step-num">34</span><b class="title">Linear & logistic regression</b> — <span class="why">the smallest complete example of "train a model," done by hand.</span> <a class="link" href="https://www.coursera.org/specializations/machine-learning-introduction">coursera.org</a></div>
+  <div class="step"><span class="step-num">35</span><b class="title">Decision trees & ensembles</b> — <span class="why">still the default choice for real-world tabular data.</span> <a class="link" href="https://scikit-learn.org/stable/modules/ensemble.html">scikit-learn.org</a></div>
+  <div class="milestone">🏁 Project 5: a classical ML project on real data you already own.</div>
+  <div class="step"><span class="step-num">36</span><b class="title">Neural networks & backpropagation</b> — <span class="why">the mechanism every deep learning model learns by.</span> <a class="link" href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></div>
+  <div class="step"><span class="step-num">37</span><b class="title">Self-attention (Q/K/V)</b> — <span class="why">the actual mechanism inside every LLM you've used since Step 10.</span> <a class="link" href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></div>
+  <div class="step"><span class="step-num">38</span><b class="title">Transformer architecture</b> — <span class="why">how attention gets stacked into a full model.</span> <a class="link" href="https://jalammar.github.io/illustrated-gpt2/">jalammar.github.io</a></div>
+  <div class="step"><span class="step-num">39</span><b class="title">PyTorch</b> — <span class="why">how you'll actually build and train models, not just call APIs.</span> <a class="link" href="https://pytorch.org/tutorials/beginner/basics/intro.html">pytorch.org</a></div>
+  <div class="step"><span class="step-num">40</span><b class="title">LoRA / PEFT</b> — <span class="why">cheaply fine-tune a model instead of full retraining.</span> <a class="link" href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">huggingface.co</a></div>
+  <div class="milestone">🏁 Project 6: a mini transformer from scratch, or a small model fine-tuned with LoRA.</div>
+  <div class="step"><span class="step-num">41</span><b class="title">Docker Compose & Kubernetes</b> — <span class="why">keeps your app running reliably, not just alive.</span> <a class="link" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">kubernetes.io</a></div>
+  <div class="step"><span class="step-num">42</span><b class="title">MLflow</b> — <span class="why">tracks exactly which model version is actually live.</span> <a class="link" href="https://mlflow.org/docs/latest/index.html">mlflow.org</a></div>
+  <div class="step"><span class="step-num">43</span><b class="title">GitHub Actions (CI/CD)</b> — <span class="why">catches a broken change before it ships.</span></div>
+  <div class="milestone">🏁 Project 7: a model containerized, registered, and deployed with real CI/CD.</div>
+  <div class="step"><span class="step-num">44</span><b class="title">Prometheus & Grafana</b> — <span class="why">tells you when something's broken before your users do.</span> <a class="link" href="https://prometheus.io/docs/introduction/overview/">prometheus.io</a></div>
+  <div class="step"><span class="step-num">45</span><b class="title">Terraform & ArgoCD</b> — <span class="why">makes infrastructure reproducible instead of memory-based.</span> <a class="link" href="https://developer.hashicorp.com/terraform/docs">developer.hashicorp.com</a></div>
+  <div class="milestone">🏁 Project 8: full monitoring/alerting added to your flagship system.</div>
+  <div class="step"><span class="step-num">46</span><b class="title">Portfolio integration</b> — <span class="why">one coherent story instead of two separate skillsets.</span></div>
+</div>
+<div class="checkpoint"><b>Complete:</b> a production-grade, monitored, agentic RAG system with a full eval suite — plus the math and infrastructure understanding underneath it. AI Engineer and ML Engineer, both covered.</div>
+
+<div class="risk-box">
+  <b>One standing risk:</b> stopping at Phase 1 because it "works well enough" and never doing Phase 2. Put a real date on Step 27 now, before Phase 1 feels finished.
+</div>
+
+<footer class="foot">
+  Prepared for Hassan — pace: 5–10 hrs/week. 46 steps, zero to complete. Each link is where the depth lives — this page is just the order to do things in.
+</footer>
+
+</div>
+</body>
+</html>

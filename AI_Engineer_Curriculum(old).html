@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Engineer Curriculum — Hassan</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --card: #1c1f28;
+    --border: #2a2e3a;
+    --text: #e4e6eb;
+    --muted: #9aa1b1;
+    --accent1: #7dd3fc; /* phase 1 - AI eng */
+    --accent2: #c4b5fd; /* phase 2 - ML/MLOps */
+    --gold: #fbbf24;
+    --green: #86efac;
+    --pink: #f9a8d4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+  }
+  a { color: var(--accent1); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .layout { display: flex; min-height: 100vh; }
+  nav.side {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.side h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 20px 0 8px;
+  }
+  nav.side h3:first-child { margin-top: 0; }
+  nav.side a {
+    display: block;
+    color: var(--text);
+    font-size: 13.5px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+  }
+  nav.side a:hover { background: #23273347; text-decoration: none; }
+  nav.side a.p1 { border-left: 3px solid var(--accent1); }
+  nav.side a.p2 { border-left: 3px solid var(--accent2); }
+  main {
+    flex: 1;
+    max-width: 900px;
+    padding: 40px 48px 120px;
+  }
+  header.hero {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  header.hero h1 { font-size: 30px; margin: 0 0 6px; }
+  header.hero .sub { color: var(--muted); font-size: 15px; }
+  .meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .intro-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  .intro-block b { color: var(--gold); }
+  .phase-banner {
+    margin: 56px 0 24px;
+    padding: 18px 22px;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
+  .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
+  .phase-banner .tag { display:block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top:4px; }
+  section.stage {
+    margin-bottom: 44px;
+    scroll-margin-top: 20px;
+  }
+  .stage-header { margin-bottom: 14px; }
+  .stage-badge {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .p1 .stage-badge { background: #0c4a6e; color: var(--accent1); }
+  .p2 .stage-badge { background: #3b0764; color: var(--accent2); }
+  section.stage h2 { font-size: 21px; margin: 0; }
+  section.stage > .stage-goal { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .concept {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .concept h4 {
+    margin: 0 0 8px;
+    font-size: 15.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .concept .num {
+    font-size: 12px;
+    color: var(--bg);
+    background: var(--accent1);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .p2 .concept .num { background: var(--accent2); }
+  .concept p { margin: 0 0 10px; font-size: 14.5px; }
+  .concept .row {
+    font-size: 13px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .concept .row b { color: var(--text); }
+  .concept .row.res b { color: var(--accent1); }
+  .p2 .concept .row.res b { color: var(--accent2); }
+  .concept .row.task b { color: var(--gold); }
+  .concept .row.check b { color: var(--green); }
+  .concept .row a { margin-right: 4px; }
+  .concept .row a:not(:last-child)::after { content: " ·"; color: var(--muted); margin-right: 4px; }
+  .project {
+    background: #1a1408;
+    border: 1px solid #4a3a10;
+    border-left: 4px solid var(--gold);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 18px;
+  }
+  .project h3 { margin: 0 0 8px; font-size: 16px; color: var(--gold); }
+  .project p { margin: 0; font-size: 14.5px; }
+  .checkpoint {
+    background: #062b1a;
+    border: 1px solid #14532d;
+    border-left: 4px solid var(--green);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 14.5px;
+  }
+  .checkpoint b { color: var(--green); }
+  table.ref {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 16px 0;
+  }
+  table.ref th, table.ref td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.ref th { background: var(--panel); color: var(--muted); font-weight: 600; }
+  .risk-box {
+    background: #2a0e0e;
+    border: 1px solid #5c1a1a;
+    border-left: 4px solid #f87171;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 30px 0;
+    font-size: 14.5px;
+  }
+  .risk-box b { color: #f87171; }
+  table.stack {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 14px 0 34px;
+  }
+  table.stack th, table.stack td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.stack th { background: var(--panel); color: var(--muted); font-weight: 600; }
+  table.stack td.lib { font-weight: 700; white-space: nowrap; }
+  table.stack td.stage-col { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  table.stack .skip { color: var(--muted); font-style: italic; }
+  .stack-phase-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin: 28px 0 4px;
+  }
+  .stack-phase-label.p1 { background: #0c4a6e; color: var(--accent1); }
+  .stack-phase-label.p2 { background: #3b0764; color: var(--accent2); }
+  footer.foot {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  @media (max-width: 900px) {
+    nav.side { display: none; }
+    main { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="side">
+  <h3>Overview</h3>
+  <a href="#intro">How this works</a>
+
+  <h3>Phase 1 · AI Engineering</h3>
+  <a class="p1" href="#stage-0">Stage 0 — Codebase Audit</a>
+  <a class="p1" href="#stage-1">Stage 1 — Foundations</a>
+  <a class="p1" href="#stage-2">Stage 2 — RAG & Vector DBs</a>
+  <a class="p1" href="#stage-3">Stage 3 — Evals</a>
+  <a class="p1" href="#stage-4">Stage 4 — Agents</a>
+  <a class="p1" href="#stage-5">Stage 5 — Agentic RAG</a>
+  <a class="p1" href="#stage-6">Stage 6 — Production</a>
+  <a class="p1" href="#stage-7">Stage 7 — Portfolio</a>
+
+  <h3>Phase 2 · ML + MLOps</h3>
+  <a class="p2" href="#stage-8">Stage 8 — Math & Classical ML</a>
+  <a class="p2" href="#stage-9">Stage 9 — DL & Transformers</a>
+  <a class="p2" href="#stage-10">Stage 10 — MLOps Core</a>
+  <a class="p2" href="#stage-11">Stage 11 — Observability</a>
+  <a class="p2" href="#stage-12">Stage 12 — Integration</a>
+
+  <h3>Reference</h3>
+  <a href="#stack-guide">Stack guide</a>
+  <a href="#risk">Standing risk</a>
+  <a href="#tools">Tool index</a>
+</nav>
+
+<main>
+
+<header class="hero" id="intro">
+  <h1>AI Engineer → ML Engineer Curriculum</h1>
+  <div class="sub">Built to be self-contained: every concept explained, every resource linked, no course purchase required.</div>
+  <div class="meta-row">
+    <span class="pill">Pace: 5–10 hrs/week</span>
+    <span class="pill">Total: ~60 weeks (~14 months)</span>
+    <span class="pill">Phase 1: AI Engineering (32 wks)</span>
+    <span class="pill">Phase 2: ML Theory + MLOps (28 wks)</span>
+  </div>
+
+  <div class="intro-block">
+    <b>Format:</b> every stage is broken into numbered concepts. Each concept has a real explanation (not a link dump), a "go deeper" resource list of specific free courses/docs/articles, a hands-on task, and a self-check question. If you can answer the self-check without notes, move on. If you can't, you haven't learned it yet — reread, don't skip.
+  </div>
+
+  <div class="intro-block" style="border-left-color: var(--pink);">
+    <b>Before Stage 0:</b> Re-read "Opportunity Inbox Copilot" and one other past project end to end. Diagram the architecture from memory, then check it against the real code. For anything you can't justify — why this database, why this library, why this data flow — stop and read until you can. This is the fix for the vibe-coding problem you flagged: doing it now, at the component level, is cheap. Doing it later, at the agent-architecture level, is expensive.
+  </div>
+</header>
+
+<!-- ================= PHASE 1 ================= -->
+<div class="phase-banner p1">PHASE 1 — AI ENGINEERING <span class="tag">Weeks 1–32 · RAG, agents, evals, deployment</span></div>
+
+<section class="stage p1" id="stage-0">
+  <div class="stage-header">
+    <span class="stage-badge">Week 1</span>
+    <h2>Stage 0 — Codebase Audit</h2>
+    <div class="stage-goal">Close the vibe-coding gap before writing anything new. No new resources needed here — this is about your own code.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">0.1</span> Architecture reconstruction</h4>
+    <p>Open "Opportunity Inbox Copilot." Without looking at the code, sketch the system on paper: what components exist, what talks to what, where data lives, what happens on a request. Then open the code and correct your sketch. The gaps between your memory and the real system are exactly the parts that were vibe-coded — you never built a real mental model of them.</p>
+    <div class="row task"><b>Do this:</b> Produce one architecture diagram per project (boxes and arrows is enough) and a written paragraph per box explaining why that piece exists and why it was built that way.</div>
+    <div class="row check"><b>Self-check:</b> Could you explain this diagram to a technical interviewer for 10 minutes without looking at your notes?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">0.2</span> Justify every dependency</h4>
+    <p>For every library or framework choice you can't defend in one sentence ("I used X because Y, and the alternative Z would have cost me W"), that's a gap. Read the library's own "why/motivation" docs page until you can state the tradeoff, not just the name.</p>
+    <div class="row task"><b>Do this:</b> List every major dependency in both projects. Next to each, write the one-sentence justification. Anywhere you write "not sure" or "AI suggested it," spend 30–60 minutes closing that gap.</div>
+    <div class="row check"><b>Self-check:</b> Can you name one thing you'd do differently if you rebuilt this today, and why?</div>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-1">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 2–5</span>
+    <h2>Stage 1 — Foundations</h2>
+    <div class="stage-goal">The mechanical basics everything else sits on: how LLM APIs actually behave, how to control them, how to get structured output back out.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.1</span> How LLM APIs actually work</h4>
+    <p>An LLM API call is a stateless HTTP request: you send a list of messages (system/user/assistant roles), the model predicts the next tokens one at a time, and the response streams back token-by-token if you ask for streaming. There is no "memory" between calls — every previous message you want the model to see has to be resent in full each time. This is why conversation history grows your token bill linearly, and why "the model forgot" is almost always "the app didn't resend the context."</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview">Claude prompt engineering docs</a>
+      <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial">Anthropic's interactive prompt engineering tutorial (free, 9 chapters + exercises)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Make three raw API calls (no framework) — one without system prompt, one with, one with streaming on — and diff the raw JSON responses so you see exactly what changes.</div>
+    <div class="row check"><b>Self-check:</b> Explain why a chatbot needs to resend the entire conversation on every message.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.2</span> Tokens, context windows, and cost math</h4>
+    <p>Models don't see characters or words — they see tokens, chunks produced by a tokenizer (roughly 4 characters per token in English). Cost and context-window limits are both counted in tokens, not characters, which is why a code-heavy prompt costs more than the same-length English paragraph (code tokenizes less efficiently). Every model has a maximum context window (input + output tokens combined); exceed it and the call fails or gets silently truncated depending on the SDK.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview">Claude docs — context windows section</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Take a real chunk of your own text and a real chunk of code of similar character length; run both through a tokenizer and compare token counts. Calculate the $ cost of a 10-turn conversation at your model's per-token pricing.</div>
+    <div class="row check"><b>Self-check:</b> Why does a 100-message chatbot conversation get exponentially more expensive per turn, not linearly?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.3</span> Prompt engineering patterns</h4>
+    <p>Zero-shot (just ask), few-shot (show 2–5 examples of input→output), and chain-of-thought (ask the model to reason step by step before answering) are the three foundational patterns — everything else is a variation. System prompts set persistent behavior/role; XML-style tags (Claude-specific but widely imitated) help the model parse structure in long prompts unambiguously. The pattern that actually moves accuracy the most in practice is few-shot with examples that match your real edge cases, not generic ones.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.deeplearning.ai/courses/chatgpt-prompt-eng">DeepLearning.AI — ChatGPT Prompt Engineering for Developers (free, ~90 min, Andrew Ng + OpenAI's Isa Fulford)</a>
+      <a href="https://www.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai">DeepLearning.AI — Building Systems with the ChatGPT API (multi-step prompting)</a>
+      <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial">Anthropic interactive tutorial</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Take one real prompt from Project 1 (below) and run it three ways — zero-shot, few-shot with 3 examples, chain-of-thought — and log the output quality difference.</div>
+    <div class="row check"><b>Self-check:</b> When would few-shot beat chain-of-thought, and vice versa?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.4</span> Structured output with Pydantic</h4>
+    <p>Parsing free-text LLM output with regex is fragile — models phrase things inconsistently. The fix is to define a Pydantic schema (a typed Python class) and use the model's native structured-output / tool-calling mode to force the response into that shape, which the SDK then validates automatically. This is the difference between "the model said something like JSON" and "you have a guaranteed, type-checked object."</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://docs.pydantic.dev/latest/">Pydantic official docs</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Define a Pydantic model for a real use case (e.g., extract name/date/amount from an invoice-like text) and force the LLM to return exactly that schema. Break it on purpose (ambiguous input) and see how validation errors surface.</div>
+    <div class="row check"><b>Self-check:</b> What happens to your app if you don't validate LLM output and the model returns malformed JSON?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.5</span> Async Python for I/O-bound API calls</h4>
+    <p>LLM API calls spend almost all their time waiting on the network, not using your CPU — that's "I/O-bound" work, and Python's <code>async</code>/<code>await</code> lets your program do other things while waiting instead of blocking. <code>asyncio.gather()</code> fires multiple API calls concurrently so 5 calls that each take 2 seconds finish in ~2 seconds total, not 10. This matters the moment you have more than one LLM call per request (e.g., an agent calling multiple tools).</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://realpython.com/async-io-python/">Real Python — Async IO in Python: A Complete Walkthrough</a>
+      <a href="https://fastapi.tiangolo.com/async/">FastAPI docs — Concurrency and async/await</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Write two versions of a "summarize 5 documents" script — one sequential (for-loop with sync calls), one concurrent (asyncio.gather) — and time both.</div>
+    <div class="row check"><b>Self-check:</b> Why doesn't async speed up CPU-heavy work the same way it speeds up API calls?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">1.6</span> Error handling & rate limits</h4>
+    <p>Production LLM calls fail: rate limits (HTTP 429), timeouts, malformed responses. The standard fix is retry-with-exponential-backoff (wait 1s, then 2s, then 4s...) plus a max-retry cap, and treating your calls as idempotent where possible so a retry doesn't double-charge a user or double-send an email.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://github.com/jd/tenacity">tenacity (Python retry library) — README/docs</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Wrap your API calls with retry-with-backoff and deliberately trigger a rate limit (rapid-fire requests) to watch it recover gracefully instead of crashing.</div>
+    <div class="row check"><b>Self-check:</b> Why is naive immediate-retry (no backoff) actually dangerous under a rate limit?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 1</h3>
+    <p>A CLI or small web tool (reuse your Next.js/FastAPI stack) that calls an LLM with structured, validated Pydantic output, streams responses, handles rate limits/errors with retry-backoff, and logs token usage/cost per call. Keep the UI minimal — the entire point is clean plumbing underneath.</p>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-2">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 6–11</span>
+    <h2>Stage 2 — RAG & Vector Databases</h2>
+    <div class="stage-goal">How to make an LLM answer from your own data instead of just its training knowledge.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.1</span> What embeddings actually are</h4>
+    <p>An embedding model turns text into a list of numbers (a vector, typically 384–3072 dimensions) such that semantically similar text ends up close together in that vector space. "Close" is measured with cosine similarity — the angle between two vectors, not their raw distance. This is why "dog" and "puppy" end up near each other even though they share no characters: the model learned to place them near each other during training based on how they're used in context.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://jalammar.github.io/illustrated-transformer/">Jay Alammar — The Illustrated Transformer (also covers embeddings intuition)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Embed 5 sentences (2 similar pairs, 1 unrelated) using any embedding API, compute cosine similarity between every pair, and confirm the similar pairs score higher.</div>
+    <div class="row check"><b>Self-check:</b> Why does cosine similarity ignore vector length (magnitude) and only care about direction?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.2</span> Chunking strategies</h4>
+    <p>You can't embed an entire document as one vector without losing detail, so you split it into chunks first. Fixed-size chunking (e.g., 500 tokens with 50-token overlap) is simplest but can cut a sentence or idea in half; recursive chunking splits along natural boundaries (paragraphs, then sentences) before falling back to fixed size; semantic chunking groups text by meaning shift. Bad chunking is the single most common silent cause of bad RAG answers — the right answer exists in the source document but never makes it into a retrievable chunk intact.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://python.langchain.com/docs/concepts/text_splitters/">LangChain docs — Text Splitters concepts</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Chunk the same document three ways (fixed-size, recursive, by-paragraph) and manually inspect 10 chunks from each — count how many cut a sentence or idea awkwardly in half.</div>
+    <div class="row check"><b>Self-check:</b> Why does overlap between chunks help, and what does too much overlap cost you?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.3</span> Vector databases & indexing</h4>
+    <p>Comparing a query vector against millions of stored vectors one-by-one (exact search) doesn't scale, so vector databases use approximate nearest neighbor (ANN) indexes like HNSW (a navigable graph structure) that trade a small amount of accuracy for massive speed. pgvector adds this capability directly to Postgres — meaning you don't need a separate database if you're already using Postgres, which fits your existing stack. Dedicated vector DBs (Qdrant, Pinecone, Weaviate) add features like built-in hybrid search and horizontal scaling that pgvector doesn't have out of the box.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://github.com/pgvector/pgvector">pgvector official GitHub (README covers HNSW/IVFFlat indexing)</a>
+      <a href="https://www.datacamp.com/tutorial/pgvector-tutorial">DataCamp — pgvector tutorial</a>
+      <a href="https://medium.com/@fredyriveraacevedo13/building-a-fastapi-powered-rag-backend-with-postgresql-pgvector-c239f032508a">Building a FastAPI + pgvector RAG backend (walkthrough)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Set up pgvector locally, insert 1,000+ embedded chunks, create an HNSW index, and compare query latency with vs. without the index.</div>
+    <div class="row check"><b>Self-check:</b> Why is an ANN index "approximate," and when would that inaccuracy actually matter?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.4</span> Retrieval quality: top-k, hybrid search, reranking</h4>
+    <p>"Top-k" retrieval just means grabbing the k most similar chunks — but similarity alone often surfaces chunks that are topically related without containing the actual answer. Hybrid search combines vector similarity with traditional keyword search (BM25) so exact terms (names, IDs, numbers) aren't lost to "semantic fuzziness." Reranking adds a second, more expensive pass — a cross-encoder model that looks at the query and each candidate chunk together (rather than independently, like embeddings do) and reorders by true relevance.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://docs.ragas.io/en/stable/getstarted/">Ragas docs (covers retrieval metrics used to judge this)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Query your Stage 2 index with a question containing a specific number or name; check whether pure vector search misses it, then add BM25 hybrid search and compare.</div>
+    <div class="row check"><b>Self-check:</b> Why can a chunk be highly "similar" to a query but still not contain the answer?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.5</span> The RAG pipeline end-to-end</h4>
+    <p>Ingest (load raw docs) → chunk → embed each chunk → store vectors + metadata → at query time, embed the user's question → retrieve top-k similar chunks → stuff them into the prompt as context → generate the answer, ideally with citations back to source chunks. Every step is a place things silently break, which is exactly why Stage 3 (evals) exists — without measurement you can't tell which step is failing.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://python.langchain.com/docs/tutorials/rag/">LangChain — RAG tutorial (official)</a>
+      <a href="https://www.deeplearning.ai/courses/retrieval-augmented-generation">DeepLearning.AI — Retrieval Augmented Generation course (free via Coursera)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Build the full pipeline once end-to-end with the simplest possible version of every step (fixed chunking, top-3 retrieval, no reranking) before optimizing any single piece.</div>
+    <div class="row check"><b>Self-check:</b> If an answer is wrong, how do you tell whether it's a retrieval failure or a generation failure?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">2.6</span> Common RAG failure modes</h4>
+    <p>"Lost in the middle": models pay less attention to information buried in the middle of a long context, so relevant chunks placed poorly in the prompt get ignored. Over-retrieval: stuffing in too many chunks dilutes signal and increases cost/latency for no accuracy gain. Stale embeddings: if source documents change but you don't re-embed, retrieval confidently returns outdated information.</p>
+    <div class="row task"><b>Do this:</b> Deliberately bury the correct chunk in the middle of a 10-chunk context vs. first position, and compare answer accuracy.</div>
+    <div class="row check"><b>Self-check:</b> Name two reasons a RAG answer can be wrong even when retrieval found the correct chunk.</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 2</h3>
+    <p>A RAG knowledge assistant over a real corpus you actually care about (your own project docs, a domain you know, coursework) — FastAPI backend, Postgres + pgvector, simple frontend, with citations back to source chunks. You'll keep extending this project through Stages 3–6, so build it cleanly.</p>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-3">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 12–15</span>
+    <h2>Stage 3 — Evals</h2>
+    <div class="stage-goal">The stage that separates AI engineers from people who can call an API. This is your stated differentiation strategy — don't rush it.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.1</span> Why evals exist</h4>
+    <p>You can't unit-test a sentence the way you test a function's return value — the same question can have many correct phrasings, and LLM output is non-deterministic (same input, different output run to run). Evals solve this by scoring outputs against criteria (faithfulness to source, relevance to question) across a fixed test set, giving you a number you can track over time instead of a vibe. Without this, "I improved the prompt" is an opinion; with it, it's a measurement.</p>
+    <div class="row check"><b>Self-check:</b> Why can't you just eyeball 5 outputs and call the system "good"?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.2</span> RAGAS core metrics</h4>
+    <p><b>Faithfulness</b>: does the generated answer only contain claims supported by the retrieved context (checks hallucination)? <b>Answer relevancy</b>: does the answer actually address the question asked, independent of correctness? <b>Context precision</b>: of the chunks retrieved, how many were actually relevant (are you retrieving noise)? <b>Context recall</b>: of the relevant information that exists, how much did retrieval actually find (are you missing things)? These four together let you localize a failure to either the retrieval half or the generation half of your pipeline.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://docs.ragas.io/en/stable/getstarted/quickstart/">Ragas — Quick Start (evaluating in 5 minutes)</a>
+      <a href="https://docs.ragas.io/en/latest/tutorials/rag/">Ragas — Evaluate a simple RAG system (full tutorial)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Run all four RAGAS metrics against Project 2's outputs on 10 real questions and manually verify one low-scoring example by hand to confirm the metric caught a real problem.</div>
+    <div class="row check"><b>Self-check:</b> If faithfulness is high but answer relevancy is low, what does that tell you about where the bug is?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.3</span> Building a golden eval dataset</h4>
+    <p>A golden dataset is a fixed set of (question, ground-truth answer, expected source chunks) triples that represent real usage — not made-up trivia questions. Aim for 30–50 to start, covering easy cases, edge cases, and known-hard cases (ambiguous questions, questions with no answer in the corpus). You can bootstrap candidates with an LLM (synthetic question generation from your documents) but a human must verify every ground-truth answer, or you're just evaluating one model against another model's opinion.</p>
+    <div class="row task"><b>Do this:</b> Write 30 question/ground-truth pairs by hand for your Project 2 corpus, including at least 5 "trick" questions the system should refuse to answer because the info isn't there.</div>
+    <div class="row check"><b>Self-check:</b> Why is a 5-question eval set not enough to trust a score change?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.4</span> LLM-as-judge pattern</h4>
+    <p>Since grading "is this answer good" often can't be reduced to exact string matching, a common pattern uses a strong LLM as the grader, given the question, answer, and a rubric, to output a score. This scales evaluation but inherits the judge model's own biases (e.g., favoring longer or more confident-sounding answers) — so judge scores need periodic spot-checking against human judgment, especially early on.</p>
+    <div class="row task"><b>Do this:</b> Have an LLM judge grade 10 of your RAG answers on a 1–5 rubric, then grade the same 10 yourself, and compare where you disagree.</div>
+    <div class="row check"><b>Self-check:</b> Name one bias an LLM judge might have that a human grader wouldn't.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.5</span> Tracing & observability</h4>
+    <p>A trace records everything that happened during one request: the exact prompt sent, the retrieved chunks, tool calls made, tokens used, latency per step. Without tracing, debugging a bad answer means guessing; with it, you can see precisely which step (retrieval vs. generation vs. a tool call) produced the wrong input to the next step.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://docs.smith.langchain.com/">LangSmith documentation (tracing/observability)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Instrument Project 2 with LangSmith (or an equivalent), then intentionally ask a question you know it'll answer wrong, and use the trace to pinpoint the exact failing step.</div>
+    <div class="row check"><b>Self-check:</b> Without a trace, how would you have found that same bug — and how much longer would it take?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">3.6</span> Regression gates / eval-driven development</h4>
+    <p>A "ship gate" means: a versioned eval set, a numeric score, and an automated check that blocks a deploy if the score regresses below a threshold. This turns evals from a one-time report into a permanent safety net — the same role unit tests play in traditional software, adapted for non-deterministic systems. Teams that skip this ship by vibe, and vibe-shipped agents reliably regress within weeks as prompts/models/data drift.</p>
+    <div class="row task"><b>Do this:</b> Write a script that runs your RAGAS eval suite and exits with a failure code if any metric drops more than 5% from a saved baseline. Wire it into a simple CI check (GitHub Actions) on your repo.</div>
+    <div class="row check"><b>Self-check:</b> What's the difference between "I ran an eval once" and "I have a regression gate"?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 2, extended</h3>
+    <p>Add a full eval harness to the RAG assistant: a versioned 30–50 question golden set, RAGAS scores tracked over time, and a CI check that flags regressions. This turns "I built a RAG demo" into "I built a RAG system I can prove works" — the exact artifact that differentiates you in the current hiring market.</p>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-4">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 16–21</span>
+    <h2>Stage 4 — Agents</h2>
+    <div class="stage-goal">Moving from a fixed pipeline to a system that decides its own next step.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.1</span> What makes something an "agent"</h4>
+    <p>A chain runs a fixed sequence of steps every time (A then B then C). An agent has a loop: it observes state, decides which action to take next (including whether to stop), takes the action, observes the result, and repeats — the number and order of steps isn't fixed in advance. This dynamic control flow is what lets an agent handle problems whose solution path can't be hard-coded.</p>
+    <div class="row check"><b>Self-check:</b> Give an example of a task better suited to a fixed chain than an agent, and explain why.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.2</span> The ReAct pattern</h4>
+    <p>ReAct (Reason + Act) interleaves explicit reasoning ("Thought: I need to look up X") with actions ("Action: call search tool") and observations ("Observation: search returned Y"), repeating until the model decides it has enough information to answer. Making the reasoning explicit in the trace (rather than hidden) is what makes agent behavior debuggable — you can literally read why it did what it did.</p>
+    <div class="row task"><b>Do this:</b> Manually trace through 3 ReAct-style thought/action/observation loops for a simple task (e.g., "what's the weather in the city where X was founded") by hand before writing code, so you internalize the loop shape.</div>
+    <div class="row check"><b>Self-check:</b> Why does making the "thought" step explicit (rather than hidden) help you debug agent failures?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.3</span> Tool calling / function calling mechanics</h4>
+    <p>You describe each tool to the model as a JSON schema (name, description, parameters) alongside your prompt. The model doesn't execute anything itself — it outputs a structured request ("call tool X with arguments Y"), your code actually runs the tool, and you feed the result back in as an observation for the next turn. Modern APIs support parallel tool calls (requesting multiple tools in one turn) to cut latency.</p>
+    <div class="row task"><b>Do this:</b> Give a model two tools (e.g., a calculator and a fake weather lookup) and a question that requires both; inspect the raw tool-call JSON the model produces before you execute anything.</div>
+    <div class="row check"><b>Self-check:</b> Who actually executes a tool call — the model, or your code?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.4</span> LangGraph core concepts</h4>
+    <p>LangGraph models an agent as a graph: a typed <b>state</b> object (a Pydantic model or TypedDict) flows through <b>nodes</b> (plain functions that read and update state) connected by <b>edges</b> (fixed or conditional — "if state.needs_more_info, go back to the retrieval node"). This graph structure, versus a plain while-loop, is what gives you visual clarity on complex control flow and lets you add cycles (loops) and branches cleanly.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://academy.langchain.com/courses/intro-to-langgraph">LangChain Academy — Introduction to LangGraph (free course)</a>
+      <a href="https://github.com/langchain-ai/langgraph">LangGraph official GitHub (docs + examples)</a>
+      <a href="https://realpython.com/langgraph-python/">Real Python — LangGraph: Build Stateful AI Agents in Python</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Build a 3-node LangGraph graph (e.g., retrieve → decide-if-enough-info → answer-or-loop-back) and draw its graph diagram before and after coding it to confirm they match.</div>
+    <div class="row check"><b>Self-check:</b> What's the difference between a fixed edge and a conditional edge?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.5</span> Checkpointing & persistence</h4>
+    <p>Long-running or multi-step agents need to survive a crash, a timeout, or a deliberate pause for human approval — checkpointing saves the graph's state at each step so execution can resume exactly where it left off, rather than restarting from scratch. This also enables human-in-the-loop patterns: the graph pauses at a node, waits for a human decision, then continues with that input folded into state.</p>
+    <div class="row task"><b>Do this:</b> Add checkpointing to your Stage 4 graph, deliberately kill the process mid-run, and confirm it resumes from the last checkpoint instead of restarting.</div>
+    <div class="row check"><b>Self-check:</b> Why does a customer-support agent handling a multi-day case need checkpointing, but a single-question chatbot doesn't?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.6</span> Multi-agent orchestration with CrewAI</h4>
+    <p>CrewAI structures multiple agents as a "crew," each with a role, goal, and backstory (a persona that shapes its behavior), plus tasks that get delegated between them. This beats a single agent when a problem naturally decomposes into specialist sub-roles (e.g., a "researcher" agent and a "writer" agent) where a single monolithic prompt would get confused trying to do both jobs at once — but it adds coordination overhead, so it's not the default choice for simple tasks.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai">DeepLearning.AI — Multi AI Agent Systems with crewAI (free course)</a>
+      <a href="https://learn.crewai.com/">CrewAI official learning platform</a>
+      <a href="https://github.com/crewAIInc/crewAI">CrewAI GitHub (docs + examples)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Build a 2-agent crew (researcher + writer) for a real task and compare its output quality/cost/latency against doing the same task with a single agent.</div>
+    <div class="row check"><b>Self-check:</b> When does splitting a task across multiple agents make things worse, not better?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">4.7</span> MCP — Model Context Protocol</h4>
+    <p>MCP is an open standard (created by Anthropic) that lets any tool/data source expose itself once as an "MCP server," and any compatible AI application can connect to it as an "MCP client" — instead of writing custom tool-integration code per framework per data source. It defines three primitives: tools (actions the model can call), resources (data the model can read), and prompts (reusable prompt templates). The payoff is decoupling: a tool you build once works across Claude, other MCP clients, and future frameworks without rewriting integration code.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://modelcontextprotocol.io">Model Context Protocol — official docs & specification</a>
+      <a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol">Anthropic — Introduction to Model Context Protocol (free course)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Build one minimal MCP server exposing a single tool (even something trivial like a local file search), connect it to a client, and call it end-to-end.</div>
+    <div class="row check"><b>Self-check:</b> What problem does MCP solve that plain function-calling tool schemas don't?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 3</h3>
+    <p>A multi-step agent (research assistant, support-triage bot, or similar) built in LangGraph with real tool use and checkpointing so it can resume after failure — not a single-shot chain wearing an "agent" label.</p>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-5">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 22–25</span>
+    <h2>Stage 5 — Agentic RAG + Trajectory Evals</h2>
+    <div class="stage-goal">Merge Stages 2–4 into your flagship project — the one you lead with in interviews and freelance pitches.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">5.1</span> The agentic RAG pattern</h4>
+    <p>Instead of a fixed retrieve-then-generate pipeline, the agent itself decides when to retrieve, what to search for, and whether one retrieval pass was enough — including rewriting the query if the first search came back weak, or doing multiple retrieval "hops" for questions that need information from several places. This handles the class of question plain RAG fails on: multi-part questions, or questions where the right search terms aren't obvious from the raw question text.</p>
+    <div class="row task"><b>Do this:</b> Find or construct a question your Stage 2 fixed-pipeline RAG gets wrong because a single retrieval pass wasn't enough, then fix it by giving the agent the ability to re-query.</div>
+    <div class="row check"><b>Self-check:</b> Give a concrete example of a question that needs two retrieval passes to answer correctly.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">5.2</span> Trajectory evaluation</h4>
+    <p>Grading only the final answer misses a whole class of bugs: an agent can get the right answer by calling the wrong tools, in the wrong order, or by getting lucky. Trajectory evaluation scores the path itself — did it call the tools it should have, in a sensible order, without redundant or wasted calls — which is what actually tells you whether the system will generalize to new questions or just happened to work on this one.</p>
+    <div class="row task"><b>Do this:</b> For 10 of your agent's runs, manually annotate the trajectory (tools called, in what order) against what the "ideal" trajectory would have been, and score the gap.</div>
+    <div class="row check"><b>Self-check:</b> Why can an agent produce a correct final answer via a trajectory you'd still call a bug?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">5.3</span> Failure mode analysis</h4>
+    <p>Not all failures are the same category: a retrieval miss (the right chunk was never found), a reasoning error (right information, wrong conclusion), or tool misuse (called the wrong tool, or the right tool with wrong arguments). Building a failure taxonomy from your own eval runs — tagging each failure by category — tells you where to actually spend your next week of work instead of guessing.</p>
+    <div class="row task"><b>Do this:</b> Run your eval set, tag every failing case by category (retrieval / reasoning / tool misuse), and count which category dominates — that's your next fix priority.</div>
+    <div class="row check"><b>Self-check:</b> Why is "the answer is wrong" not a useful bug report on its own?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 4 (Flagship)</h3>
+    <p>Merge Projects 2 and 3 into an agentic RAG system with a full eval suite covering both retrieval quality (RAGAS) and agent trajectory correctness. This is the project where you earn the right to say "I can explain why it doesn't hallucinate" — your stated differentiation strategy, made concrete.</p>
+  </div>
+</section>
+
+<section class="stage p1" id="stage-6">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 26–29</span>
+    <h2>Stage 6 — Production & Deployment</h2>
+    <div class="stage-goal">Get the flagship project live, at a URL, surviving a stranger clicking around in it.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">6.1</span> FastAPI production patterns</h4>
+    <p>Dependency injection (FastAPI's <code>Depends</code>) lets you share things like DB connections and auth checks across endpoints without repeating code. Background tasks let you return a response to the user immediately while slow work (like an LLM call) finishes after the response is sent. Async endpoints (<code>async def</code>) matter specifically because LLM calls are I/O-bound — see Concept 1.5.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://fastapi.tiangolo.com/async/">FastAPI docs — async/await & concurrency</a>
+      <a href="https://fastapi.tiangolo.com/tutorial/dependencies/">FastAPI docs — Dependencies</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Refactor Project 4's endpoints to use dependency injection for the DB/auth, and move any slow non-response-critical work into a background task.</div>
+    <div class="row check"><b>Self-check:</b> Why would you use a background task instead of just making the endpoint slower?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">6.2</span> Auth & rate limiting basics</h4>
+    <p>At minimum: API keys or session tokens to identify callers, and per-user request quotas so one user (or a bug, or an attacker) can't exhaust your LLM budget or your database. This doesn't need to be enterprise-grade — it needs to exist at all, since an unprotected LLM endpoint is effectively an open invoice.</p>
+    <div class="row task"><b>Do this:</b> Add API-key auth and a simple per-key rate limit (e.g., 20 requests/hour) to Project 4, then test that exceeding the limit returns a clean error instead of crashing.</div>
+    <div class="row check"><b>Self-check:</b> What's the actual dollar risk of shipping an LLM endpoint with no rate limiting?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">6.3</span> Docker fundamentals</h4>
+    <p>An image is a frozen snapshot of your app plus everything it needs to run (Python version, dependencies, OS libraries); a container is a running instance of that image. A Dockerfile builds the image in layers, each layer cached, so "works on my machine" gets fixed by shipping the machine, not just the code. This is a light pass here — full depth (multi-stage builds, Compose) comes back in Phase 2, Stage 10.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freeCodeCamp — Docker & Kubernetes Fundamentals (free, hands-on)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Write a Dockerfile for Project 4, build it, run it locally in a container, and confirm it behaves identically to running it directly.</div>
+    <div class="row check"><b>Self-check:</b> What specifically does Docker fix that a requirements.txt file alone doesn't?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">6.4</span> Deployment platform choice</h4>
+    <p>Fly.io/Render/Railway are managed platforms — you push code, they handle servers, scaling, and TLS, trading some control for speed to a live URL. This is the right choice for a portfolio project; full Kubernetes control comes back in Phase 2 once the tradeoffs actually matter for a real production system.</p>
+    <div class="row task"><b>Do this:</b> Deploy Project 4 to one managed platform, end to end, and confirm it's reachable from a device that isn't yours.</div>
+    <div class="row check"><b>Self-check:</b> What are you giving up by choosing a managed platform over raw Kubernetes, and why is that an acceptable tradeoff right now?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">6.5</span> Basic observability in production</h4>
+    <p>Structured logging (JSON logs with consistent fields, not free-text print statements) makes logs queryable later. Track cost per request (tokens × price) and latency percentiles (p50/p95/p99 — the tail matters more than the average, since that's what angry users actually experience) from day one, even before you have real traffic, so you have a baseline.</p>
+    <div class="row task"><b>Do this:</b> Add structured logging to Project 4 capturing latency and token cost per request, and compute p50/p95 latency from a batch of test requests.</div>
+    <div class="row check"><b>Self-check:</b> Why does p95 latency matter more than average latency for user experience?</div>
+  </div>
+
+  <div class="checkpoint">
+    <b>Phase 1 checkpoint (Stage 6 complete):</b> Project 4 should be live at a real URL, with auth, rate limiting, logging, and cost tracking — something a stranger could use without you standing over their shoulder.
+  </div>
+</section>
+
+<section class="stage p1" id="stage-7">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 30–32</span>
+    <h2>Stage 7 — Portfolio & Freelance Positioning</h2>
+    <div class="stage-goal">Make the work legible to someone who didn't watch you build it.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">7.1</span> Writing a technical case study</h4>
+    <p>A case study is not a feature list — it's architecture (why this design), decisions (what you chose and rejected, and why), and results (your eval numbers, before/after). This is what lets a hiring manager or client evaluate your thinking instead of just trusting a GitHub star count. Structure: problem → architecture diagram → key decisions & tradeoffs → eval results → what you'd do differently.</p>
+    <div class="row task"><b>Do this:</b> Write one case study for Project 4 following that exact structure, including your actual RAGAS numbers and trajectory-eval findings from Stage 5.</div>
+    <div class="row check"><b>Self-check:</b> Does your case study let someone understand a decision you made without asking you a follow-up question?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">7.2</span> Positioning around evals as the differentiator</h4>
+    <p>Most portfolios stop at "I called an LLM API." Yours should foreground the eval harness and trajectory analysis as the headline, not a footnote — that's the actual scarce skill in the current market. Rewrite your resume bullets to lead with measurable claims ("built an eval suite scoring faithfulness/relevance across 40 test cases, catching a 15% retrieval regression before deploy") instead of tool names.</p>
+    <div class="row task"><b>Do this:</b> Rewrite your resume/portfolio bullets for Projects 2–4 to lead with the eval/measurement story, not the tech stack list.</div>
+    <div class="row check"><b>Self-check:</b> Does your resume currently mention evals at all? If not, that's the first thing to fix.</div>
+  </div>
+
+  <div class="checkpoint">
+    <b>Phase 1 complete.</b> You should have three defensible projects — a production RAG assistant with evals, a LangGraph multi-agent system, and a deployed agentic RAG flagship — each with a case study you can talk through without notes, plus active freelance outreach targeting RAG/agent-building work.
+  </div>
+</section>
+
+<!-- ================= PHASE 2 ================= -->
+<div class="phase-banner p2">PHASE 2 — ML THEORY + MLOPS <span class="tag">Weeks 33–60 · The math and infrastructure underneath Phase 1</span></div>
+
+<div class="intro-block" style="border-left-color: var(--accent2);">
+  <b>Why this comes second, not first:</b> you already know what embeddings and attention <i>do</i> from building Phase 1 — this phase teaches <i>why</i> they work, anchored to systems you've already broken and fixed. Theory learned in isolation, with nothing to anchor it to, doesn't stick. Theory learned after a real bug forces you to ask "wait, why does this work at all" sticks for years.
+</div>
+
+<section class="stage p2" id="stage-8">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 33–38</span>
+    <h2>Stage 8 — Math & Classical ML Foundations</h2>
+    <div class="stage-goal">Just enough linear algebra, probability, and classical ML to make Stage 9 click — not a full math degree.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.0</span> The Python data stack: NumPy, pandas, Matplotlib, scikit-learn</h4>
+    <p>These four are tools, not theory — you'll use them constantly from here through the rest of the curriculum, so get comfortable with them before the math gets heavy. <b>NumPy</b> gives you arrays and fast vector/matrix math (this is what "implement from scratch in NumPy" means in 8.5 — you're doing the linear algebra yourself, just not re-implementing array storage). <b>pandas</b> loads and cleans tabular data (CSVs, freelance usage logs, eval datasets) into DataFrames you can filter, group, and reshape — this is what you actually load Project 5's data with. <b>Matplotlib</b> is the plotting library behind every "plot this" instruction in this stage (8.1's vector transformation, 8.4's gradient descent steps, 8.6's decision boundary, 8.8's train/test gap) — without it those tasks have no visual output to inspect. <b>scikit-learn</b> gives you battle-tested implementations (regression, trees, forests, train/test splitting, metrics) to check your from-scratch code against, and to use directly once you've proven you understand the from-scratch version.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://numpy.org/doc/stable/user/quickstart.html">NumPy — official quickstart guide</a>
+      <a href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas — "10 minutes to pandas" (official)</a>
+      <a href="https://matplotlib.org/stable/tutorials/pyplot.html">Matplotlib — pyplot tutorial (official)</a>
+      <a href="https://scikit-learn.org/stable/getting_started.html">scikit-learn — Getting Started (official)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Load a real CSV (even a small export from your own freelance/portfolio data) into a pandas DataFrame, compute basic stats with pandas, plot one column with Matplotlib, and convert one column to a NumPy array for a manual calculation — touch all four in one script before moving to 8.1.</div>
+    <div class="row check"><b>Self-check:</b> Which of the four would you reach for to load a CSV, which for a from-scratch gradient calculation, and which to sanity-check your from-scratch model against a known-good implementation?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.1</span> Vectors and matrices, geometrically</h4>
+    <p>A vector is a point/arrow in space (you already used this in Stage 2 — an embedding is just a vector). A matrix multiply is a transformation of that space — rotating, scaling, or projecting vectors — which is exactly what happens at every layer of a neural network: each layer is a matrix multiply that reshapes the representation before the next layer sees it.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.3blue1brown.com/topics/linear-algebra">3Blue1Brown — Essence of Linear Algebra (free video series, geometric intuition)</a>
+      <a href="https://www.khanacademy.org/math/linear-algebra">Khan Academy — Linear Algebra (free, exercises included)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> By hand, multiply a 2×2 matrix by a 2D vector and plot both the original and resulting vector — see the transformation visually.</div>
+    <div class="row check"><b>Self-check:</b> What does it mean, geometrically, for a matrix multiply to "rotate" a vector?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.2</span> Dot product & cosine similarity, formalized</h4>
+    <p>You used cosine similarity in Stage 2 as a black box; now derive it: the dot product of two vectors measures how much they point in the same direction, and dividing by the product of their magnitudes normalizes that into a -1 to 1 similarity score independent of vector length. This is the actual math underneath every RAG retrieval you've built.</p>
+    <div class="row task"><b>Do this:</b> Compute cosine similarity by hand (dot product, then divide by magnitudes) for two small 3D vectors, then verify your answer with code.</div>
+    <div class="row check"><b>Self-check:</b> Why does normalizing by magnitude matter — what would happen to search results if you skipped that step?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.3</span> Probability basics: conditional probability & softmax</h4>
+    <p>Conditional probability — P(A given B) — is the mathematical backbone of "predict the next token given everything before it," which is literally what an LLM does at every step. Softmax takes a list of raw scores (logits) and converts them into a valid probability distribution (all positive, summing to 1) by exponentiating and normalizing — this is the last step before a model "chooses" its next token.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.khanacademy.org/math/statistics-probability/probability-library">Khan Academy — Probability library (free)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Take 5 raw logit values, compute softmax by hand, confirm they sum to 1, then verify with code.</div>
+    <div class="row check"><b>Self-check:</b> Why can't a model just pick the token with the highest raw logit directly, skipping softmax?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.4</span> Gradients & why gradient descent works</h4>
+    <p>A derivative tells you the slope (rate of change) of a function at a point; a gradient is the multi-dimensional version — the direction of steepest increase. Gradient descent repeatedly steps in the opposite direction of the gradient (steepest decrease) to find a minimum of a loss function — this is literally how every model you've used got trained, and it's the mechanical core you'll implement by hand in Stage 9.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://karpathy.ai/zero-to-hero.html">Andrej Karpathy — Neural Networks: Zero to Hero (starts with exactly this)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Plot a simple parabola, pick a random starting point, and manually compute 3 gradient-descent steps toward the minimum using the derivative.</div>
+    <div class="row check"><b>Self-check:</b> Why does gradient descent move in the <i>opposite</i> direction of the gradient, not the same direction?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.5</span> Linear regression from scratch</h4>
+    <p>Linear regression fits a line (or hyperplane) to data by minimizing a loss function — typically mean squared error between predictions and actual values — using gradient descent to update the line's slope and intercept iteratively. This is the smallest possible complete example of "define a loss, compute gradients, update parameters," the pattern every model in this curriculum uses at larger scale.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.coursera.org/specializations/machine-learning-introduction">Andrew Ng — Machine Learning Specialization (Coursera/DeepLearning.AI, free to audit)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Implement linear regression from scratch in NumPy (no scikit-learn) — loss function, gradient computation, update loop — on a toy dataset.</div>
+    <div class="row check"><b>Self-check:</b> What would happen to training if your learning rate (step size) were too large?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.6</span> Classification & logistic regression</h4>
+    <p>Logistic regression adapts linear regression for yes/no predictions by passing the linear output through a sigmoid function (squashes any number into 0–1, interpretable as a probability), and swaps mean-squared-error for cross-entropy loss (which penalizes confident-wrong predictions much more harshly). Cross-entropy loss is the same loss function used to train LLMs on next-token prediction — this is a direct bridge to Stage 9.</p>
+    <div class="row task"><b>Do this:</b> Implement logistic regression from scratch on a toy binary classification dataset (scikit-learn's built-in datasets work fine) and plot the decision boundary.</div>
+    <div class="row check"><b>Self-check:</b> Why is cross-entropy a better loss function for classification than mean squared error?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.7</span> Trees & ensembles</h4>
+    <p>A decision tree splits data on feature thresholds to make predictions and is easy to interpret but prone to overfitting on its own. Random forests train many trees on random subsets of data/features and average their predictions to reduce variance; gradient boosting trains trees sequentially, each correcting the previous ones' errors. These remain the default choice for structured/tabular data even in 2026, where deep learning usually isn't worth the added complexity.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://scikit-learn.org/stable/modules/ensemble.html">scikit-learn docs — Ensemble methods</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Train a single decision tree and a random forest on the same tabular dataset; compare accuracy and overfitting (train vs. test score gap).</div>
+    <div class="row check"><b>Self-check:</b> Why does averaging many overfit trees produce a model that doesn't overfit as badly?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">8.8</span> Bias-variance tradeoff</h4>
+    <p>High bias (underfitting): the model is too simple to capture real patterns, performing poorly on both train and test data. High variance (overfitting): the model memorizes training data noise, performing great on train but poorly on test/unseen data. Train/validation/test splits exist specifically to detect this gap — you tune on validation, and only check test once at the very end to get an honest read on real-world performance.</p>
+    <div class="row task"><b>Do this:</b> Deliberately overfit a model (e.g., a very deep decision tree with no depth limit) on a small dataset and plot train vs. test accuracy to see the gap widen.</div>
+    <div class="row check"><b>Self-check:</b> Why would tuning your model based on test-set performance invalidate your final evaluation?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 5</h3>
+    <p>A small classical ML project on real data you already own (freelance usage data, portfolio site analytics, or similar) — implement at least one model from scratch (linear/logistic regression) and one using scikit-learn (random forest), comparing them honestly on the bias-variance tradeoff.</p>
+  </div>
+</section>
+
+<section class="stage p2" id="stage-9">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 39–46</span>
+    <h2>Stage 9 — Deep Learning & Transformers from First Principles</h2>
+    <div class="stage-goal">The math behind everything you built in Phase 1, learned once it has something real to anchor to.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.1</span> The neuron / perceptron</h4>
+    <p>A single artificial neuron computes a weighted sum of its inputs plus a bias, then passes that through a nonlinear activation function (like ReLU or sigmoid). The nonlinearity is not optional — stacking purely linear layers collapses mathematically into a single linear layer, no matter how many you stack, so nonlinearity is what actually lets a network learn complex, curved decision boundaries.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://karpathy.ai/zero-to-hero.html">Karpathy — Neural Networks: Zero to Hero (micrograd lecture builds exactly this)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Implement a single neuron (weighted sum + ReLU) from scratch in plain Python, no libraries, and pass a few inputs through it by hand and in code to confirm they match.</div>
+    <div class="row check"><b>Self-check:</b> Why would a 10-layer network with no activation functions behave identically to a 1-layer network?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.2</span> Backpropagation</h4>
+    <p>Backprop is the chain rule from calculus applied systematically to a computation graph: to know how much a change in an early-layer weight affects the final loss, you multiply the local gradients along every step of the path from that weight to the output. Frameworks (PyTorch, etc.) do this automatically via autograd, but building a tiny one by hand once is what makes "the model learns by adjusting weights" stop being a black box.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://karpathy.ai/zero-to-hero.html">Karpathy — "The spelled-out intro to neural networks and backpropagation: building micrograd" (free video + code)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Follow Karpathy's micrograd lecture and build a tiny autograd engine yourself (not just copy the code — retype it, break it, fix it) until you can explain every line.</div>
+    <div class="row check"><b>Self-check:</b> Why does backprop need to work backward from the output, rather than forward from the input?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.3</span> Word embeddings before transformers</h4>
+    <p>Word2vec learned static embeddings (one fixed vector per word, regardless of context) by training a shallow network to predict a word from its neighbors — establishing that "meaning" can be captured as position in vector space, the same idea underlying every embedding you used in Stage 2. The key limitation this motivates: static embeddings can't distinguish "bank" (river) from "bank" (money) — which is exactly the problem attention/transformers solve with contextual embeddings.</p>
+    <div class="row task"><b>Do this:</b> Read a summary of word2vec's training objective (predict-neighbor-words), then explain in your own words why a single fixed vector per word is a limitation.</div>
+    <div class="row check"><b>Self-check:</b> Why can't word2vec give "bank" two different meanings depending on sentence context?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.4</span> Self-attention: Query, Key, Value</h4>
+    <p>For each token, self-attention creates three vectors — Query (what am I looking for), Key (what do I offer), Value (what information do I actually carry) — and computes attention scores as the dot product of one token's Query against every other token's Key, then uses those scores to take a weighted average of all tokens' Values. This is the mechanism that lets "it" in a sentence dynamically figure out which earlier noun it refers to, based on the actual sentence content — not a fixed rule.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://jalammar.github.io/illustrated-transformer/">Jay Alammar — The Illustrated Transformer (the canonical explanation, with diagrams)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Work through Jay Alammar's Illustrated Transformer post with pen and paper, manually computing the Q/K/V calculation for a 3-word toy sentence.</div>
+    <div class="row check"><b>Self-check:</b> In your own words, what does the dot product between a Query and a Key actually measure?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.5</span> Multi-head attention & positional encoding</h4>
+    <p>A single attention head can only learn one "type" of relationship at a time; multi-head attention runs several attention computations in parallel with different learned Q/K/V weights, letting the model track multiple kinds of relationships simultaneously (e.g., grammatical role and topical relevance at once). Since attention itself has no built-in sense of word order (it treats input as a set, not a sequence), positional encoding injects position information into each token's embedding before attention runs.</p>
+    <div class="row task"><b>Do this:</b> Read the "multi-headed attention" section of the Illustrated Transformer and explain, without looking, why 8 heads see 8 different perspectives on the same sentence.</div>
+    <div class="row check"><b>Self-check:</b> If you removed positional encoding entirely, what would the model lose the ability to distinguish?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.6</span> Transformer architecture end-to-end</h4>
+    <p>A transformer block stacks: multi-head self-attention → residual connection (add the input back in, so gradients can flow through many layers without vanishing) → layer normalization (keeps activations stable) → a feed-forward network → another residual + norm. Encoder-decoder transformers (original translation-style) use both halves; decoder-only transformers (GPT-style, what modern LLMs use) use just the decoder stack, generating one token at a time.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://jalammar.github.io/illustrated-gpt2/">Jay Alammar — The Illustrated GPT-2 (decoder-only architecture specifically)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Draw the full block diagram of a transformer layer from memory (attention, residual, norm, feed-forward, residual, norm), then check it against the Illustrated Transformer diagram.</div>
+    <div class="row check"><b>Self-check:</b> What problem do residual connections solve in a deep network?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.7</span> From attention to GPT: causal masking & autoregression</h4>
+    <p>Decoder-only models generate text autoregressively — predicting one token, appending it, then predicting the next based on everything so far. Causal masking prevents a token's attention from "seeing" future tokens during training (which would let the model cheat by looking at the answer), forcing it to learn genuine next-token prediction. This is literally the mechanism underneath every LLM API call you made back in Stage 1.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://karpathy.ai/zero-to-hero.html">Karpathy — "Let's build GPT: from scratch, in code" (final lecture in the Zero to Hero series)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Follow Karpathy's "build GPT from scratch" lecture and train a tiny character-level GPT on a small text file on your own machine.</div>
+    <div class="row check"><b>Self-check:</b> Why would training without causal masking produce a model that looks great in training but fails at real generation?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.8</span> Fine-tuning vs. prompting vs. RAG</h4>
+    <p>Prompting (Stage 1) changes behavior with no weight updates — fastest, cheapest, but limited by context window and can't teach genuinely new knowledge patterns. RAG (Stage 2) injects external knowledge at query time without touching weights — good for facts that change often. Fine-tuning actually updates model weights on your own examples — worth it for changing style/format/behavior consistently, not for injecting facts (which RAG handles better and cheaper). Now that you've built all three in Phase 1, this decision framework has real weight behind it.</p>
+    <div class="row task"><b>Do this:</b> Take one problem from your Phase 1 projects and argue, in writing, which of the three approaches actually fits it best and why the other two would be worse choices.</div>
+    <div class="row check"><b>Self-check:</b> Why is fine-tuning usually the wrong tool for "the model doesn't know about our latest product docs"?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">9.9</span> LoRA / PEFT</h4>
+    <p>Full fine-tuning updates every weight in a model — expensive and requires storing a full new copy of the model per task. LoRA (Low-Rank Adaptation) freezes the original weights and injects small, trainable low-rank matrices alongside them, cutting trainable parameters by roughly 90% while achieving comparable results for most tasks. PEFT (the Hugging Face library) is the standard tool for applying LoRA in practice.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">Hugging Face PEFT docs — LoRA conceptual guide</a>
+      <a href="https://huggingface.co/learn/smol-course/en/unit1/3a">Hugging Face — Smol Course: LoRA and PEFT (free)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Fine-tune a small open model with LoRA via Hugging Face PEFT on a toy dataset, and connect it explicitly back to a Phase 1 project — e.g., "here's the math behind why my chunking strategy in Project 4 worked."</div>
+    <div class="row check"><b>Self-check:</b> Why does freezing the original weights and only training small added matrices still work almost as well as full fine-tuning?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 6</h3>
+    <p>Implement a minimal transformer from scratch (Karpathy's "build GPT" lecture is the scaffold) OR fine-tune a small open model with LoRA — either way, write up explicitly how it connects to the RAG/agent systems you built in Phase 1.</p>
+  </div>
+</section>
+
+<section class="stage p2" id="stage-10">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 47–52</span>
+    <h2>Stage 10 — MLOps Core</h2>
+    <div class="stage-goal">The infrastructure layer that turns "a model that works on my machine" into "a system that runs reliably in production."</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">10.1</span> Docker deep dive</h4>
+    <p>Beyond the basic Dockerfile from Stage 6: multi-stage builds separate the build environment (compilers, dev dependencies) from the final runtime image, producing smaller, more secure images. Docker Compose defines and runs multi-container applications (e.g., your API + a database + a monitoring stack) with one config file instead of manually wiring containers together.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freeCodeCamp — Docker & Kubernetes Fundamentals (free, hands-on)</a>
+      <a href="https://github.com/DataTalksClub/mlops-zoomcamp">MLOps Zoomcamp — DataTalks.Club (free, 9-week course, Module 1 covers Docker for ML)</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Write a docker-compose.yml running your Project 4 API alongside a Postgres container, with a multi-stage Dockerfile that keeps the final image lean.</div>
+    <div class="row check"><b>Self-check:</b> What's the actual size/security benefit of a multi-stage build over a single-stage one?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">10.2</span> Kubernetes basics</h4>
+    <p>A Pod is the smallest deployable unit (one or more tightly-coupled containers). A Deployment manages a set of identical Pods, handling restarts and rolling updates. A Service gives a stable network address to a set of Pods even as individual Pods get replaced. Kubernetes exists to solve the problem Docker alone doesn't: keeping things running reliably when servers die, traffic spikes, or you need zero-downtime deploys.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freeCodeCamp — same course, Kubernetes fundamentals section</a>
+      <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">Kubernetes official docs — Kubernetes Basics tutorial</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Run a local Kubernetes cluster (minikube or kind), deploy your containerized Project 4 as a Deployment + Service, and kill a Pod manually to watch Kubernetes restart it.</div>
+    <div class="row check"><b>Self-check:</b> What does a Deployment give you that just running a container manually doesn't?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">10.3</span> CI/CD for ML</h4>
+    <p>Continuous integration/deployment for ML extends normal software CI/CD (run tests on every PR, deploy on merge) with ML-specific checks: run your eval suite (Stage 3's regression gate) as part of the pipeline, not just unit tests, so a prompt change or model swap that hurts quality gets caught before it ships.</p>
+    <div class="row task"><b>Do this:</b> Set up a GitHub Actions workflow that runs your Stage 3 eval regression check on every pull request to Project 4's repo.</div>
+    <div class="row check"><b>Self-check:</b> Why does ML CI/CD need eval checks that regular software CI/CD doesn't?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">10.4</span> Model registries</h4>
+    <p>A model registry (MLflow being the standard open-source choice) versions trained models the way git versions code — tracking which model version is in staging vs. production, its training data/hyperparameters, and its eval scores, so you can roll back to a known-good version if a new one underperforms.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://mlflow.org/docs/latest/index.html">MLflow official documentation</a>
+      <a href="https://github.com/DataTalksClub/mlops-zoomcamp">MLOps Zoomcamp — Module 2 covers experiment tracking + MLflow specifically</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Register your Project 5 or 6 model in MLflow, log its metrics, and practice promoting a version from "staging" to "production" and rolling it back.</div>
+    <div class="row check"><b>Self-check:</b> Without a registry, how would you know exactly which model version is currently live?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">10.5</span> Experiment tracking</h4>
+    <p>Every training run has hyperparameters (learning rate, batch size) and resulting metrics (loss, accuracy) — experiment tracking tools (Weights & Biases, Comet, or MLflow's tracking component) log all of this automatically so you can compare 20 runs side by side instead of scrolling through terminal output trying to remember what changed between runs.</p>
+    <div class="row task"><b>Do this:</b> Run 5 variations of Project 5's model (different hyperparameters) with experiment tracking on, and use the comparison view to pick the best run objectively.</div>
+    <div class="row check"><b>Self-check:</b> Why is "I remember run 3 was best" not good enough once you're past ~5 experiments?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 7</h3>
+    <p>Properly containerize and deploy a model (or revisit Project 4) with a real CI/CD pipeline, an MLflow model registry, and experiment tracking — the MLOps-adjacent skill layer that's the rarer combination in the current market when paired with your AI engineering work.</p>
+  </div>
+</section>
+
+<section class="stage p2" id="stage-11">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 53–58</span>
+    <h2>Stage 11 — Observability & Infrastructure</h2>
+    <div class="stage-goal">Know when production is breaking before your users tell you.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">11.1</span> Monitoring philosophy: what to actually measure</h4>
+    <p>Four categories matter for an AI system: latency (how long requests take), error rate (failed requests / total), cost (tokens × price, per request and aggregated), and eval-score drift (is quality silently degrading as data/models/prompts change over time). Most teams only monitor the first two; the eval-score drift category is what actually catches the "it works but got worse" failure mode unique to AI systems.</p>
+    <div class="row task"><b>Do this:</b> List, for Project 4, exactly which metric in each of the four categories you'd want an alert on, and why that specific threshold.</div>
+    <div class="row check"><b>Self-check:</b> Why can a system have 0% error rate and still be silently failing its users?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">11.2</span> Prometheus & Grafana</h4>
+    <p>Prometheus scrapes (pulls) metrics from your app on a schedule and stores them as time series; Grafana reads that data and renders it as dashboards, plus lets you define alerting rules (e.g., "fire an alert if p95 latency exceeds 2s for 5 minutes straight"). This is the standard open-source pairing for the "what to measure" list from 11.1.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://prometheus.io/docs/introduction/overview/">Prometheus official docs — Overview</a>
+      <a href="https://grafana.com/docs/">Grafana official docs</a>
+      <a href="https://github.com/DataTalksClub/mlops-zoomcamp">MLOps Zoomcamp — Module 5 covers monitoring with Prometheus/Grafana specifically</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Instrument Project 4 to expose Prometheus metrics (latency, request count, error count), scrape them, and build one Grafana dashboard with an alert rule.</div>
+    <div class="row check"><b>Self-check:</b> What's the difference between Prometheus "scraping" metrics and an app "pushing" logs somewhere?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">11.3</span> Feature stores</h4>
+    <p>Training-serving skew happens when the feature computation logic used during model training doesn't exactly match the logic used at inference time in production — a subtle, common bug that silently degrades model quality. A feature store (Feast being the common open-source option) centralizes feature definitions so training and serving pull from the exact same computation, eliminating that class of bug by construction.</p>
+    <div class="row task"><b>Do this:</b> Identify one feature in a Phase 2 project that's currently computed differently (or in two different code paths) for training vs. inference, and explain the skew risk in writing.</div>
+    <div class="row check"><b>Self-check:</b> Give a concrete example of training-serving skew and how it would silently hurt predictions.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">11.4</span> Infrastructure as code</h4>
+    <p>Terraform lets you declare your infrastructure (servers, databases, networking) as version-controlled config files instead of manually clicking through a cloud console ("click-ops") — meaning your infrastructure is reproducible, reviewable in a pull request, and recoverable if something gets deleted by accident.</p>
+    <div class="row res"><b>Go deeper:</b>
+      <a href="https://developer.hashicorp.com/terraform/docs">Terraform official documentation</a>
+    </div>
+    <div class="row task"><b>Do this:</b> Write a Terraform config that provisions the actual infrastructure Project 7 runs on (even a single server + database), destroy it, and recreate it from the config to confirm reproducibility.</div>
+    <div class="row check"><b>Self-check:</b> Why is "click-ops" infrastructure a liability even if it works fine today?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">11.5</span> GitOps</h4>
+    <p>GitOps (ArgoCD being the common tool) means your desired infrastructure/deployment state lives in a git repo, and a controller continuously reconciles the real system to match it — deploying happens by merging a commit, not by running a manual command, and drift (someone manually changing something in production) gets automatically detected and can be auto-corrected.</p>
+    <div class="row task"><b>Do this:</b> Set up ArgoCD (or read through its quickstart if a full setup is out of scope for your timeline) pointed at a git repo containing Project 7's deployment config, and manually drift the live state to watch it get flagged.</div>
+    <div class="row check"><b>Self-check:</b> Why does "deploy by merging a commit" reduce the risk of a bad manual deploy?</div>
+  </div>
+
+  <div class="project">
+    <h3>🔨 Project 8</h3>
+    <p>Add full monitoring/alerting to your Phase 1 flagship agentic RAG system — latency, cost, and eval-score drift over time. This is the project that closes the loop between "I built an AI system" and "I run an AI system in production."</p>
+  </div>
+</section>
+
+<section class="stage p2" id="stage-12">
+  <div class="stage-header">
+    <span class="stage-badge">Weeks 59–60</span>
+    <h2>Stage 12 — Integration & Repositioning</h2>
+    <div class="stage-goal">Fold everything into one coherent story instead of two separate portfolios.</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">12.1</span> One system, not two portfolios</h4>
+    <p>Merge the MLOps layer (Docker/K8s/CI-CD/monitoring from Stages 10–11) directly into your Phase 1 flagship agentic RAG project, so it reads as one system with real production maturity — not "an AI project" and "an MLOps project" sitting in separate repos with no relationship to each other.</p>
+    <div class="row task"><b>Do this:</b> Rewrite Project 4's case study (from Stage 7) to fold in the monitoring, registry, and CI/CD work from Phase 2 as one continuous narrative.</div>
+    <div class="row check"><b>Self-check:</b> Does your flagship project's README currently tell this as one story, or does it read as two unrelated efforts?</div>
+  </div>
+
+  <div class="concept">
+    <h4><span class="num">12.2</span> Repositioning for the combined skillset</h4>
+    <p>"AI Engineer with MLOps depth" is a rarer, higher-value combination than either skill alone — most AI engineers stop at the application layer, and most MLOps engineers never touch agentic/LLM systems. Update your resume/portfolio headline to state this combination explicitly, since hiring managers and clients won't infer it from a project list alone.</p>
+    <div class="row task"><b>Do this:</b> Rewrite your resume/portfolio's opening line or summary to explicitly state the AI engineering + MLOps combination, backed by your flagship project as proof.</div>
+    <div class="row check"><b>Self-check:</b> If a recruiter reads only your resume's first line, do they know you have both skillsets?</div>
+  </div>
+
+  <div class="checkpoint">
+    <b>Full curriculum complete.</b> You now have a production-grade, monitored, agentic RAG system with a full eval suite, backed by first-principles understanding of the math underneath it and the infrastructure to run it reliably. That combination — not any single tool on this list — is the actual differentiator.
+  </div>
+</section>
+
+<h2 id="stack-guide" style="margin-top:60px;">Stack Guide: What to Actually Learn in Each Library</h2>
+<div class="intro-block">
+  The curriculum tells you <i>which concept</i> to learn and <i>which tool</i> teaches it. This table is the missing middle layer: for every library named above, exactly which part of it to learn deeply, which part to ignore for now, and which stage it belongs to. No code here — this is a map, not a tutorial. When you hit a stage, come back to this table first, then go build.
+</div>
+
+<span class="stack-phase-label p1">PHASE 1 STACK</span>
+<table class="stack">
+  <tr><th>Library</th><th>Stage</th><th>Learn this specifically</th><th>Skip for now</th></tr>
+  <tr><td class="lib">Anthropic / OpenAI SDK</td><td class="stage-col">Stage 1</td><td>Client setup, the messages format (system/user/assistant), streaming responses, tool-use / function-calling blocks in the response.</td><td class="skip">Legacy completions-style APIs; provider-specific edge features you're not using.</td></tr>
+  <tr><td class="lib">Pydantic (v2)</td><td class="stage-col">Stage 1</td><td>BaseModel, field types and validators, how a model plugs into structured-output / tool-schema definitions.</td><td class="skip">Pydantic v1 syntax; custom serializers unless you hit a real need.</td></tr>
+  <tr><td class="lib">asyncio</td><td class="stage-col">Stage 1</td><td>async/await syntax, asyncio.gather for concurrent calls, the mental model of an event loop (not its internals).</td><td class="skip">Low-level event-loop/transport APIs.</td></tr>
+  <tr><td class="lib">tenacity</td><td class="stage-col">Stage 1</td><td>The retry decorator, exponential backoff config, stop conditions.</td><td class="skip">Custom wait/stop strategy classes.</td></tr>
+  <tr><td class="lib">FastAPI</td><td class="stage-col">Stages 1, 6</td><td>Path operations, request/response models via Pydantic, Depends for dependency injection, BackgroundTasks, async def endpoints.</td><td class="skip">Starlette internals; WebSocket support unless a project needs it.</td></tr>
+  <tr><td class="lib">Postgres + pgvector</td><td class="stage-col">Stage 2</td><td>The vector column type, distance operators (cosine/L2), CREATE INDEX for HNSW, basic SQL you'll actually query with.</td><td class="skip">IVFFlat tuning details; replication/scaling config.</td></tr>
+  <tr><td class="lib">LangChain (text splitters only)</td><td class="stage-col">Stage 2</td><td>RecursiveCharacterTextSplitter and its chunk_size/chunk_overlap parameters — that's the 5% of LangChain you need here.</td><td class="skip">The rest of LangChain's chain/agent abstractions unless a later stage calls for them.</td></tr>
+  <tr><td class="lib">RAGAS</td><td class="stage-col">Stage 3</td><td>The four core metrics (faithfulness, answer relevancy, context precision/recall), the evaluate() entry point, expected dataset shape.</td><td class="skip">Writing fully custom metrics; RAGAS's synthetic test-set generator until you trust hand-written data first.</td></tr>
+  <tr><td class="lib">LangSmith</td><td class="stage-col">Stage 3</td><td>Enabling tracing on a run, reading a trace in the UI, creating a dataset from real runs, kicking off an eval job.</td><td class="skip">Custom evaluator functions beyond the built-ins, initially.</td></tr>
+  <tr><td class="lib">LangGraph</td><td class="stage-col">Stages 4, 5</td><td>StateGraph, defining nodes as functions, add_edge vs. add_conditional_edges, compiling a graph, checkpointer/persistence concept.</td><td class="skip">LangGraph Platform/Cloud deployment specifics — not needed for a portfolio project.</td></tr>
+  <tr><td class="lib">CrewAI</td><td class="stage-col">Stage 4</td><td>Agent / Task / Crew classes, role-goal-backstory pattern, sequential vs. hierarchical process.</td><td class="skip">CrewAI Flows (their more advanced orchestration layer) until Crews feel natural.</td></tr>
+  <tr><td class="lib">MCP Python SDK</td><td class="stage-col">Stage 4</td><td>Defining a server with the tool decorator pattern, resources vs. tools vs. prompts, connecting a client to a server.</td><td class="skip">Writing a custom transport layer.</td></tr>
+  <tr><td class="lib">Docker</td><td class="stage-col">Stage 6</td><td>Dockerfile instructions (FROM/COPY/RUN/CMD), build vs. run, image layers/caching.</td><td class="skip">Docker Swarm; anything Kubernetes-shaped — that's Phase 2.</td></tr>
+  <tr><td class="lib">Fly.io / Render / Railway</td><td class="stage-col">Stage 6</td><td>Whichever platform's own deploy config file and CLI deploy command — pick one, don't survey all three.</td><td class="skip">Multi-region/scaling configuration until you have real traffic to justify it.</td></tr>
+</table>
+
+<span class="stack-phase-label p2">PHASE 2 STACK</span>
+<table class="stack">
+  <tr><th>Library</th><th>Stage</th><th>Learn this specifically</th><th>Skip for now</th></tr>
+  <tr><td class="lib">NumPy</td><td class="stage-col">Stage 8</td><td>ndarray creation, broadcasting rules, matrix multiplication, the linalg module for dot products/norms.</td><td class="skip">Memory layout/strides internals.</td></tr>
+  <tr><td class="lib">pandas</td><td class="stage-col">Stage 8</td><td>DataFrame/Series basics, read_csv, filtering with .loc/.iloc, groupby, simple merges.</td><td class="skip">MultiIndex; pandas' internal block-manager details.</td></tr>
+  <tr><td class="lib">Matplotlib</td><td class="stage-col">Stage 8</td><td>The pyplot interface — plot/scatter/show, basic subplots for side-by-side comparisons.</td><td class="skip">The full object-oriented API, animations.</td></tr>
+  <tr><td class="lib">scikit-learn</td><td class="stage-col">Stage 8</td><td>The fit/predict/transform pattern, train_test_split, core estimators (LinearRegression, LogisticRegression, RandomForestClassifier), the metrics module.</td><td class="skip">Writing custom estimators/pipelines.</td></tr>
+  <tr><td class="lib">PyTorch</td><td class="stage-col">Stage 9</td><td>Tensors, autograd (.backward()), nn.Module, writing a basic training loop (forward → loss → backward → optimizer.step()).</td><td class="skip">Distributed training, custom CUDA kernels.</td></tr>
+  <tr><td class="lib">Hugging Face Transformers + PEFT</td><td class="stage-col">Stage 9</td><td>AutoModel/AutoTokenizer loading, LoraConfig parameters, get_peft_model wrapping.</td><td class="skip">Writing custom model architectures from scratch.</td></tr>
+  <tr><td class="lib">Docker Compose</td><td class="stage-col">Stage 10</td><td>Service definitions in docker-compose.yml, basic networking/volumes between services.</td><td class="skip">Advanced multi-host Compose setups.</td></tr>
+  <tr><td class="lib">Kubernetes / kubectl</td><td class="stage-col">Stage 10</td><td>kubectl apply/get/describe/logs, the shape of Pod/Deployment/Service YAML.</td><td class="skip">Writing custom controllers/operators.</td></tr>
+  <tr><td class="lib">MLflow</td><td class="stage-col">Stage 10</td><td>Logging params/metrics, the model registry, promoting a model version between stages.</td><td class="skip">MLflow's plugin/extension system.</td></tr>
+  <tr><td class="lib">GitHub Actions</td><td class="stage-col">Stage 10</td><td>Workflow YAML structure, triggers (on: pull_request), running your eval script as a job step.</td><td class="skip">Self-hosted runners; complex matrix builds.</td></tr>
+  <tr><td class="lib">Prometheus</td><td class="stage-col">Stage 11</td><td>The three core metric types (counter/gauge/histogram), enough PromQL to query your own metrics.</td><td class="skip">Writing a custom exporter from scratch.</td></tr>
+  <tr><td class="lib">Grafana</td><td class="stage-col">Stage 11</td><td>Connecting a data source, building a panel/dashboard, defining an alert rule.</td><td class="skip">Grafana plugin development.</td></tr>
+  <tr><td class="lib">Feast</td><td class="stage-col">Stage 11</td><td>The feature-view definition concept, online vs. offline store.</td><td class="skip">Custom feature-store backends.</td></tr>
+  <tr><td class="lib">Terraform</td><td class="stage-col">Stage 11</td><td>Resource blocks, providers, the plan → apply → destroy workflow, what state files are for.</td><td class="skip">Writing custom providers/modules for publication.</td></tr>
+  <tr><td class="lib">ArgoCD</td><td class="stage-col">Stage 11</td><td>The Application concept, sync policies, how drift detection works conceptually.</td><td class="skip">Multi-cluster ArgoCD topologies.</td></tr>
+</table>
+
+<div class="risk-box" id="risk">
+  <b>Standing risk, repeated on purpose:</b> the danger was never failing to learn AI engineering — it's declaring victory once Phase 1 "works well enough" and never circling back for Phase 2. Put the Stage 8 start date on a calendar now, before Phase 1 feels done, not after. This is a more sophisticated version of the exact vibe-coding problem you already caught yourself doing once — don't let it recur one level up the stack.
+</div>
+
+<h2 id="tools" style="margin-top:50px;">Quick Reference: Tool Index by Stage</h2>
+<table class="ref">
+  <tr><th>Stage</th><th>Core Tools</th></tr>
+  <tr><td>1 — Foundations</td><td>Claude/OpenAI APIs, Pydantic, asyncio, tenacity</td></tr>
+  <tr><td>2 — RAG</td><td>pgvector, Postgres, FastAPI, LangChain text splitters</td></tr>
+  <tr><td>3 — Evals</td><td>RAGAS, LangSmith</td></tr>
+  <tr><td>4 — Agents</td><td>LangGraph, CrewAI, MCP</td></tr>
+  <tr><td>5 — Agentic RAG</td><td>LangGraph + RAGAS combined</td></tr>
+  <tr><td>6 — Deployment</td><td>Docker, Fly.io/Render/Railway</td></tr>
+  <tr><td>8 — Math/Classical ML</td><td>NumPy, pandas, Matplotlib, scikit-learn</td></tr>
+  <tr><td>9 — DL/Transformers</td><td>PyTorch, Hugging Face PEFT</td></tr>
+  <tr><td>10 — MLOps Core</td><td>Docker Compose, Kubernetes, MLflow, GitHub Actions</td></tr>
+  <tr><td>11 — Observability</td><td>Prometheus, Grafana, Feast, Terraform, ArgoCD</td></tr>
+</table>
+
+<footer class="foot">
+  Prepared for Hassan — 4th semester, FAST NUCES Lahore · July 2026 · Pace: 5–10 hrs/week.<br>
+  All linked resources verified live via web search at time of writing (July 2026). Free/open resources were prioritized throughout — Coursera/DeepLearning.AI courses are audit-free unless a certificate is wanted.
+</footer>
+
+</main>
+</div>
+</body>
+</html>

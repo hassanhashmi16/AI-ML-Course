@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Phase 0 — Python Revision Guide</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --card: #1c1f28;
+    --border: #2a2e3a;
+    --text: #e4e6eb;
+    --muted: #9aa1b1;
+    --accent0: #fdba74;
+    --accent1: #7dd3fc;
+    --accent2: #c4b5fd;
+    --gold: #fbbf24;
+    --green: #86efac;
+    --red: #f87171;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 44px 24px 100px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
+
+  .section {
+    margin: 32px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .section h2 {
+    margin: 0;
+    padding: 12px 18px;
+    font-size: 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    color: var(--accent0);
+  }
+  .section h2 .num { color: var(--muted); margin-right: 8px; }
+  .section .body { padding: 14px 18px; }
+
+  .code {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre;
+    color: #d4d4d4;
+  }
+  .code .kw { color: #c586c0; }
+  .code .fn { color: #dcdcaa; }
+  .code .str { color: #ce9178; }
+  .code .cm { color: #6a9955; }
+  .code .num { color: #b5cea8; }
+  .code .cls { color: #4ec9b0; }
+  .code .dec { color: #569cd6; }
+  .code .op { color: #d4d4d4; }
+  .code .bu { color: #dcdcaa; }
+  .code .va { color: #9cdcfe; }
+
+  .note {
+    background: #1a1810;
+    border-left: 3px solid var(--gold);
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .note b { color: var(--gold); }
+  .tip {
+    background: #0c1f1a;
+    border-left: 3px solid var(--green);
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .tip b { color: var(--green); }
+  .warn {
+    background: #1f0c0c;
+    border-left: 3px solid var(--red);
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .warn b { color: var(--red); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13.5px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th { background: var(--panel); color: var(--accent1); font-weight: 600; }
+  td { background: var(--card); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .inline-code { background: #0a0c10; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 13px; color: var(--accent1); }
+  .oop-deep {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    font-size: 13.5px;
+  }
+  .oop-deep h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: var(--accent2);
+  }
+  .oop-deep h4 {
+    margin: 14px 0 4px;
+    font-size: 14px;
+    color: var(--accent1);
+  }
+  .oop-deep ul { margin: 4px 0; padding-left: 18px; }
+  .oop-deep li { margin: 3px 0; }
+  .milestone-box {
+    background: #1a1408;
+    border: 1px solid #4a3a10;
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 36px 0 10px;
+    font-size: 14px;
+    color: var(--gold);
+  }
+  .milestone-box b { color: var(--gold); }
+  footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Phase 0 — Python Revision Guide</h1>
+<div class="sub">The 9 things from the roadmap, in order. Code examples, edge cases, and one deep dive on OOP since you wanted that extra attention.</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">1.</span>Python Syntax Basics</h2>
+  <div class="body">
+    <p>Python is whitespace-delimited. No braces, no semicolons. Indentation <em>is</em> the block.</p>
+
+<div class="code"><span class="cm"># This is a comment</span>
+name = <span class="str">"Hassan"</span>    <span class="cm"># no let, const, var — just assign</span>
+age = 26
+is_learning = <span class="kw">True</span>
+
+<span class="cm"># Dynamic typing — same variable can change type (don't do this)</span>
+x = 5
+x = <span class="str">"hello"</span>        <span class="cm"># allowed, but confusing</span>
+
+<span class="cm"># Multiple assignment</span>
+a, b, c = 1, 2, 3
+
+<span class="cm"># Swap without temp variable</span>
+a, b = b, a</div>
+
+    <div class="note"><b>Edge case:</b> mixing tabs and spaces will crash your program. Pick spaces (PEP 8 says 4). Your editor should convert tabs automatically.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">2.</span>Control Flow</h2>
+  <div class="body">
+
+<div class="code"><span class="cm"># if / elif / else</span>
+score = 85
+<span class="kw">if</span> score &gt;= 90:
+    grade = <span class="str">"A"</span>
+<span class="kw">elif</span> score &gt;= 80:
+    grade = <span class="str">"B"</span>
+<span class="kw">else</span>:
+    grade = <span class="str">"C"</span>
+
+<span class="cm"># for loop — always over an iterable</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="bu">range</span>(5):     <span class="cm"># 0, 1, 2, 3, 4</span>
+    <span class="bu">print</span>(i)
+
+<span class="cm"># enumerate — when you need both index and value</span>
+names = [<span class="str">"alice"</span>, <span class="str">"bob"</span>]
+<span class="kw">for</span> idx, name <span class="kw">in</span> <span class="bu">enumerate</span>(names):
+    <span class="bu">print</span>(f<span class="str">"{idx}: {name}"</span>)
+
+<span class="cm"># zip — iterate two lists in parallel</span>
+names = [<span class="str">"alice"</span>, <span class="str">"bob"</span>]
+scores = [85, 92]
+<span class="kw">for</span> name, score <span class="kw">in</span> <span class="bu">zip</span>(names, scores):
+    <span class="bu">print</span>(f<span class="str">"{name}: {score}"</span>)
+
+<span class="cm"># while — use when you don't know the number of iterations</span>
+x = 10
+<span class="kw">while</span> x &gt; 0:
+    x -= 1
+
+<span class="cm"># List comprehension — the Pythonic way to transform/filter lists</span>
+squares = [x**2 <span class="kw">for</span> x <span class="kw">in</span> <span class="bu">range</span>(10)]          <span class="cm"># [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</span>
+evens    = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="bu">range</span>(10) <span class="kw">if</span> x % 2 == 0]  <span class="cm"># [0, 2, 4, 6, 8]</span>
+pairs    = [(a,b) <span class="kw">for</span> a <span class="kw">in</span> [1,2] <span class="kw">for</span> b <span class="kw">in</span> [3,4]]  <span class="cm"># nested = cartesian product</span></div>
+
+    <div class="tip"><b>Why this matters later:</b> comprehensions are the foundation for transforming data in pandas and PyTorch (tensor operations use the same mental model).</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">3.</span>Core Data Structures</h2>
+  <div class="body">
+
+<table>
+  <tr><th>Type</th><th>Ordered?</th><th>Mutable?</th><th>Duplicates?</th><th>Example</th></tr>
+  <tr><td><span class="inline-code">list</span></td><td>Yes</td><td>Yes</td><td>Yes</td><td><span class="inline-code">[1, 2, 3]</span></td></tr>
+  <tr><td><span class="inline-code">tuple</span></td><td>Yes</td><td>No</td><td>Yes</td><td><span class="inline-code">(1, 2, 3)</span></td></tr>
+  <tr><td><span class="inline-code">dict</span></td><td>3.7+ Yes</td><td>Yes</td><td>Keys: No</td><td><span class="inline-code">{"a": 1}</span></td></tr>
+  <tr><td><span class="inline-code">set</span></td><td>No</td><td>Yes</td><td>No</td><td><span class="inline-code">{1, 2, 3}</span></td></tr>
+</table>
+
+<div class="code"><span class="cm"># Lists — the workhorse</span>
+nums = [1, 2, 3]
+nums.append(4)                    <span class="cm"># [1, 2, 3, 4]</span>
+nums.insert(0, 0)                 <span class="cm"># [0, 1, 2, 3, 4]</span>
+nums.pop()                        <span class="cm"># returns 4, list becomes [0, 1, 2, 3]</span>
+nums[1:3]                         <span class="cm"># slice: [1, 2]  (start=1, end=3, exclusive)</span>
+
+<span class="cm"># Dicts — every config, every JSON response, every ML dataset loader</span>
+user = {<span class="str">"name"</span>: <span class="str">"Hassan"</span>, <span class="str">"role"</span>: <span class="str">"AI Engineer"</span>}
+user[<span class="str">"name"</span>]                         <span class="cm"># "Hassan" — raises KeyError if missing</span>
+user.get(<span class="str">"missing"</span>, <span class="str">"default"</span>)      <span class="cm"># "default" — safe access</span>
+
+<span class="cm"># Sets — fast membership tests, deduplication</span>
+tags = {<span class="str">"python"</span>, <span class="str">"ml"</span>, <span class="str">"ai"</span>}
+tags.add(<span class="str">"python"</span>)                   <span class="cm"># no effect — already present</span>
+<span class="str">"ml"</span> <span class="kw">in</span> tags                          <span class="cm"># True — O(1) lookup</span>
+
+<span class="cm"># Tuples — for fixed records, dict keys, function returns</span>
+point = (3, 4)                      <span class="cm"># immutable — can't change after creation</span>
+x, y = point                        <span class="cm"># tuple unpacking</span></div>
+
+    <div class="note"><b>Edge case — mutable default args:</b> never do <span class="inline-code">def f(x=[])</span>. The list is created once at function definition and mutated across calls. Use <span class="inline-code">None</span> instead.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">4.</span>Functions</h2>
+  <div class="body">
+
+<div class="code"><span class="cm"># Basic</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="kw">return</span> f<span class="str">"Hello, {name}"</span>
+
+<span class="cm"># Default args</span>
+<span class="kw">def</span> <span class="fn">power</span>(base, exp=2):
+    <span class="kw">return</span> base ** exp
+
+power(3)      <span class="cm"># 9</span>
+power(3, 3)   <span class="cm"># 27</span>
+
+<span class="cm"># *args — positional variable-length</span>
+<span class="kw">def</span> <span class="fn">sum_all</span>(*nums):
+    <span class="kw">return</span> <span class="bu">sum</span>(nums)
+
+sum_all(1, 2, 3)  <span class="cm"># 6</span>
+
+<span class="cm"># **kwargs — keyword variable-length</span>
+<span class="kw">def</span> <span class="fn">print_config</span>(**kwargs):
+    <span class="kw">for</span> k, v <span class="kw">in</span> kwargs.items():
+        <span class="bu">print</span>(f<span class="str">"{k}={v}"</span>)
+
+print_config(lr=0.01, epochs=10)  <span class="cm"># lr=0.01, epochs=10</span>
+
+<span class="cm"># Lambda — small anonymous function</span>
+squared = <span class="bu">list</span>(<span class="bu">map</span>(<span class="kw">lambda</span> x: x**2, [1, 2, 3]))    <span class="cm"># [1, 4, 9]</span>
+sorted(users, key=<span class="kw">lambda</span> u: u[<span class="str">"name"</span>])           <span class="cm"># sort by name</span></div>
+
+    <div class="tip"><b>Pattern you'll see everywhere:</b> functions taking <span class="inline-code">**kwargs</span> and passing them through. This is how Pydantic, FastAPI, and PyTorch all work — configs flow as dicts.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">5.</span>Classes & OOP — <span style="color:var(--accent2)">deep dive</span></h2>
+  <div class="body">
+
+    <p>You asked for detail here. This is the longest section. Every major OOP concept you need, with the <em>exact patterns</em> you'll see in AI/ML libraries.</p>
+
+    <!-- 5.1 -->
+    <div class="oop-deep">
+      <h3>5.1 — Basic class structure</h3>
+
+<div class="code"><span class="kw">class</span> <span class="cls">ModelConfig</span>:
+    <span class="cm">"""A simple class — in real life you'd use Pydantic for this."""</span>
+
+    <span class="cm"># Class variable — shared by all instances</span>
+    default_lr = 0.001
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, layers):
+        <span class="cm">"""Instance constructor. 'self' is always the instance."""</span>
+        <span class="kw">self</span>.name = name              <span class="cm"># instance variable</span>
+        <span class="kw">self</span>.layers = layers
+        <span class="kw">self</span>.lr = ModelConfig.default_lr  <span class="cm"># access class var</span>
+
+    <span class="kw">def</span> <span class="fn">summary</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> f<span class="str">"{self.name}: {len(self.layers)} layers, lr={self.lr}"</span>
+
+<span class="cm"># Usage</span>
+config = ModelConfig(<span class="str">"my_model"</span>, [128, 64, 10])
+<span class="bu">print</span>(config.summary())          <span class="cm"># my_model: 3 layers, lr=0.001</span>
+<span class="bu">print</span>(config.lr)                 <span class="cm"># 0.001</span></div>
+    </div>
+
+    <!-- 5.2 -->
+    <div class="oop-deep">
+      <h3>5.2 — <span class="inline-code">__init__</span> is not a constructor (important)</h3>
+      <p>When you write <span class="inline-code">MyClass()</span>, Python secretly runs <strong>two</strong> methods. Most people only know about the second one. Knowing both explains a common trap:</p>
+      <ul>
+        <li><b>Step 1 — <span class="inline-code">__new__</span> (the real constructor):</b> creates a brand new, empty object in memory. Returns the object.</li>
+        <li><b>Step 2 — <span class="inline-code">__init__</span> (the initializer):</b> takes that empty object and fills it with your data (sets attributes).</li>
+      </ul>
+      <p>You almost never override <span class="inline-code">__new__</span>. But the Singleton pattern does, and it reveals the trap dramatically:</p>
+
+<div class="code"><span class="cm"># Singleton = a class that only ever creates ONE object.
+# No matter how many times you call Singleton() — same object every time.</span>
+
+<span class="kw">class</span> <span class="cls">Singleton</span>:
+    _instance = <span class="kw">None</span>                     <span class="cm"># class variable — shared by all instances</span>
+
+    <span class="cm"># __new__ is what CREATES the object. By overriding it, we can
+    # intercept object creation and return an existing one instead.</span>
+    <span class="kw">def</span> <span class="fn">__new__</span>(cls, *args, **kwargs):
+        <span class="kw">if</span> cls._instance <span class="kw">is</span> <span class="kw">None</span>:         <span class="cm"># first time? create it</span>
+            cls._instance = <span class="bu">super</span>().<span class="fn">__new__</span>(cls)
+        <span class="kw">return</span> cls._instance                <span class="cm"># second time? return same old object</span>
+
+    <span class="cm"># The trap: __init__ runs EVERY TIME you call Singleton(),
+    # even when __new__ returned the same old object instead of creating a new one.</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, value):
+        <span class="kw">self</span>.value = value                <span class="cm"># overwrites value on THE SAME object</span>
+
+a = Singleton(1)                           <span class="cm"># __new__: creates object. __init__: sets value=1</span>
+b = Singleton(2)                           <span class="cm"># __new__: returns SAME object. __init__: sets value=2 (overwrites!)</span>
+<span class="bu">print</span>(a <span class="kw">is</span> b)                              <span class="cm"># True — they are literally the same object in memory</span>
+<span class="bu">print</span>(a.value)                             <span class="cm"># 2 — because b's __init__ overwrote a's value (same object)</span>
+
+<span class="cm"># The flow for b = Singleton(2):
+#   1. Python calls __new__(Singleton, 2)
+#   2. __new__ sees _instance already exists, returns it (no new object)
+#   3. Python then calls __init__(old_object, 2)
+#   4. __init__ sets self.value = 2 on the old object
+#   5. b points to the exact same object as a.
+# Result: a.value is now 2 even though we "created" a with value 1.</span></div>
+
+      <div class="warn"><b>Trap:</b> Singleton's <span class="inline-code">__init__</span> overwrites your data every time you "make a new instance" — because it's always the same instance. Real singletons guard against this with a flag like <span class="inline-code">_initialized = False</span> and check it inside <span class="inline-code">__init__</span>.</div>
+    </div>
+
+    <!-- 5.3 -->
+    <div class="oop-deep">
+      <h3>5.3 — Inheritance</h3>
+      <p>Child classes inherit (copy) everything from the parent. The parent's methods and attributes are all there. The child can then:</p>
+      <ul>
+        <li><b>Override</b> — replace a parent method entirely with its own version</li>
+        <li><b>Extend</b> — call the parent's version first via <span class="inline-code">super()</span>, then add more</li>
+        <li><b>Add</b> — define new methods the parent doesn't have</li>
+      </ul>
+      <p>The code below shows all three patterns. The comments walk through what happens step by step.</p>
+
+<div class="code"><span class="cm"># ── PARENT CLASS ──</span>
+<span class="kw">class</span> <span class="cls">Dataset</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, path):
+        <span class="kw">self</span>.path = path                 <span class="cm"># parent sets up "path"</span>
+
+    <span class="kw">def</span> <span class="fn">load</span>(<span class="kw">self</span>):
+        <span class="cm"># This is a "fake abstract" trick: if someone creates a plain Dataset
+        # and calls load(), it'll crash with NotImplementedError.
+        # The child MUST override this with a real implementation.</span>
+        <span class="kw">raise</span> <span class="bu">NotImplementedError</span>(<span class="str">"Subclasses must implement load()"</span>)
+
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> f<span class="str">"Dataset at {self.path}"</span>
+
+<span class="cm"># ── CHILD CLASS ──</span>
+<span class="cm"># The (Dataset) after ImageDataset means "ImageDataset inherits from Dataset."</span>
+<span class="kw">class</span> <span class="cls">ImageDataset</span>(<span class="cls">Dataset</span>):
+    <span class="cm"># The child's __init__ has its OWN parameters. But it still needs the parent's
+    # __init__ to run so that self.path gets created. That's what super() does.</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, path, transform=<span class="kw">None</span>):
+        <span class="cm"># super() = "get the parent class (Dataset) and call its version of __init__"</span>
+        <span class="cm"># This sets self.path = path. WITHOUT THIS LINE, self.path would NOT exist.</span>
+        <span class="bu">super</span>().<span class="fn">__init__</span>(path)
+
+        <span class="cm"># Now the child adds its OWN attribute that the parent doesn't have.</span>
+        <span class="kw">self</span>.transform = transform
+
+    <span class="cm"># OVERRIDE: replace the parent's load() entirely.
+    # The parent's version raised an error — this one actually works.</span>
+    <span class="kw">def</span> <span class="fn">load</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">"[image bytes]"</span>             <span class="cm"># pretend we loaded real images</span>
+
+    <span class="cm"># EXTEND: keep the parent's behavior AND add to it.
+    # We call the parent's describe() first, then add more text.</span>
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="kw">self</span>):
+        base = <span class="bu">super</span>().<span class="fn">describe</span>()        <span class="cm"># "Dataset at /data/images"</span>
+        <span class="kw">return</span> f<span class="str">"{base} with transform={self.transform}"</span>
+
+<span class="cm"># ── WHAT HAPPENS WHEN YOU USE IT ──</span>
+ds = ImageDataset(<span class="str">"/data/images"</span>, transform=<span class="str">"resize"</span>)
+
+<span class="cm"># ds.path came from the PARENT's __init__ (called via super().__init__(path))</span>
+<span class="bu">print</span>(ds.path)                             <span class="cm"># /data/images</span>
+
+<span class="cm"># ds.transform came from the CHILD's __init__ (set directly)</span>
+<span class="bu">print</span>(ds.transform)                        <span class="cm"># resize</span>
+
+<span class="cm"># ds.load() uses the CHILD's version (overrides the parent's NotImplementedError)</span>
+<span class="bu">print</span>(ds.load())                            <span class="cm"># [image bytes]</span>
+
+<span class="cm"># ds.describe() calls the PARENT's describe() via super(), then adds child's text</span>
+<span class="bu">print</span>(ds.describe())                        <span class="cm"># Dataset at /data/images with transform=resize</span></div>
+
+      <div class="note"><b>Why <span class="inline-code">super()</span> matters:</b> Without it, the parent's <span class="inline-code">__init__</span> never runs and <span class="inline-code">self.path</span> never gets set. The child would crash with <span class="inline-code">AttributeError: 'ImageDataset' object has no attribute 'path'</span>. In Python 3, just write <span class="inline-code">super()</span> — no arguments needed. Never write <span class="inline-code">super(ClassName, self)</span> (that's Python 2).</div>
+    </div>
+
+    <!-- 5.4 -->
+    <div class="oop-deep">
+      <h3>5.4 — Multiple inheritance & MRO</h3>
+      <p>Python supports multiple inheritance. The Method Resolution Order (MRO) determines which method is called. Use <span class="inline-code">ClassName.__mro__</span> to see the order.</p>
+
+<div class="code"><span class="kw">class</span> <span class="cls">A</span>:
+    <span class="kw">def</span> <span class="fn">say</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"A"</span>
+
+<span class="kw">class</span> <span class="cls">B</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">say</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"B"</span>
+
+<span class="kw">class</span> <span class="cls">C</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">say</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"C"</span>
+
+<span class="kw">class</span> <span class="cls">D</span>(<span class="cls">B</span>, <span class="cls">C</span>):
+    <span class="kw">pass</span>
+
+d = D()
+<span class="bu">print</span>(d.say())           <span class="cm"># "B" — B comes first in MRO</span>
+<span class="bu">print</span>(D.<span class="fn">__mro__</span>)        <span class="cm"># D → B → C → A → object</span>
+
+<span class="cm"># If D explicitly calls super().say(), it follows the MRO:</span>
+<span class="kw">class</span> <span class="cls">D2</span>(<span class="cls">B</span>, <span class="cls">C</span>):
+    <span class="kw">def</span> <span class="fn">say</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="bu">super</span>().<span class="fn">say</span>() + <span class="str">" (from D2)"</span>
+
+d2 = D2()
+<span class="bu">print</span>(d2.say())          <span class="cm"># "B (from D2)" — follows MRO</span></div>
+
+      <div class="tip"><b>Real-world MRO example:</b> PyTorch's <span class="inline-code">nn.Module</span> uses MRO for hook chains. FastAPI's dependency injection uses MRO-like resolution. Know it exists, don't overuse multiple inheritance.</div>
+    </div>
+
+    <!-- 5.5 -->
+    <div class="oop-deep">
+      <h3>5.5 — @staticmethod vs @classmethod vs instance methods</h3>
+      <p>Three kinds of methods, each with different access:</p>
+
+<table>
+  <tr><th>Method type</th><th>First param</th><th>Can access?</th></tr>
+  <tr><td>Instance method</td><td><span class="inline-code">self</span></td><td>Instance vars, class vars</td></tr>
+  <tr><td><span class="inline-code">@classmethod</span></td><td><span class="inline-code">cls</span></td><td>Class vars only (can't see <span class="inline-code">self</span>)</td></tr>
+  <tr><td><span class="inline-code">@staticmethod</span></td><td>Nothing special</td><td>Nothing — just a function namespaced in the class</td></tr>
+</table>
+
+<div class="code"><span class="kw">class</span> <span class="cls">ModelOps</span>:
+    version = <span class="str">"1.0"</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+
+    <span class="kw">def</span> <span class="fn">instance_method</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> f<span class="str">"model={self.name}, version={self.version}"</span>
+
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_pretrained</span>(cls, model_id):
+        <span class="cm">"""Factory — creates an instance using class context"""</span>
+        <span class="bu">print</span>(f<span class="str">"Loading {model_id}, lib version {cls.version}"</span>)
+        <span class="kw">return</span> cls(model_id)                <span class="cm"># constructs instance</span>
+
+    <span class="dec">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">validate_lr</span>(lr):
+        <span class="cm">"""Stateless utility — no self, no cls"""</span>
+        <span class="kw">return</span> 0.0 &lt; lr &lt;= 1.0
+
+<span class="cm"># Usage</span>
+m = ModelOps(<span class="str">"bert"</span>)
+m.instance_method()              <span class="cm"># normal</span>
+
+m2 = ModelOps.from_pretrained(<span class="str">"bert-base"</span>)   <span class="cm"># factory — creates instance</span>
+
+ModelOps.validate_lr(0.01)       <span class="cm"># True — no instance needed</span>
+m.validate_lr(0.5)               <span class="cm"># also works (but calling on instance is weird)</span></div>
+
+      <div class="tip"><b>When you'll see each:</b><br>
+      — <span class="inline-code">@classmethod</span>: Pydantic's <span class="inline-code">model_validate</span>, PyTorch's <span class="inline-code">torch.tensor</span> factory methods<br>
+      — <span class="inline-code">@staticmethod</span>: utility functions inside a class (like validation helpers)<br>
+      — Instance methods: 90% of what you write</div>
+    </div>
+
+    <!-- 5.6 -->
+    <div class="oop-deep">
+      <h3>5.6 — Dunder methods (the ones that matter)</h3>
+      <p>Magic methods let your objects behave like built-in types. These are the ones you'll actually use:</p>
+
+<div class="code"><span class="kw">class</span> <span class="cls">Vector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, x, y):
+        <span class="kw">self</span>.x = x
+        <span class="kw">self</span>.y = y
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="kw">self</span>):           <span class="cm"># what you see in the debugger / console</span>
+        <span class="kw">return</span> f<span class="str">"Vector({self.x}, {self.y})"</span>
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="kw">self</span>, other):     <span class="cm"># enables v1 + v2</span>
+        <span class="kw">return</span> Vector(<span class="kw">self</span>.x + other.x, <span class="kw">self</span>.y + other.y)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="kw">self</span>, other):       <span class="cm"># enables v1 == v2</span>
+        <span class="kw">return</span> <span class="kw">self</span>.x == other.x <span class="kw">and</span> <span class="kw">self</span>.y == other.y
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="kw">self</span>):            <span class="cm"># enables len(v)</span>
+        <span class="kw">return</span> 2
+
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(<span class="kw">self</span>, idx):    <span class="cm"># enables v[0]</span>
+        <span class="kw">return</span> (<span class="kw">self</span>.x, <span class="kw">self</span>.y)[idx]
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(<span class="kw">self</span>, scale):      <span class="cm"># enables v(2)  —  object is callable</span>
+        <span class="kw">return</span> Vector(<span class="kw">self</span>.x * scale, <span class="kw">self</span>.y * scale)
+
+v1 = Vector(1, 2)
+v2 = Vector(3, 4)
+
+<span class="bu">print</span>(v1)                                <span class="cm"># Vector(1, 2)            — __repr__</span>
+<span class="bu">print</span>(v1 + v2)                           <span class="cm"># Vector(4, 6)            — __add__</span>
+<span class="bu">print</span>(v1 == Vector(1, 2))                <span class="cm"># True                   — __eq__</span>
+<span class="bu">print</span>(v1[0])                              <span class="cm"># 1                      — __getitem__</span>
+<span class="bu">print</span>(v1(10))                             <span class="cm"># Vector(10, 20)          — __call__</span></div>
+
+      <div class="note"><b><span class="inline-code">__call__</span> is everywhere:</b> PyTorch models are callable objects: <span class="inline-code">output = model(x)</span>. That's <span class="inline-code">__call__</span> under the hood. Same with FastAPI route handlers.</div>
+    </div>
+
+    <!-- 5.7 -->
+    <div class="oop-deep">
+      <h3>5.7 — Properties (controlled attribute access)</h3>
+      <p>Let you use getter/setter logic while keeping the dot-access syntax. You'll see these in Pydantic, dataclasses, and SQLAlchemy models.</p>
+
+<div class="code"><span class="kw">class</span> <span class="cls">Temperature</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, celsius):
+        <span class="kw">self</span>._celsius = celsius     <span class="cm"># underscore = "private" by convention</span>
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="kw">self</span>._celsius
+
+    <span class="dec">@celsius.setter</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(<span class="kw">self</span>, value):
+        <span class="kw">if</span> value &lt; -273.15:
+            <span class="kw">raise</span> <span class="bu">ValueError</span>(<span class="str">"Below absolute zero"</span>)
+        <span class="kw">self</span>._celsius = value
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">fahrenheit</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="kw">self</span>._celsius * 9/5 + 32    <span class="cm"># computed, no setter</span>
+
+t = Temperature(25)
+<span class="bu">print</span>(t.celsius)        <span class="cm"># 25 — looks like attribute access</span>
+<span class="bu">print</span>(t.fahrenheit)     <span class="cm"># 77.0 — computed property</span>
+t.celsius = 30           <span class="cm"># setter validates and sets</span>
+<span class="cm"># t.celsius = -300      # raises ValueError</span></div>
+    </div>
+
+    <!-- 5.8 -->
+    <div class="oop-deep">
+      <h3>5.8 — Encapsulation (it's just convention)</h3>
+      <p>Python has no <span class="inline-code">private</span> keyword. Everything is public. Convention:</p>
+      <ul>
+        <li><span class="inline-code">_name</span> — "protected" (internal use, don't touch from outside)</li>
+        <li><span class="inline-code">__name</span> — name mangling (Python renames it to <span class="inline-code">_ClassName__name</span>). Used to avoid collisions in inheritance, not for "privacy."</li>
+      </ul>
+
+<div class="code"><span class="kw">class</span> <span class="cls">Parent</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.public = <span class="str">"anyone can see this"</span>
+        <span class="kw">self</span>._protected = <span class="str">"please don't touch"</span>
+        <span class="kw">self</span>.__mangled = <span class="str">"renamed to _Parent__mangled"</span>
+
+<span class="kw">class</span> <span class="cls">Child</span>(<span class="cls">Parent</span>):
+    <span class="kw">def</span> <span class="fn">show</span>(<span class="kw">self</span>):
+        <span class="bu">print</span>(<span class="kw">self</span>.public)       <span class="cm"># works</span>
+        <span class="bu">print</span>(<span class="kw">self</span>._protected)    <span class="cm"># works (convention says don't)</span>
+        <span class="cm"># print(self.__mangled)  # AttributeError!</span>
+        <span class="bu">print</span>(<span class="kw">self</span>._Parent__mangled)  <span class="cm"># works but ugly — don't do this</span></div>
+
+      <div class="tip"><b>Don't overthink this.</b> Use <span class="inline-code">_name</span> for internal attributes. That's it. Libraries like Pydantic and FastAPI use <span class="inline-code">_name</span> extensively for internal state.</div>
+    </div>
+
+    <!-- 5.9 -->
+    <div class="oop-deep">
+      <h3>5.9 — Abstract Base Classes (ABC)</h3>
+      <p>In 5.3 we faked "abstract methods" with <span class="inline-code">raise NotImplementedError</span>. ABCs are the real system. They do the same thing but <strong>enforce the rule at creation time</strong> instead of waiting until you call the method.</p>
+
+      <p>Think of an ABC as a <strong>contract</strong>: "you MUST implement these methods, or your class can't exist." This is everywhere in ML libraries — scikit-learn estimators all follow a base class contract, PyTorch's <span class="inline-code">Dataset</span> forces you to implement <span class="inline-code">__len__</span> and <span class="inline-code">__getitem__</span>, and you'll likely write your own base classes for agent tools and model wrappers.</p>
+
+<div class="code"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="cm"># ── ABSTRACT BASE CLASS ──</span>
+<span class="cm"># By inheriting from ABC, this class says "I'm a template, not something you use directly."</span>
+<span class="kw">class</span> <span class="cls">BaseTokenizer</span>(<span class="cls">ABC</span>):
+    <span class="cm"># @abstractmethod means: any child class MUST implement this method.
+    # The method body doesn't matter — it'll never run. 'pass' is fine.</span>
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">encode</span>(<span class="kw">self</span>, text: <span class="bu">str</span>) -&gt; <span class="bu">list</span>[<span class="bu">int</span>]:
+        <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">decode</span>(<span class="kw">self</span>, tokens: <span class="bu">list</span>[<span class="bu">int</span>]) -&gt; <span class="bu">str</span>:
+        <span class="kw">pass</span>
+
+<span class="cm"># ── CONCRETE CHILD ──</span>
+<span class="cm"># This class MUST implement both encode() and decode(). If it forgets one:</span>
+<span class="cm"># TypeError: Can't instantiate abstract class SimpleTokenizer with abstract methods encode</span>
+<span class="kw">class</span> <span class="cls">SimpleTokenizer</span>(<span class="cls">BaseTokenizer</span>):
+    <span class="kw">def</span> <span class="fn">encode</span>(<span class="kw">self</span>, text):                  <span class="cm"># required by BaseTokenizer</span>
+        <span class="kw">return</span> [<span class="bu">ord</span>(c) <span class="kw">for</span> c <span class="kw">in</span> text]     <span class="cm"># convert chars to ASCII codes</span>
+
+    <span class="kw">def</span> <span class="fn">decode</span>(<span class="kw">self</span>, tokens):                <span class="cm"># required by BaseTokenizer</span>
+        <span class="kw">return</span> <span class="str">""</span>.join(<span class="bu">chr</span>(t) <span class="kw">for</span> t <span class="kw">in</span> tokens)
+
+<span class="cm"># ── THE KEY DIFFERENCE VS RAISE NotImplementedError ──</span>
+<span class="cm"># With ABC, the crash happens the MOMENT you try to create the object:</span>
+<span class="cm">#   t = BaseTokenizer()       # TypeError IMMEDIATELY — "can't instantiate abstract class"</span>
+<span class="cm"># With raise NotImplementedError (from 5.3), the crash only happens when you CALL the method:</span>
+<span class="cm">#   ds = Dataset("/path")      # works fine</span>
+<span class="cm">#   ds.load()                  # crashes HERE instead</span>
+
+t = SimpleTokenizer()
+<span class="bu">print</span>(t.encode(<span class="str">"abc"</span>))                     <span class="cm"># [97, 98, 99]</span>
+<span class="bu">print</span>(t.decode([97, 98, 99]))               <span class="cm"># "abc"</span></div>
+
+      <div class="note"><b>When to use ABC vs raise NotImplementedError:</b> Use ABC when you're writing a framework that OTHER people will extend (they need the instant error). Use <span class="inline-code">raise NotImplementedError</span> for quick internal code where you just need a reminder to implement something later.</div>
+    </div>
+
+    <!-- 5.10 -->
+    <div class="oop-deep">
+      <h3>5.10 — Dataclasses (modern Python)</h3>
+      <p>Writing classes that <em>just hold data</em> is tedious — you have to write <span class="inline-code">__init__</span>, <span class="inline-code">__repr__</span>, <span class="inline-code">__eq__</span>, and it's all boilerplate. <span class="inline-code">@dataclass</span> writes all of that for you automatically based on the type annotations you already wrote.</p>
+
+      <p>You'll use these constantly in AI engineering — training configs, model hyperparameters, API response containers, experiment tracking metadata. Pydantic (Step 11) is essentially dataclasses with validation on top.</p>
+
+<div class="code"><span class="cm"># ── WHAT YOU WRITE WITH @dataclass ──</span>
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="dec">@dataclass</span>                              <span class="cm"># <-- this decorator does the magic</span>
+<span class="kw">class</span> <span class="cls">TrainingConfig</span>:
+    lr: <span class="bu">float</span> = 0.001                 <span class="cm"># type annotation + default value</span>
+    epochs: <span class="bu">int</span> = 10
+    batch_size: <span class="bu">int</span> = 32
+    device: <span class="bu">str</span> = <span class="str">"cuda"</span>
+    metrics: <span class="bu">list</span> = field(default_factory=<span class="bu">list</span>)  <span class="cm"># ← see note below</span>
+
+<span class="cm"># ── WHAT @dataclass GENERATES FOR YOU (you'd have to write this manually) ──</span>
+<span class="cm"># class TrainingConfig:</span>
+<span class="cm">#     def __init__(self, lr=0.001, epochs=10, batch_size=32, device="cuda", metrics=None):</span>
+<span class="cm">#         self.lr = lr</span>
+<span class="cm">#         self.epochs = epochs</span>
+<span class="cm">#         self.batch_size = batch_size</span>
+<span class="cm">#         self.device = device</span>
+<span class="cm">#         self.metrics = metrics if metrics is not None else []</span>
+<span class="cm">#</span>
+<span class="cm">#     def __repr__(self):</span>
+<span class="cm">#         return f"TrainingConfig(lr={self.lr}, epochs={self.epochs}, ...)"</span>
+<span class="cm">#</span>
+<span class="cm">#     def __eq__(self, other):</span>
+<span class="cm">#         return (self.lr, self.epochs, ...) == (other.lr, other.epochs, ...)</span>
+
+config = TrainingConfig(lr=0.01)          <span class="cm"># __init__ was auto-generated</span>
+<span class="bu">print</span>(config)                             <span class="cm"># __repr__ was auto-generated: TrainingConfig(lr=0.01, epochs=10, ...)</span>
+
+<span class="cm"># ── WHY field(default_factory=list) INSTEAD OF metrics: list = [] ──</span>
+<span class="cm"># This goes back to the edge case from Step 3: mutable default args.</span>
+<span class="cm"># If you wrote:</span>
+<span class="cm">#   metrics: list = []</span>
+<span class="cm"># Python creates ONE list at class definition time and ALL instances share it.</span>
+<span class="cm"># field(default_factory=list) calls list() every time a new instance is created,</span>
+<span class="cm"># giving each instance its OWN separate empty list.</span>
+<span class="cm"># This applies to any mutable type: list, dict, set.</span>
+
+<span class="cm"># ── FROZEN DATACLASS = immutable (like a tuple, but with named fields) ──</span>
+<span class="dec">@dataclass</span>(frozen=<span class="kw">True</span>)
+<span class="kw">class</span> <span class="cls">Point</span>:
+    x: <span class="bu">float</span>
+    y: <span class="bu">float</span>
+
+p = Point(1, 2)
+<span class="cm"># p.x = 3     # TypeError: cannot assign to field 'x' — frozen instance</span>
+<span class="cm"># Useful for immutable configs, hyperparameters that shouldn't change mid-training</span>
+
+<span class="cm"># ── SLOTS DATACLASS (Python 3.10+, more memory efficient) ──</span>
+<span class="dec">@dataclass</span>(slots=<span class="kw">True</span>)                    <span class="cm"># no __dict__, uses __slots__ internally</span>
+<span class="kw">class</span> <span class="cls">FastPoint</span>:
+    x: <span class="bu">float</span>
+    y: <span class="bu">float</span>
+<span class="cm"># Uses ~40% less memory — matters when you have millions of datapoints</span></div>
+
+      <div class="note"><b>When to reach for what:</b><br>
+      — <span class="inline-code">@dataclass</span>: simple data containers, configs, internal DTOs (data transfer objects)<br>
+      — <span class="inline-code">frozen=True</span>: when immutability matters (hashable, safe to use as dict keys)<br>
+      — <span class="inline-code">slots=True</span>: when you have thousands/millions of instances<br>
+      — <strong>Pydantic</strong> (Step 11): when you need validation, type coercion, serialization, or schema generation. Pydantic builds directly on dataclass concepts.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">6.</span>Modules & Imports</h2>
+  <div class="body">
+
+<div class="code"><span class="cm"># my_project/</span>
+<span class="cm">#   main.py</span>
+<span class="cm">#   utils/</span>
+<span class="cm">#     __init__.py      ← makes 'utils' a package</span>
+<span class="cm">#     helpers.py</span>
+<span class="cm">#     parsing.py</span>
+
+<span class="cm"># Inside main.py:</span>
+<span class="kw">import</span> utils.helpers                          <span class="cm"># use: utils.helpers.some_func()</span>
+<span class="kw">from</span> utils.parsing <span class="kw">import</span> parse_csv           <span class="cm"># use: parse_csv()</span>
+<span class="kw">from</span> utils <span class="kw">import</span> helpers                     <span class="cm"># requires __init__.py to exist</span>
+
+<span class="cm"># Conditional import pattern (common in ML libs)</span>
+<span class="kw">try</span>:
+    <span class="kw">import</span> torch
+    HAS_TORCH = <span class="kw">True</span>
+<span class="kw">except</span> <span class="bu">ImportError</span>:
+    HAS_TORCH = <span class="kw">False</span></div>
+
+    <div class="tip"><b>Critical for later:</b> <span class="inline-code">__init__.py</span> can be empty. It just tells Python "this directory is a package." In Python 3.3+ it's optional for <em>namespace packages</em>, but the safest habit is to always include it.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">7.</span>Virtual Environments & pip</h2>
+  <div class="body">
+
+<div class="code"><span class="cm"># Create — do this FIRST for every project</span>
+python -m venv .venv
+
+<span class="cm"># Activate</span>
+<span class="cm"># Windows (Command Prompt):</span>
+.venv\Scripts\activate
+<span class="cm"># Windows (PowerShell):</span>
+.venv\Scripts\Activate.ps1
+<span class="cm"># macOS / Linux:</span>
+<span class="kw">source</span> .venv/bin/activate
+
+<span class="cm"># Install</span>
+pip install numpy pandas torch
+
+<span class="cm"># Freeze — captures exact versions</span>
+pip freeze &gt; requirements.txt
+
+<span class="cm"># Install from file (on another machine or fresh clone)</span>
+pip install -r requirements.txt</div>
+
+    <div class="warn"><b>Never</b> <span class="inline-code">pip install</span> without an active venv. You'll pollute your global Python and get dependency conflicts across projects. Always: create → activate → install.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">8.</span>Files, JSON, try/except</h2>
+  <div class="body">
+
+<div class="code"><span class="cm"># Context manager — auto-closes even if error</span>
+<span class="kw">with</span> <span class="bu">open</span>(<span class="str">"data.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    content = f.read()                <span class="cm"># entire file as string</span>
+    lines = f.readlines()             <span class="cm"># list of lines</span>
+
+<span class="cm"># Writing</span>
+<span class="kw">with</span> <span class="bu">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"hello\n"</span>)
+
+<span class="cm"># JSON — you'll use this constantly (API responses, configs, datasets)</span>
+<span class="kw">import</span> json
+
+data = {<span class="str">"name"</span>: <span class="str">"Hassan"</span>, <span class="str">"scores"</span>: [85, 92, 78]}
+
+<span class="cm"># Write</span>
+<span class="kw">with</span> <span class="bu">open</span>(<span class="str">"data.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(data, f, indent=2)
+
+<span class="cm"># Read</span>
+<span class="kw">with</span> <span class="bu">open</span>(<span class="str">"data.json"</span>) <span class="kw">as</span> f:
+    loaded = json.load(f)
+
+<span class="bu">print</span>(loaded[<span class="str">"name"</span>])                <span class="cm"># "Hassan"</span>
+
+<span class="cm"># try/except — handle failures without crashing</span>
+<span class="kw">try</span>:
+    result = risky_operation()
+    <span class="bu">print</span>(result)
+<span class="kw">except</span> <span class="bu">FileNotFoundError</span>:
+    <span class="bu">print</span>(<span class="str">"File not found"</span>)
+<span class="kw">except</span> <span class="bu">ValueError</span> <span class="kw">as</span> e:
+    <span class="bu">print</span>(f<span class="str">"Bad value: {e}"</span>)
+<span class="kw">except</span> <span class="bu">Exception</span> <span class="kw">as</span> e:
+    <span class="bu">print</span>(f<span class="str">"Unexpected: {e}"</span>)       <span class="cm"># catch-all — log it, don't silence it</span>
+<span class="kw">else</span>:
+    <span class="bu">print</span>(<span class="str">"No error occurred"</span>)         <span class="cm"># runs only if no exception</span>
+<span class="kw">finally</span>:
+    cleanup()                            <span class="cm"># always runs</span></div>
+
+    <div class="note"><b>JSON edge case:</b> JSON keys must be strings. If you have <span class="inline-code">json.load</span> a dict with integer keys, they become strings. Use <span class="inline-code">json.loads(data, object_hook=...)</span> for custom handling.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section">
+  <h2><span class="num">9.</span>Type Hints</h2>
+  <div class="body">
+
+    <p>Type hints don't affect runtime behavior — but they enable Pydantic validation (Step 11), autocomplete in your editor, and catch bugs before runtime with <span class="inline-code">mypy</span>.</p>
+
+<div class="code"><span class="kw">from</span> typing <span class="kw">import</span> <span class="bu">List</span>, <span class="bu">Dict</span>, <span class="bu">Optional</span>, <span class="bu">Union</span>, <span class="bu">Tuple</span>
+
+<span class="cm"># Basic</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name: <span class="bu">str</span>) -&gt; <span class="bu">str</span>:
+    <span class="kw">return</span> f<span class="str">"Hello {name}"</span>
+
+<span class="cm"># Collections</span>
+<span class="kw">def</span> <span class="fn">process_scores</span>(scores: <span class="bu">List</span>[<span class="bu">float</span>]) -&gt; <span class="bu">Dict</span>[<span class="bu">str</span>, <span class="bu">float</span>]:
+    <span class="kw">return</span> {<span class="str">"mean"</span>: <span class="bu">sum</span>(scores) / <span class="bu">len</span>(scores)}
+
+<span class="cm"># Optional = value or None</span>
+<span class="kw">def</span> <span class="fn">find_user</span>(<span class="kw">id</span>: <span class="bu">int</span>) -&gt; <span class="bu">Optional</span>[<span class="bu">dict</span>]:
+    <span class="kw">if</span> <span class="kw">id</span> <span class="kw">in</span> database:
+        <span class="kw">return</span> database[<span class="kw">id</span>]
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="cm"># Union = one of several types</span>
+<span class="kw">def</span> <span class="fn">to_id</span>(value: <span class="bu">Union</span>[<span class="bu">int</span>, <span class="bu">str</span>]) -&gt; <span class="bu">int</span>:
+    <span class="kw">return</span> <span class="bu">int</span>(value)
+
+<span class="cm"># Type alias — avoid repeating complex types</span>
+ConfigDict = <span class="bu">Dict</span>[<span class="bu">str</span>, <span class="bu">Union</span>[<span class="bu">str</span>, <span class="bu">int</span>, <span class="bu">float</span>]]
+
+<span class="kw">def</span> <span class="fn">validate_config</span>(cfg: ConfigDict) -&gt; <span class="bu">bool</span>:
+    <span class="kw">return</span> <span class="str">"lr"</span> <span class="kw">in</span> cfg</div>
+
+    <div class="tip"><b>Python 3.10+ shortcuts</b> (which you should use):<br>
+    — <span class="inline-code">list[int]</span> instead of <span class="inline-code">List[int]</span><br>
+    — <span class="inline-code">dict[str, float]</span> instead of <span class="inline-code">Dict[str, float]</span><br>
+    — <span class="inline-code">int | str</span> instead of <span class="inline-code">Union[int, str]</span><br>
+    — <span class="inline-code">int | None</span> instead of <span class="inline-code">Optional[int]</span><br>
+    In short: lowercase built-ins, pipe syntax for unions. This is the modern style.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="milestone-box">
+  <b>🏁 Milestone checkpoint:</b> You should now be able to write a script with a function, a class, and file/JSON handling without syntax lookups. If you can't do that yet, go back to any section above where you felt uncertain and write 3 small examples from scratch. The next step — Anthropic/OpenAI SDKs in Phase 1 — assumes this is solid.
+</div>
+
+<footer>
+  Prepared from the Phase 0 roadmap. OOP section expanded per request. Open in browser, read in order, write code as you go.
+</footer>
+
+</div>
+</body>
+</html>
