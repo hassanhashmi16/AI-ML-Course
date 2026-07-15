@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Engineer + ML Engineer — Step by Step</title>
+<title>AI Engineer + ML Engineer — Course Outline</title>
 <style>
   :root {
     --bg: #0f1115;
@@ -24,11 +24,70 @@
     background: var(--bg);
     color: var(--text);
     line-height: 1.5;
-    font-size: 15.5px;
+    font-size: 15px;
   }
   a { color: var(--accent1); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 44px 24px 100px; }
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ---------- SIDEBAR ---------- */
+  nav.side {
+    width: 290px;
+    flex-shrink: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 20px 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.side .side-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 14px 4px;
+  }
+  details.phase-group { margin-bottom: 6px; border-radius: 8px; overflow: hidden; }
+  details.phase-group summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 9px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  details.phase-group summary::-webkit-details-marker { display: none; }
+  details.phase-group summary::after {
+    content: "▸";
+    color: var(--muted);
+    font-size: 11px;
+    transition: transform 0.15s ease;
+  }
+  details.phase-group[open] summary::after { transform: rotate(90deg); }
+  details.p0 summary { background: #7c2d1233; color: var(--accent0); }
+  details.p1 summary { background: #0c4a6e33; color: var(--accent1); }
+  details.p2 summary { background: #3b076433; color: var(--accent2); }
+  details.phase-group .steplist { padding: 4px 4px 8px; }
+  details.phase-group a {
+    display: block;
+    color: var(--text);
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 1px;
+  }
+  details.phase-group a:hover { background: #23273347; text-decoration: none; }
+  nav.side .divider { height: 1px; background: var(--border); margin: 14px 4px; }
+  nav.side .foot-links a { display: block; font-size: 12.5px; color: var(--muted); padding: 4px 10px; }
+
+  /* ---------- MAIN ---------- */
+  main { flex: 1; max-width: 840px; padding: 40px 44px 120px; }
   header h1 { font-size: 26px; margin: 0 0 6px; }
   header .sub { color: var(--muted); font-size: 14.5px; margin-bottom: 16px; }
   .intro-block {
@@ -36,60 +95,76 @@
     border: 1px solid var(--border);
     border-left: 3px solid var(--gold);
     border-radius: 8px;
-    padding: 14px 16px;
-    margin: 14px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
     font-size: 13.5px;
     color: var(--muted);
   }
   .intro-block b { color: var(--gold); }
+
   .phase-banner {
-    margin: 40px 0 4px;
-    padding: 12px 18px;
+    margin: 46px 0 16px;
+    padding: 14px 20px;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 700;
+    scroll-margin-top: 16px;
   }
-  .phase-banner .tag { display:block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top:2px; }
+  .phase-banner .tag { display:block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top:3px; }
   .phase-banner.p0 { background: linear-gradient(90deg,#7c2d12,#0f1115); border-left: 4px solid var(--accent0); }
   .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
   .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
-  .steps { margin-top: 8px; border-left: 2px solid var(--border); margin-left: 13px; }
-  .step {
-    position: relative;
-    padding: 9px 0 9px 24px;
-    border-bottom: 1px solid var(--border);
-    font-size: 14.5px;
+
+  .step-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px 14px;
+    margin-bottom: 12px;
+    scroll-margin-top: 16px;
   }
-  .step:last-child { border-bottom: none; }
-  .step-num {
-    position: absolute;
-    left: -14px;
-    top: 9px;
-    width: 24px;
-    height: 24px;
+  .step-head { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num-badge {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--bg);
     border: 2px solid var(--accent1);
     color: var(--accent1);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 1px;
   }
-  .p0 .step-num { border-color: var(--accent0); color: var(--accent0); }
-  .p2 .step-num { border-color: var(--accent2); color: var(--accent2); }
-  .step b.title { color: var(--text); }
-  .step .why { color: var(--muted); }
-  .step .link { margin-left: 6px; white-space: nowrap; font-size: 13px; }
+  .p0 .step-num-badge { border-color: var(--accent0); color: var(--accent0); }
+  .p2 .step-num-badge { border-color: var(--accent2); color: var(--accent2); }
+  .step-head h3 { margin: 0 0 3px; font-size: 16px; }
+  .step-head .why { color: var(--muted); font-size: 13.5px; margin: 0; }
+  .step-head .why a { margin-left: 6px; white-space: nowrap; }
+  ol.outline {
+    margin: 10px 0 2px 40px;
+    padding: 0;
+    font-size: 13.5px;
+  }
+  ol.outline li { margin-bottom: 3px; color: var(--text); }
+  ol.outline li .onum {
+    display: inline-block;
+    min-width: 34px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
   .milestone {
     position: relative;
-    margin: 6px 0 6px 24px;
-    padding: 8px 14px;
+    margin: 10px 0 14px;
+    padding: 10px 16px;
     background: #1a1408;
     border: 1px solid #4a3a10;
     border-left: 3px solid var(--gold);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 13.5px;
     color: var(--gold);
   }
@@ -99,8 +174,8 @@
     border: 1px solid #14532d;
     border-left: 4px solid var(--green);
     border-radius: 10px;
-    padding: 14px 18px;
-    margin: 16px 0 0;
+    padding: 14px 20px;
+    margin: 8px 0 0;
     font-size: 13.5px;
   }
   .checkpoint b { color: var(--green); }
@@ -109,7 +184,7 @@
     border: 1px solid #5c1a1a;
     border-left: 4px solid #f87171;
     border-radius: 10px;
-    padding: 16px 18px;
+    padding: 16px 20px;
     margin: 44px 0 0;
     font-size: 13.5px;
   }
@@ -121,98 +196,750 @@
     color: var(--muted);
     font-size: 12px;
   }
+  @media (max-width: 900px) {
+    nav.side { display: none; }
+    main { padding: 24px; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="layout">
+
+<nav class="side">
+  <div class="side-title">Course Outline</div>
+
+  <details class="phase-group p0" open>
+    <summary>Phase 0 · Python</summary>
+    <div class="steplist">
+      <a href="#step-1">1. Python syntax basics</a>
+      <a href="#step-2">2. Control flow</a>
+      <a href="#step-3">3. Core data structures</a>
+      <a href="#step-4">4. Functions</a>
+      <a href="#step-5">5. Classes & OOP</a>
+      <a href="#step-6">6. Modules & imports</a>
+      <a href="#step-7">7. Virtual environments & pip</a>
+      <a href="#step-8">8. Files, JSON, try/except</a>
+      <a href="#step-9">9. Type hints</a>
+    </div>
+  </details>
+
+  <details class="phase-group p1" open>
+    <summary>Phase 1 · AI Engineering</summary>
+    <div class="steplist">
+      <a href="#step-10">10. Anthropic / OpenAI SDK</a>
+      <a href="#step-11">11. Pydantic</a>
+      <a href="#step-12">12. asyncio</a>
+      <a href="#step-13">13. Embeddings & similarity</a>
+      <a href="#step-14">14. Chunking strategies</a>
+      <a href="#step-15">15. Postgres + pgvector</a>
+      <a href="#step-16">16. FastAPI</a>
+      <a href="#step-17">17. RAGAS</a>
+      <a href="#step-18">18. LangSmith</a>
+      <a href="#step-19">19. Tool calling</a>
+      <a href="#step-20">20. LangGraph</a>
+      <a href="#step-21">21. CrewAI</a>
+      <a href="#step-22">22. MCP</a>
+      <a href="#step-23">23. Agentic RAG</a>
+      <a href="#step-24">24. Docker</a>
+      <a href="#step-25">25. Deploy</a>
+      <a href="#step-26">26. Case studies & resume</a>
+    </div>
+  </details>
+
+  <details class="phase-group p2" open>
+    <summary>Phase 2 · ML Engineering</summary>
+    <div class="steplist">
+      <a href="#step-27">27. NumPy</a>
+      <a href="#step-28">28. pandas</a>
+      <a href="#step-29">29. Matplotlib</a>
+      <a href="#step-30">30. scikit-learn</a>
+      <a href="#step-31">31. Linear algebra</a>
+      <a href="#step-32">32. Probability & softmax</a>
+      <a href="#step-33">33. Gradient descent</a>
+      <a href="#step-34">34. Linear & logistic regression</a>
+      <a href="#step-35">35. Decision trees & ensembles</a>
+      <a href="#step-36">36. Neural nets & backprop</a>
+      <a href="#step-37">37. Self-attention (Q/K/V)</a>
+      <a href="#step-38">38. Transformer architecture</a>
+      <a href="#step-39">39. PyTorch</a>
+      <a href="#step-40">40. LoRA / PEFT</a>
+      <a href="#step-41">41. Docker Compose & K8s</a>
+      <a href="#step-42">42. MLflow</a>
+      <a href="#step-43">43. GitHub Actions (CI/CD)</a>
+      <a href="#step-44">44. Prometheus & Grafana</a>
+      <a href="#step-45">45. Terraform & ArgoCD</a>
+      <a href="#step-46">46. Portfolio integration</a>
+    </div>
+  </details>
+
+  <div class="divider"></div>
+  <div class="foot-links">
+    <a href="#risk">Standing risk</a>
+  </div>
+</nav>
+
+<main>
 
 <header>
-  <h1>AI Engineer + ML Engineer — Step by Step</h1>
-  <div class="sub">One numbered list, top to bottom, zero to complete. Every step: what to learn, one line on why, one link. No lectures.</div>
+  <h1>AI Engineer + ML Engineer — Course Outline</h1>
+  <div class="sub">46 modules, zero to complete. Each module: what it is, why it matters, one resource, and its lesson outline.</div>
   <div class="intro-block">
-    <b>How to use this:</b> go in order. Don't skip. Each step is small on purpose — when a step says "learn X," go to the linked resource, learn just enough to do the next milestone, then move on. Milestones (gold boxes) are the actual proof you're ready for the next step — don't pass one you can't do. AI Engineering = the front end: building products on top of AI (APIs, RAG, agents). ML Engineering = the back end: understanding and running the models underneath (math, training, infrastructure). This takes you through both, in that order.
+    <b>How to use this:</b> go in order, top to bottom (or jump via the sidebar). Each module's outline (10.1, 10.2, ...) is the actual scope of that module — what to make sure you cover before moving on. Milestones (gold boxes) are the checkpoints that prove you're ready for the next module. AI Engineering = the front end: building products on top of AI. ML Engineering = the back end: understanding what's underneath. This runs through both, in order.
   </div>
 </header>
 
-<div class="phase-banner p0">PHASE 0 — PYTHON, FROM SCRATCH</div>
-<div class="steps p0">
-  <div class="step"><span class="step-num">1</span><b class="title">Python syntax basics</b> — <span class="why">variables, printing, comments, indentation-based blocks.</span> <a class="link" href="https://docs.python.org/3/tutorial/introduction.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">2</span><b class="title">Control flow</b> — <span class="why">if/elif/else, for, while, list comprehensions.</span> <a class="link" href="https://docs.python.org/3/tutorial/controlflow.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">3</span><b class="title">Core data structures</b> — <span class="why">list, tuple, dict, set — everything later is built on these.</span> <a class="link" href="https://docs.python.org/3/tutorial/datastructures.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">4</span><b class="title">Functions</b> — <span class="why">def, default args, *args/**kwargs.</span> <a class="link" href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions">docs.python.org</a></div>
-  <div class="step"><span class="step-num">5</span><b class="title">Classes & OOP</b> — <span class="why">self, __init__, inheritance — every library you'll use is class-based.</span> <a class="link" href="https://realpython.com/python3-object-oriented-programming/">realpython.com</a></div>
-  <div class="step"><span class="step-num">6</span><b class="title">Modules & imports</b> — <span class="why">how real projects are organized across files.</span> <a class="link" href="https://docs.python.org/3/tutorial/modules.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">7</span><b class="title">Virtual environments & pip</b> — <span class="why">isolated dependencies per project — like node_modules.</span> <a class="link" href="https://docs.python.org/3/tutorial/venv.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">8</span><b class="title">Files, JSON, try/except</b> — <span class="why">reading data and handling failures without crashing.</span> <a class="link" href="https://docs.python.org/3/tutorial/errors.html">docs.python.org</a></div>
-  <div class="step"><span class="step-num">9</span><b class="title">Type hints</b> — <span class="why">sets up Pydantic, which you use starting Step 11.</span> <a class="link" href="https://realpython.com/python-type-checking/">realpython.com</a></div>
+<div class="phase-banner p0" id="phase0">PHASE 0 — PYTHON, FROM SCRATCH</div>
+
+<div class="step-block p0" id="step-1">
+  <div class="step-head">
+    <span class="step-num-badge">1</span>
+    <div><h3>Python syntax basics</h3><p class="why">Variables, printing, comments, indentation-based blocks. <a href="https://docs.python.org/3/tutorial/introduction.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">1.1</span> Variables & dynamic typing</li>
+    <li><span class="onum">1.2</span> print / input & comments</li>
+    <li><span class="onum">1.3</span> Indentation-based blocks</li>
+    <li><span class="onum">1.4</span> f-strings</li>
+  </ol>
 </div>
+
+<div class="step-block p0" id="step-2">
+  <div class="step-head">
+    <span class="step-num-badge">2</span>
+    <div><h3>Control flow</h3><p class="why">if/elif/else, for, while, list comprehensions. <a href="https://docs.python.org/3/tutorial/controlflow.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">2.1</span> if / elif / else</li>
+    <li><span class="onum">2.2</span> for loops & range()</li>
+    <li><span class="onum">2.3</span> while loops</li>
+    <li><span class="onum">2.4</span> List comprehensions</li>
+    <li><span class="onum">2.5</span> break / continue</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-3">
+  <div class="step-head">
+    <span class="step-num-badge">3</span>
+    <div><h3>Core data structures</h3><p class="why">list, tuple, dict, set — everything later is built on these. <a href="https://docs.python.org/3/tutorial/datastructures.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">3.1</span> list (indexing, slicing, methods)</li>
+    <li><span class="onum">3.2</span> tuple (immutability)</li>
+    <li><span class="onum">3.3</span> dict (keys/values, iteration)</li>
+    <li><span class="onum">3.4</span> set (uniqueness, operations)</li>
+    <li><span class="onum">3.5</span> strings (slicing, common methods)</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-4">
+  <div class="step-head">
+    <span class="step-num-badge">4</span>
+    <div><h3>Functions</h3><p class="why">def, default args, *args/**kwargs. <a href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">4.1</span> def & return</li>
+    <li><span class="onum">4.2</span> Default arguments</li>
+    <li><span class="onum">4.3</span> *args</li>
+    <li><span class="onum">4.4</span> **kwargs</li>
+    <li><span class="onum">4.5</span> Docstrings</li>
+    <li><span class="onum">4.6</span> Lambda functions</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-5">
+  <div class="step-head">
+    <span class="step-num-badge">5</span>
+    <div><h3>Classes & OOP</h3><p class="why">self, __init__, inheritance — every library you'll use is class-based. <a href="https://realpython.com/python3-object-oriented-programming/">realpython.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">5.1</span> class & __init__</li>
+    <li><span class="onum">5.2</span> self (explicit, unlike JS's this)</li>
+    <li><span class="onum">5.3</span> Instance vs. class attributes</li>
+    <li><span class="onum">5.4</span> Inheritance & super()</li>
+    <li><span class="onum">5.5</span> Dunder methods (__str__, __repr__, __eq__)</li>
+    <li><span class="onum">5.6</span> Properties & class/static methods</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-6">
+  <div class="step-head">
+    <span class="step-num-badge">6</span>
+    <div><h3>Modules & imports</h3><p class="why">How real projects are organized across files. <a href="https://docs.python.org/3/tutorial/modules.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">6.1</span> import vs. from...import</li>
+    <li><span class="onum">6.2</span> Organizing code across files</li>
+    <li><span class="onum">6.3</span> if __name__ == "__main__"</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-7">
+  <div class="step-head">
+    <span class="step-num-badge">7</span>
+    <div><h3>Virtual environments & pip</h3><p class="why">Isolated dependencies per project — like node_modules. <a href="https://docs.python.org/3/tutorial/venv.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">7.1</span> Creating & activating a venv</li>
+    <li><span class="onum">7.2</span> pip install</li>
+    <li><span class="onum">7.3</span> requirements.txt</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-8">
+  <div class="step-head">
+    <span class="step-num-badge">8</span>
+    <div><h3>Files, JSON, try/except</h3><p class="why">Reading data and handling failures without crashing. <a href="https://docs.python.org/3/tutorial/errors.html">docs.python.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">8.1</span> open() & context managers (with)</li>
+    <li><span class="onum">8.2</span> Reading/writing JSON</li>
+    <li><span class="onum">8.3</span> try / except / finally</li>
+    <li><span class="onum">8.4</span> Raising & catching specific exceptions</li>
+  </ol>
+</div>
+
+<div class="step-block p0" id="step-9">
+  <div class="step-head">
+    <span class="step-num-badge">9</span>
+    <div><h3>Type hints</h3><p class="why">Sets up Pydantic, which you use starting Step 11. <a href="https://realpython.com/python-type-checking/">realpython.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">9.1</span> Basic hints (str, int, list[str])</li>
+    <li><span class="onum">9.2</span> Optional</li>
+    <li><span class="onum">9.3</span> Why Python doesn't enforce them at runtime</li>
+  </ol>
+</div>
+
 <div class="milestone">🏁 Milestone: write a script with a function, a class, and file/JSON handling — no syntax lookups.</div>
 
-<div class="phase-banner p1">PHASE 1 — AI ENGINEERING <span class="tag">the front end: building products on AI</span></div>
-<div class="steps p1">
-  <div class="step"><span class="step-num">10</span><b class="title">Anthropic / OpenAI SDK</b> — <span class="why">how you actually call an LLM from code.</span> <a class="link" href="https://github.com/anthropics/prompt-eng-interactive-tutorial">github.com</a></div>
-  <div class="step"><span class="step-num">11</span><b class="title">Pydantic</b> — <span class="why">get validated structured data back, not raw text to parse.</span> <a class="link" href="https://docs.pydantic.dev/latest/">docs.pydantic.dev</a></div>
-  <div class="step"><span class="step-num">12</span><b class="title">asyncio</b> — <span class="why">run multiple LLM calls at once instead of waiting one by one.</span> <a class="link" href="https://realpython.com/async-io-python/">realpython.com</a></div>
-  <div class="milestone">🏁 Project 1: a CLI tool that calls an LLM and returns validated structured output.</div>
-  <div class="step"><span class="step-num">13</span><b class="title">Embeddings & similarity search</b> — <span class="why">how "search by meaning" actually works.</span> <a class="link" href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></div>
-  <div class="step"><span class="step-num">14</span><b class="title">Chunking strategies</b> — <span class="why">bad chunking silently breaks every RAG system.</span> <a class="link" href="https://python.langchain.com/docs/concepts/text_splitters/">python.langchain.com</a></div>
-  <div class="step"><span class="step-num">15</span><b class="title">Postgres + pgvector</b> — <span class="why">stores and searches your embeddings, fits your existing stack.</span> <a class="link" href="https://github.com/pgvector/pgvector">github.com</a></div>
-  <div class="step"><span class="step-num">16</span><b class="title">FastAPI</b> — <span class="why">the backend you'll actually serve everything through.</span> <a class="link" href="https://fastapi.tiangolo.com/tutorial/">fastapi.tiangolo.com</a></div>
-  <div class="milestone">🏁 Project 2: a RAG knowledge assistant over a real corpus you care about.</div>
-  <div class="step"><span class="step-num">17</span><b class="title">RAGAS</b> — <span class="why">proves your RAG system works — a number, not a vibe.</span> <a class="link" href="https://docs.ragas.io/en/stable/getstarted/quickstart/">docs.ragas.io</a></div>
-  <div class="step"><span class="step-num">18</span><b class="title">LangSmith</b> — <span class="why">shows you exactly what happened inside a bad answer.</span> <a class="link" href="https://docs.smith.langchain.com/">docs.smith.langchain.com</a></div>
-  <div class="milestone">🏁 Add a scored, versioned eval suite (30–50 questions) to Project 2.</div>
-  <div class="step"><span class="step-num">19</span><b class="title">Tool calling / function calling</b> — <span class="why">how a model actually takes actions, not just talks.</span></div>
-  <div class="step"><span class="step-num">20</span><b class="title">LangGraph</b> — <span class="why">the standard way to build production agents with real control flow.</span> <a class="link" href="https://academy.langchain.com/courses/intro-to-langgraph">academy.langchain.com</a></div>
-  <div class="step"><span class="step-num">21</span><b class="title">CrewAI</b> — <span class="why">for tasks that split cleanly across specialist agents.</span> <a class="link" href="https://learn.crewai.com/">learn.crewai.com</a></div>
-  <div class="step"><span class="step-num">22</span><b class="title">MCP</b> — <span class="why">standardizes how tools connect to any AI app, not just one framework.</span> <a class="link" href="https://modelcontextprotocol.io">modelcontextprotocol.io</a></div>
-  <div class="milestone">🏁 Project 3: a multi-step agent with real tool use that can resume after a crash.</div>
-  <div class="step"><span class="step-num">23</span><b class="title">Agentic RAG</b> — <span class="why">merge retrieval + agents into one system (Steps 13–22 combined).</span></div>
-  <div class="milestone">🏁 Project 4 (flagship): merge Projects 2 & 3 into one agentic, evaluated RAG system.</div>
-  <div class="step"><span class="step-num">24</span><b class="title">Docker</b> — <span class="why">makes your app run the same everywhere, not just your machine.</span> <a class="link" href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freecodecamp.org</a></div>
-  <div class="step"><span class="step-num">25</span><b class="title">Deploy (Fly.io / Render / Railway)</b> — <span class="why">gets Project 4 onto a real, working URL.</span></div>
-  <div class="milestone">🏁 Project 4 is live and usable by a stranger.</div>
-  <div class="step"><span class="step-num">26</span><b class="title">Case studies & resume</b> — <span class="why">makes the work legible to someone who didn't watch you build it.</span></div>
+<div class="phase-banner p1" id="phase1">PHASE 1 — AI ENGINEERING <span class="tag">the front end: building products on AI</span></div>
+
+<div class="step-block p1" id="step-10">
+  <div class="step-head">
+    <span class="step-num-badge">10</span>
+    <div><h3>Anthropic / OpenAI SDK</h3><p class="why">How you actually call an LLM from code. <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial">github.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">10.1</span> Client setup & authentication</li>
+    <li><span class="onum">10.2</span> Messages format (system / user / assistant)</li>
+    <li><span class="onum">10.3</span> Streaming responses</li>
+    <li><span class="onum">10.4</span> Tool-use / function-calling blocks</li>
+  </ol>
 </div>
+
+<div class="step-block p1" id="step-11">
+  <div class="step-head">
+    <span class="step-num-badge">11</span>
+    <div><h3>Pydantic</h3><p class="why">Get validated structured data back, not raw text to parse. <a href="https://docs.pydantic.dev/latest/">docs.pydantic.dev</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">11.1</span> BaseModel & field types</li>
+    <li><span class="onum">11.2</span> Field() constraints & defaults</li>
+    <li><span class="onum">11.3</span> Validators (field_validator vs. model_validator)</li>
+    <li><span class="onum">11.4</span> Nested models</li>
+    <li><span class="onum">11.5</span> Serialization (model_dump / model_dump_json)</li>
+    <li><span class="onum">11.6</span> Structured-output / tool schemas</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-12">
+  <div class="step-head">
+    <span class="step-num-badge">12</span>
+    <div><h3>asyncio</h3><p class="why">Run multiple LLM calls at once instead of waiting one by one. <a href="https://realpython.com/async-io-python/">realpython.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">12.1</span> async / await syntax</li>
+    <li><span class="onum">12.2</span> asyncio.gather</li>
+    <li><span class="onum">12.3</span> The event loop concept</li>
+    <li><span class="onum">12.4</span> When NOT to use async</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 1: a CLI tool that calls an LLM and returns validated structured output.</div>
+
+<div class="step-block p1" id="step-13">
+  <div class="step-head">
+    <span class="step-num-badge">13</span>
+    <div><h3>Embeddings & similarity search</h3><p class="why">How "search by meaning" actually works. <a href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">13.1</span> What an embedding vector is</li>
+    <li><span class="onum">13.2</span> Cosine similarity</li>
+    <li><span class="onum">13.3</span> Embedding APIs</li>
+    <li><span class="onum">13.4</span> Limits of pure similarity search</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-14">
+  <div class="step-head">
+    <span class="step-num-badge">14</span>
+    <div><h3>Chunking strategies</h3><p class="why">Bad chunking silently breaks every RAG system. <a href="https://python.langchain.com/docs/concepts/text_splitters/">python.langchain.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">14.1</span> Fixed-size chunking</li>
+    <li><span class="onum">14.2</span> Recursive / semantic chunking</li>
+    <li><span class="onum">14.3</span> Chunk overlap</li>
+    <li><span class="onum">14.4</span> Splitter parameters (chunk_size, chunk_overlap)</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-15">
+  <div class="step-head">
+    <span class="step-num-badge">15</span>
+    <div><h3>Postgres + pgvector</h3><p class="why">Stores and searches your embeddings, fits your existing stack. <a href="https://github.com/pgvector/pgvector">github.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">15.1</span> Vector column type</li>
+    <li><span class="onum">15.2</span> Distance operators (cosine / L2)</li>
+    <li><span class="onum">15.3</span> CREATE INDEX (HNSW)</li>
+    <li><span class="onum">15.4</span> Basic retrieval SQL</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-16">
+  <div class="step-head">
+    <span class="step-num-badge">16</span>
+    <div><h3>FastAPI</h3><p class="why">The backend you'll actually serve everything through. <a href="https://fastapi.tiangolo.com/tutorial/">fastapi.tiangolo.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">16.1</span> Path operations & routing</li>
+    <li><span class="onum">16.2</span> Path & query parameters, validation</li>
+    <li><span class="onum">16.3</span> Request & response models (Pydantic)</li>
+    <li><span class="onum">16.4</span> Dependency injection (Depends)</li>
+    <li><span class="onum">16.5</span> Background tasks</li>
+    <li><span class="onum">16.6</span> Streaming responses (WebSockets / SSE)</li>
+    <li><span class="onum">16.7</span> Error handling (HTTPException)</li>
+    <li><span class="onum">16.8</span> Security basics (OAuth2 / API keys)</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 2: a RAG knowledge assistant over a real corpus you care about.</div>
+
+<div class="step-block p1" id="step-17">
+  <div class="step-head">
+    <span class="step-num-badge">17</span>
+    <div><h3>RAGAS</h3><p class="why">Proves your RAG system works — a number, not a vibe. <a href="https://docs.ragas.io/en/stable/getstarted/quickstart/">docs.ragas.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">17.1</span> Faithfulness</li>
+    <li><span class="onum">17.2</span> Answer relevancy</li>
+    <li><span class="onum">17.3</span> Context precision</li>
+    <li><span class="onum">17.4</span> Context recall</li>
+    <li><span class="onum">17.5</span> evaluate() & building a golden dataset</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-18">
+  <div class="step-head">
+    <span class="step-num-badge">18</span>
+    <div><h3>LangSmith</h3><p class="why">Shows you exactly what happened inside a bad answer. <a href="https://docs.smith.langchain.com/">docs.smith.langchain.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">18.1</span> Enabling tracing on a run</li>
+    <li><span class="onum">18.2</span> Reading a trace</li>
+    <li><span class="onum">18.3</span> Creating a dataset from real runs</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Add a scored, versioned eval suite (30–50 questions) to Project 2.</div>
+
+<div class="step-block p1" id="step-19">
+  <div class="step-head">
+    <span class="step-num-badge">19</span>
+    <div><h3>Tool calling / function calling</h3><p class="why">How a model actually takes actions, not just talks.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">19.1</span> JSON schema tool definitions</li>
+    <li><span class="onum">19.2</span> How the model requests a call</li>
+    <li><span class="onum">19.3</span> Executing & returning results</li>
+    <li><span class="onum">19.4</span> Parallel tool calls</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-20">
+  <div class="step-head">
+    <span class="step-num-badge">20</span>
+    <div><h3>LangGraph</h3><p class="why">The standard way to build production agents with real control flow. <a href="https://academy.langchain.com/courses/intro-to-langgraph">academy.langchain.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">20.1</span> State schema (TypedDict)</li>
+    <li><span class="onum">20.2</span> StateGraph & compile()</li>
+    <li><span class="onum">20.3</span> Nodes as functions</li>
+    <li><span class="onum">20.4</span> add_edge vs. add_conditional_edges</li>
+    <li><span class="onum">20.5</span> Checkpointer / persistence</li>
+    <li><span class="onum">20.6</span> Streaming & human-in-the-loop interrupts</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-21">
+  <div class="step-head">
+    <span class="step-num-badge">21</span>
+    <div><h3>CrewAI</h3><p class="why">For tasks that split cleanly across specialist agents. <a href="https://learn.crewai.com/">learn.crewai.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">21.1</span> Agent / Task / Crew classes</li>
+    <li><span class="onum">21.2</span> Role-goal-backstory pattern</li>
+    <li><span class="onum">21.3</span> Tools integration</li>
+    <li><span class="onum">21.4</span> Memory (short-term vs. long-term)</li>
+    <li><span class="onum">21.5</span> Sequential vs. hierarchical process</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-22">
+  <div class="step-head">
+    <span class="step-num-badge">22</span>
+    <div><h3>MCP</h3><p class="why">Standardizes how tools connect to any AI app, not just one framework. <a href="https://modelcontextprotocol.io">modelcontextprotocol.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">22.1</span> Tools / resources / prompts primitives</li>
+    <li><span class="onum">22.2</span> Server vs. client architecture</li>
+    <li><span class="onum">22.3</span> Transports (stdio vs. HTTP/SSE)</li>
+    <li><span class="onum">22.4</span> Connecting a client to a server</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 3: a multi-step agent with real tool use that can resume after a crash.</div>
+
+<div class="step-block p1" id="step-23">
+  <div class="step-head">
+    <span class="step-num-badge">23</span>
+    <div><h3>Agentic RAG</h3><p class="why">Merge retrieval + agents into one system (Steps 13–22 combined).</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">23.1</span> Agent-driven retrieval decisions</li>
+    <li><span class="onum">23.2</span> Query rewriting</li>
+    <li><span class="onum">23.3</span> Multi-hop retrieval</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 4 (flagship): merge Projects 2 & 3 into one agentic, evaluated RAG system.</div>
+
+<div class="step-block p1" id="step-24">
+  <div class="step-head">
+    <span class="step-num-badge">24</span>
+    <div><h3>Docker</h3><p class="why">Makes your app run the same everywhere, not just your machine. <a href="https://www.freecodecamp.org/news/learn-docker-and-kubernetes-hands-on-course/">freecodecamp.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">24.1</span> Dockerfile instructions (FROM/COPY/RUN/CMD)</li>
+    <li><span class="onum">24.2</span> Build vs. run (image vs. container)</li>
+    <li><span class="onum">24.3</span> Image layers & caching</li>
+    <li><span class="onum">24.4</span> Volumes (persistent data)</li>
+    <li><span class="onum">24.5</span> Networking between containers</li>
+  </ol>
+</div>
+
+<div class="step-block p1" id="step-25">
+  <div class="step-head">
+    <span class="step-num-badge">25</span>
+    <div><h3>Deploy (Fly.io / Render / Railway)</h3><p class="why">Gets Project 4 onto a real, working URL.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">25.1</span> Picking one platform</li>
+    <li><span class="onum">25.2</span> Deploy config file</li>
+    <li><span class="onum">25.3</span> Environment variables / secrets</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 4 is live and usable by a stranger.</div>
+
+<div class="step-block p1" id="step-26">
+  <div class="step-head">
+    <span class="step-num-badge">26</span>
+    <div><h3>Case studies & resume</h3><p class="why">Makes the work legible to someone who didn't watch you build it.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">26.1</span> Architecture write-up structure</li>
+    <li><span class="onum">26.2</span> Leading with eval numbers</li>
+    <li><span class="onum">26.3</span> Resume bullet rewrite</li>
+  </ol>
+</div>
+
 <div class="checkpoint"><b>Phase 1 done:</b> 3 working, deployed projects — RAG + evals, an agent, a flagship agentic RAG system.</div>
 
-<div class="phase-banner p2">PHASE 2 — ML ENGINEERING <span class="tag">the back end: understanding what's underneath</span></div>
-<div class="steps p2">
-  <div class="step"><span class="step-num">27</span><b class="title">NumPy</b> — <span class="why">the array math underneath every ML library.</span> <a class="link" href="https://numpy.org/doc/stable/user/quickstart.html">numpy.org</a></div>
-  <div class="step"><span class="step-num">28</span><b class="title">pandas</b> — <span class="why">how you'll load and clean real datasets.</span> <a class="link" href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas.pydata.org</a></div>
-  <div class="step"><span class="step-num">29</span><b class="title">Matplotlib</b> — <span class="why">how you'll visualize what a model is actually doing.</span> <a class="link" href="https://matplotlib.org/stable/tutorials/pyplot.html">matplotlib.org</a></div>
-  <div class="step"><span class="step-num">30</span><b class="title">scikit-learn</b> — <span class="why">tested implementations to check your own code against.</span> <a class="link" href="https://scikit-learn.org/stable/getting_started.html">scikit-learn.org</a></div>
-  <div class="step"><span class="step-num">31</span><b class="title">Linear algebra</b> — <span class="why">the actual math behind the embeddings you used in Step 13.</span> <a class="link" href="https://www.khanacademy.org/math/linear-algebra">khanacademy.org</a></div>
-  <div class="step"><span class="step-num">32</span><b class="title">Probability & softmax</b> — <span class="why">how a model turns raw scores into a "choice."</span> <a class="link" href="https://www.khanacademy.org/math/statistics-probability/probability-library">khanacademy.org</a></div>
-  <div class="step"><span class="step-num">33</span><b class="title">Gradient descent</b> — <span class="why">literally how every model you use gets trained.</span> <a class="link" href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></div>
-  <div class="step"><span class="step-num">34</span><b class="title">Linear & logistic regression</b> — <span class="why">the smallest complete example of "train a model," done by hand.</span> <a class="link" href="https://www.coursera.org/specializations/machine-learning-introduction">coursera.org</a></div>
-  <div class="step"><span class="step-num">35</span><b class="title">Decision trees & ensembles</b> — <span class="why">still the default choice for real-world tabular data.</span> <a class="link" href="https://scikit-learn.org/stable/modules/ensemble.html">scikit-learn.org</a></div>
-  <div class="milestone">🏁 Project 5: a classical ML project on real data you already own.</div>
-  <div class="step"><span class="step-num">36</span><b class="title">Neural networks & backpropagation</b> — <span class="why">the mechanism every deep learning model learns by.</span> <a class="link" href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></div>
-  <div class="step"><span class="step-num">37</span><b class="title">Self-attention (Q/K/V)</b> — <span class="why">the actual mechanism inside every LLM you've used since Step 10.</span> <a class="link" href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></div>
-  <div class="step"><span class="step-num">38</span><b class="title">Transformer architecture</b> — <span class="why">how attention gets stacked into a full model.</span> <a class="link" href="https://jalammar.github.io/illustrated-gpt2/">jalammar.github.io</a></div>
-  <div class="step"><span class="step-num">39</span><b class="title">PyTorch</b> — <span class="why">how you'll actually build and train models, not just call APIs.</span> <a class="link" href="https://pytorch.org/tutorials/beginner/basics/intro.html">pytorch.org</a></div>
-  <div class="step"><span class="step-num">40</span><b class="title">LoRA / PEFT</b> — <span class="why">cheaply fine-tune a model instead of full retraining.</span> <a class="link" href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">huggingface.co</a></div>
-  <div class="milestone">🏁 Project 6: a mini transformer from scratch, or a small model fine-tuned with LoRA.</div>
-  <div class="step"><span class="step-num">41</span><b class="title">Docker Compose & Kubernetes</b> — <span class="why">keeps your app running reliably, not just alive.</span> <a class="link" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">kubernetes.io</a></div>
-  <div class="step"><span class="step-num">42</span><b class="title">MLflow</b> — <span class="why">tracks exactly which model version is actually live.</span> <a class="link" href="https://mlflow.org/docs/latest/index.html">mlflow.org</a></div>
-  <div class="step"><span class="step-num">43</span><b class="title">GitHub Actions (CI/CD)</b> — <span class="why">catches a broken change before it ships.</span></div>
-  <div class="milestone">🏁 Project 7: a model containerized, registered, and deployed with real CI/CD.</div>
-  <div class="step"><span class="step-num">44</span><b class="title">Prometheus & Grafana</b> — <span class="why">tells you when something's broken before your users do.</span> <a class="link" href="https://prometheus.io/docs/introduction/overview/">prometheus.io</a></div>
-  <div class="step"><span class="step-num">45</span><b class="title">Terraform & ArgoCD</b> — <span class="why">makes infrastructure reproducible instead of memory-based.</span> <a class="link" href="https://developer.hashicorp.com/terraform/docs">developer.hashicorp.com</a></div>
-  <div class="milestone">🏁 Project 8: full monitoring/alerting added to your flagship system.</div>
-  <div class="step"><span class="step-num">46</span><b class="title">Portfolio integration</b> — <span class="why">one coherent story instead of two separate skillsets.</span></div>
+<div class="phase-banner p2" id="phase2">PHASE 2 — ML ENGINEERING <span class="tag">the back end: understanding what's underneath</span></div>
+
+<div class="step-block p2" id="step-27">
+  <div class="step-head">
+    <span class="step-num-badge">27</span>
+    <div><h3>NumPy</h3><p class="why">The array math underneath every ML library. <a href="https://numpy.org/doc/stable/user/quickstart.html">numpy.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">27.1</span> ndarray creation</li>
+    <li><span class="onum">27.2</span> Broadcasting rules</li>
+    <li><span class="onum">27.3</span> Matrix multiplication</li>
+    <li><span class="onum">27.4</span> linalg module</li>
+  </ol>
 </div>
+
+<div class="step-block p2" id="step-28">
+  <div class="step-head">
+    <span class="step-num-badge">28</span>
+    <div><h3>pandas</h3><p class="why">How you'll load and clean real datasets. <a href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas.pydata.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">28.1</span> DataFrame / Series basics</li>
+    <li><span class="onum">28.2</span> read_csv</li>
+    <li><span class="onum">28.3</span> .loc / .iloc filtering</li>
+    <li><span class="onum">28.4</span> groupby</li>
+    <li><span class="onum">28.5</span> Merges</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-29">
+  <div class="step-head">
+    <span class="step-num-badge">29</span>
+    <div><h3>Matplotlib</h3><p class="why">How you'll visualize what a model is actually doing. <a href="https://matplotlib.org/stable/tutorials/pyplot.html">matplotlib.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">29.1</span> pyplot interface</li>
+    <li><span class="onum">29.2</span> plot / scatter</li>
+    <li><span class="onum">29.3</span> Subplots</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-30">
+  <div class="step-head">
+    <span class="step-num-badge">30</span>
+    <div><h3>scikit-learn</h3><p class="why">Tested implementations to check your own code against. <a href="https://scikit-learn.org/stable/getting_started.html">scikit-learn.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">30.1</span> fit / predict / transform pattern</li>
+    <li><span class="onum">30.2</span> train_test_split</li>
+    <li><span class="onum">30.3</span> Core estimators (Linear/Logistic/RandomForest)</li>
+    <li><span class="onum">30.4</span> metrics module</li>
+    <li><span class="onum">30.5</span> Pipelines (chaining preprocessing + model)</li>
+    <li><span class="onum">30.6</span> Cross-validation & GridSearchCV</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-31">
+  <div class="step-head">
+    <span class="step-num-badge">31</span>
+    <div><h3>Linear algebra</h3><p class="why">The actual math behind the embeddings you used in Step 13. <a href="https://www.khanacademy.org/math/linear-algebra">khanacademy.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">31.1</span> Vectors as points/arrows in space</li>
+    <li><span class="onum">31.2</span> Matrix multiply as a transformation</li>
+    <li><span class="onum">31.3</span> Dot product</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-32">
+  <div class="step-head">
+    <span class="step-num-badge">32</span>
+    <div><h3>Probability & softmax</h3><p class="why">How a model turns raw scores into a "choice." <a href="https://www.khanacademy.org/math/statistics-probability/probability-library">khanacademy.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">32.1</span> Conditional probability</li>
+    <li><span class="onum">32.2</span> Logits → probability distribution</li>
+    <li><span class="onum">32.3</span> Softmax formula</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-33">
+  <div class="step-head">
+    <span class="step-num-badge">33</span>
+    <div><h3>Gradient descent</h3><p class="why">Literally how every model you use gets trained. <a href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">33.1</span> Derivative / slope</li>
+    <li><span class="onum">33.2</span> Gradient as direction of steepest increase</li>
+    <li><span class="onum">33.3</span> Learning rate</li>
+    <li><span class="onum">33.4</span> The update rule</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-34">
+  <div class="step-head">
+    <span class="step-num-badge">34</span>
+    <div><h3>Linear & logistic regression</h3><p class="why">The smallest complete example of "train a model," done by hand. <a href="https://www.coursera.org/specializations/machine-learning-introduction">coursera.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">34.1</span> Loss functions (MSE vs. cross-entropy)</li>
+    <li><span class="onum">34.2</span> Sigmoid function</li>
+    <li><span class="onum">34.3</span> Decision boundary</li>
+    <li><span class="onum">34.4</span> Implementing both from scratch</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-35">
+  <div class="step-head">
+    <span class="step-num-badge">35</span>
+    <div><h3>Decision trees & ensembles</h3><p class="why">Still the default choice for real-world tabular data. <a href="https://scikit-learn.org/stable/modules/ensemble.html">scikit-learn.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">35.1</span> Splitting on feature thresholds</li>
+    <li><span class="onum">35.2</span> Overfitting in a single tree</li>
+    <li><span class="onum">35.3</span> Random forests</li>
+    <li><span class="onum">35.4</span> Gradient boosting</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 5: a classical ML project on real data you already own.</div>
+
+<div class="step-block p2" id="step-36">
+  <div class="step-head">
+    <span class="step-num-badge">36</span>
+    <div><h3>Neural networks & backpropagation</h3><p class="why">The mechanism every deep learning model learns by. <a href="https://karpathy.ai/zero-to-hero.html">karpathy.ai</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">36.1</span> Weighted sum + activation function</li>
+    <li><span class="onum">36.2</span> Why nonlinearity matters</li>
+    <li><span class="onum">36.3</span> Chain rule on a computation graph</li>
+    <li><span class="onum">36.4</span> Autograd concept</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-37">
+  <div class="step-head">
+    <span class="step-num-badge">37</span>
+    <div><h3>Self-attention (Q/K/V)</h3><p class="why">The actual mechanism inside every LLM you've used since Step 10. <a href="https://jalammar.github.io/illustrated-transformer/">jalammar.github.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">37.1</span> Query / Key / Value vectors</li>
+    <li><span class="onum">37.2</span> Attention scores (dot product of Q and K)</li>
+    <li><span class="onum">37.3</span> Weighted average of Values</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-38">
+  <div class="step-head">
+    <span class="step-num-badge">38</span>
+    <div><h3>Transformer architecture</h3><p class="why">How attention gets stacked into a full model. <a href="https://jalammar.github.io/illustrated-gpt2/">jalammar.github.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">38.1</span> Multi-head attention</li>
+    <li><span class="onum">38.2</span> Positional encoding</li>
+    <li><span class="onum">38.3</span> Residual connections</li>
+    <li><span class="onum">38.4</span> Layer normalization</li>
+    <li><span class="onum">38.5</span> Encoder-decoder vs. decoder-only</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-39">
+  <div class="step-head">
+    <span class="step-num-badge">39</span>
+    <div><h3>PyTorch</h3><p class="why">How you'll actually build and train models, not just call APIs. <a href="https://pytorch.org/tutorials/beginner/basics/intro.html">pytorch.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">39.1</span> Tensors</li>
+    <li><span class="onum">39.2</span> Datasets & DataLoaders</li>
+    <li><span class="onum">39.3</span> autograd (.backward())</li>
+    <li><span class="onum">39.4</span> nn.Module (building models)</li>
+    <li><span class="onum">39.5</span> Training loop (forward → loss → backward → optimizer.step())</li>
+    <li><span class="onum">39.6</span> Saving & loading models (state_dict)</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-40">
+  <div class="step-head">
+    <span class="step-num-badge">40</span>
+    <div><h3>LoRA / PEFT</h3><p class="why">Cheaply fine-tune a model instead of full retraining. <a href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">huggingface.co</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">40.1</span> Low-rank decomposition idea</li>
+    <li><span class="onum">40.2</span> LoraConfig parameters</li>
+    <li><span class="onum">40.3</span> get_peft_model wrapping</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 6: a mini transformer from scratch, or a small model fine-tuned with LoRA.</div>
+
+<div class="step-block p2" id="step-41">
+  <div class="step-head">
+    <span class="step-num-badge">41</span>
+    <div><h3>Docker Compose & Kubernetes</h3><p class="why">Keeps your app running reliably, not just alive. <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">kubernetes.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">41.1</span> docker-compose.yml service definitions</li>
+    <li><span class="onum">41.2</span> Pod & Deployment (desired state, self-healing)</li>
+    <li><span class="onum">41.3</span> Service (stable network access)</li>
+    <li><span class="onum">41.4</span> ConfigMap & Secret (config/credentials)</li>
+    <li><span class="onum">41.5</span> Ingress (external routing)</li>
+    <li><span class="onum">41.6</span> kubectl apply / get / describe / logs</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-42">
+  <div class="step-head">
+    <span class="step-num-badge">42</span>
+    <div><h3>MLflow</h3><p class="why">Tracks exactly which model version is actually live. <a href="https://mlflow.org/docs/latest/index.html">mlflow.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">42.1</span> Logging params & metrics (tracking runs)</li>
+    <li><span class="onum">42.2</span> Experiments (grouping & comparing runs)</li>
+    <li><span class="onum">42.3</span> Model registry (registering & versioning)</li>
+    <li><span class="onum">42.4</span> Stage transitions (staging → production)</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-43">
+  <div class="step-head">
+    <span class="step-num-badge">43</span>
+    <div><h3>GitHub Actions (CI/CD)</h3><p class="why">Catches a broken change before it ships.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">43.1</span> Workflow YAML structure (workflows/jobs/steps)</li>
+    <li><span class="onum">43.2</span> Triggers (on: push / pull_request / schedule)</li>
+    <li><span class="onum">43.3</span> Secrets (encrypted env vars)</li>
+    <li><span class="onum">43.4</span> Running your eval script as a CI job</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 7: a model containerized, registered, and deployed with real CI/CD.</div>
+
+<div class="step-block p2" id="step-44">
+  <div class="step-head">
+    <span class="step-num-badge">44</span>
+    <div><h3>Prometheus & Grafana</h3><p class="why">Tells you when something's broken before your users do. <a href="https://prometheus.io/docs/introduction/overview/">prometheus.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">44.1</span> Metric types (counter / gauge / histogram)</li>
+    <li><span class="onum">44.2</span> Basic PromQL</li>
+    <li><span class="onum">44.3</span> Building a dashboard</li>
+    <li><span class="onum">44.4</span> Alert rules</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-45">
+  <div class="step-head">
+    <span class="step-num-badge">45</span>
+    <div><h3>Terraform & ArgoCD</h3><p class="why">Makes infrastructure reproducible instead of memory-based. <a href="https://developer.hashicorp.com/terraform/docs">developer.hashicorp.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">45.1</span> Providers & resource blocks (Terraform)</li>
+    <li><span class="onum">45.2</span> State file (source of truth)</li>
+    <li><span class="onum">45.3</span> Modules (reusable configs)</li>
+    <li><span class="onum">45.4</span> plan → apply → destroy workflow</li>
+    <li><span class="onum">45.5</span> ArgoCD Application resource</li>
+    <li><span class="onum">45.6</span> Sync policies (manual vs. automated GitOps)</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 8: full monitoring/alerting added to your flagship system.</div>
+
+<div class="step-block p2" id="step-46">
+  <div class="step-head">
+    <span class="step-num-badge">46</span>
+    <div><h3>Portfolio integration</h3><p class="why">One coherent story instead of two separate skillsets.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">46.1</span> Merging Phase 1 + Phase 2 narrative</li>
+    <li><span class="onum">46.2</span> Repositioning resume headline</li>
+  </ol>
+</div>
+
 <div class="checkpoint"><b>Complete:</b> a production-grade, monitored, agentic RAG system with a full eval suite — plus the math and infrastructure understanding underneath it. AI Engineer and ML Engineer, both covered.</div>
 
-<div class="risk-box">
+<div class="risk-box" id="risk">
   <b>One standing risk:</b> stopping at Phase 1 because it "works well enough" and never doing Phase 2. Put a real date on Step 27 now, before Phase 1 feels finished.
 </div>
 
 <footer class="foot">
-  Prepared for Hassan — pace: 5–10 hrs/week. 46 steps, zero to complete. Each link is where the depth lives — this page is just the order to do things in.
+  Prepared for Hassan — pace: 5–10 hrs/week. 46 modules, zero to complete. Each linked resource is where the depth lives — this page is the outline of what to cover and in what order.
 </footer>
 
+</main>
 </div>
 </body>
 </html>
