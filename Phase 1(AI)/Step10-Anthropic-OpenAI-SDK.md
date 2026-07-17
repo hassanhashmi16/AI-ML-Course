@@ -592,6 +592,28 @@ if tool_calls:
 
 ---
 
+---
+
+## Theory Summary
+
+Here's the mental model for LLM SDKs — the concepts that unify everything above.
+
+**LLMs are stateless text generators.** Every API call is a self-contained transaction. You send text (the `messages` array), the model generates text (token by token), and the connection closes. The model remembers nothing between calls. If you want multi-turn conversation, you send the entire history every time. This is why the `messages` array grows with each turn — it's the only way to give the model context.
+
+**Tokens are the currency.** You're billed by the token, not by the message. Input tokens (what you send) and output tokens (what the model generates) are priced differently but both cost money. `max_tokens` is a circuit breaker, not a target. The model stops generating when it decides it's done, but `max_tokens` prevents runaway generations from burning through your budget.
+
+**Temperature controls how "sharp" the probability distribution is.** At 0.0, the most likely next token always wins — deterministic, repeatable. At 1.0, the model samples from the full distribution — varied, creative. For any task where correctness matters (data extraction, classification, tool calling), use 0.0. For creative tasks, raise it. For most AI engineering pipelines, temperature stays at 0.0.
+
+**Streaming is about latency, not throughput.** The model generates the same number of tokens either way. Streaming just delivers them as they're produced instead of all at once. This is purely a UX improvement — the user sees text appear progressively instead of staring at a blank screen. The underlying SSE protocol is simple: an open HTTP connection, event name on one line, JSON data on the next, repeat until done.
+
+**Tool use is delegation, not execution.** The model never runs your tools. It outputs a structured request saying "I want to call this function with these arguments." Your code runs the function and feeds the result back. The model then incorporates that result into its response. This round-trip (request → tool call → result → response) is the fundamental pattern behind all agentic behavior.
+
+**The response format constraints your code.** Anthropic returns content as a list of blocks (text, tool_use, thinking — any or all in one turn). OpenAI returns content as a property on the message object, with tool_calls as a separate nested property. These structural differences drive all the little code differences between the two SDKs. Pick one as your primary and translate to the other when needed.
+
+**System prompts are special.** They're not just another user message. Anthropic treats them as a separate parameter with different attention weighting. OpenAI puts them in the messages array but marks them with `role: "system"`. Both give them privileged status — the model pays more attention to system instructions than to user text. Use system prompts for persistent instructions that should override user behavior.
+
+---
+
 ## What to Practice
 
 1. Get an API key, install the SDK, and make a single `messages.create()` call.
