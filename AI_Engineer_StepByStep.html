@@ -73,6 +73,7 @@
   details.p0 summary { background: #7c2d1233; color: var(--accent0); }
   details.p1 summary { background: #0c4a6e33; color: var(--accent1); }
   details.p2 summary { background: #3b076433; color: var(--accent2); }
+  details.p3 summary { background: #14532d33; color: var(--green); }
   details.phase-group .steplist { padding: 4px 4px 8px; }
   details.phase-group a {
     display: block;
@@ -114,6 +115,7 @@
   .phase-banner.p0 { background: linear-gradient(90deg,#7c2d12,#0f1115); border-left: 4px solid var(--accent0); }
   .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
   .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
+  .phase-banner.p3 { background: linear-gradient(90deg,#14532d,#0f1115); border-left: 4px solid var(--green); }
 
   .step-block {
     background: var(--card);
@@ -141,6 +143,7 @@
   }
   .p0 .step-num-badge { border-color: var(--accent0); color: var(--accent0); }
   .p2 .step-num-badge { border-color: var(--accent2); color: var(--accent2); }
+  .p3 .step-num-badge { border-color: var(--green); color: var(--green); }
   .step-head h3 { margin: 0 0 3px; font-size: 16px; }
   .step-head .why { color: var(--muted); font-size: 13.5px; margin: 0; }
   .step-head .why a { margin-left: 6px; white-space: nowrap; }
@@ -262,13 +265,32 @@
       <a href="#step-37">37. Self-attention (Q/K/V)</a>
       <a href="#step-38">38. Transformer architecture</a>
       <a href="#step-39">39. PyTorch</a>
-      <a href="#step-40">40. LoRA / PEFT</a>
-      <a href="#step-41">41. Docker Compose & K8s</a>
-      <a href="#step-42">42. MLflow</a>
-      <a href="#step-43">43. GitHub Actions (CI/CD)</a>
-      <a href="#step-44">44. Prometheus & Grafana</a>
-      <a href="#step-45">45. Terraform & ArgoCD</a>
-      <a href="#step-46">46. Portfolio integration</a>
+      <a href="#step-40">40. TensorFlow & Keras</a>
+      <a href="#step-41">41. LoRA / PEFT</a>
+      <a href="#step-42">42. Docker Compose & K8s</a>
+      <a href="#step-43">43. MLflow</a>
+      <a href="#step-44">44. GitHub Actions (CI/CD)</a>
+      <a href="#step-45">45. Prometheus & Grafana</a>
+      <a href="#step-46">46. Terraform & ArgoCD</a>
+    </div>
+  </details>
+
+  <details class="phase-group p3" open>
+    <summary>Phase 3 · Specialization</summary>
+    <div class="steplist">
+      <a href="#step-47">47. LLM-as-judge evals</a>
+      <a href="#step-48">48. Safety & red-teaming evals</a>
+      <a href="#step-49">49. Cost optimization</a>
+      <a href="#step-50">50. LLM production observability</a>
+      <a href="#step-51">51. Quantization</a>
+      <a href="#step-52">52. Knowledge distillation</a>
+      <a href="#step-53">53. vLLM & high-throughput serving</a>
+      <a href="#step-54">54. Speculative decoding & KV-cache</a>
+      <a href="#step-55">55. Vision-language models</a>
+      <a href="#step-56">56. Multimodal embeddings & retrieval</a>
+      <a href="#step-57">57. Audio pipelines</a>
+      <a href="#step-58">58. Building a multimodal agent</a>
+      <a href="#step-59">59. Portfolio integration</a>
     </div>
   </details>
 
@@ -282,9 +304,9 @@
 
 <header>
   <h1>AI Engineer + ML Engineer — Course Outline</h1>
-  <div class="sub">46 modules, zero to complete. Each module: what it is, why it matters, one resource, and its lesson outline.</div>
+  <div class="sub">59 modules, zero to complete. Each module: what it is, why it matters, one resource, and its lesson outline.</div>
   <div class="intro-block">
-    <b>How to use this:</b> go in order, top to bottom (or jump via the sidebar). Each module's outline (10.1, 10.2, ...) is the actual scope of that module — what to make sure you cover before moving on. Milestones (gold boxes) are the checkpoints that prove you're ready for the next module. AI Engineering = the front end: building products on top of AI. ML Engineering = the back end: understanding what's underneath. This runs through both, in order.
+    <b>How to use this:</b> go in order, top to bottom (or jump via the sidebar). Each module's outline (10.1, 10.2, ...) is the actual scope of that module — what to make sure you cover before moving on. Milestones (gold boxes) are the checkpoints that prove you're ready for the next module. AI Engineering = the front end: building products on top of AI. ML Engineering = the back end: understanding what's underneath. Phase 3 = the differentiation layer — evals/cost, inference systems, and multimodal — the depth most AI-engineer portfolios skip. This runs through all three, in order.
   </div>
 </header>
 
@@ -834,109 +856,290 @@
 <div class="step-block p2" id="step-40">
   <div class="step-head">
     <span class="step-num-badge">40</span>
+    <div><h3>TensorFlow & Keras</h3><p class="why">The other major framework — required at Google/enterprise MLOps shops; translating what you already know from PyTorch is fast. <a href="https://www.tensorflow.org/guide/keras">tensorflow.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">40.1</span> Tensors & NumPy interop</li>
+    <li><span class="onum">40.2</span> Keras Sequential vs. Functional API</li>
+    <li><span class="onum">40.3</span> tf.GradientTape (manual autodiff)</li>
+    <li><span class="onum">40.4</span> model.compile / fit / evaluate</li>
+    <li><span class="onum">40.5</span> Saving & loading (SavedModel / .keras)</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-41">
+  <div class="step-head">
+    <span class="step-num-badge">41</span>
     <div><h3>LoRA / PEFT</h3><p class="why">Cheaply fine-tune a model instead of full retraining. <a href="https://huggingface.co/docs/peft/main/en/conceptual_guides/lora">huggingface.co</a></p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">40.1</span> Low-rank decomposition idea</li>
-    <li><span class="onum">40.2</span> LoraConfig parameters</li>
-    <li><span class="onum">40.3</span> get_peft_model wrapping</li>
+    <li><span class="onum">41.1</span> Low-rank decomposition idea</li>
+    <li><span class="onum">41.2</span> LoraConfig parameters</li>
+    <li><span class="onum">41.3</span> get_peft_model wrapping</li>
   </ol>
 </div>
 
 <div class="milestone">🏁 Project 6: a mini transformer from scratch, or a small model fine-tuned with LoRA.</div>
 
-<div class="step-block p2" id="step-41">
-  <div class="step-head">
-    <span class="step-num-badge">41</span>
-    <div><h3>Docker Compose & Kubernetes</h3><p class="why">Keeps your app running reliably, not just alive. <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">kubernetes.io</a></p></div>
-  </div>
-  <ol class="outline">
-    <li><span class="onum">41.1</span> docker-compose.yml service definitions</li>
-    <li><span class="onum">41.2</span> Pod & Deployment (desired state, self-healing)</li>
-    <li><span class="onum">41.3</span> Service (stable network access)</li>
-    <li><span class="onum">41.4</span> ConfigMap & Secret (config/credentials)</li>
-    <li><span class="onum">41.5</span> Ingress (external routing)</li>
-    <li><span class="onum">41.6</span> kubectl apply / get / describe / logs</li>
-  </ol>
-</div>
-
 <div class="step-block p2" id="step-42">
   <div class="step-head">
     <span class="step-num-badge">42</span>
-    <div><h3>MLflow</h3><p class="why">Tracks exactly which model version is actually live. <a href="https://mlflow.org/docs/latest/index.html">mlflow.org</a></p></div>
+    <div><h3>Docker Compose & Kubernetes</h3><p class="why">Keeps your app running reliably, not just alive. <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">kubernetes.io</a></p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">42.1</span> Logging params & metrics (tracking runs)</li>
-    <li><span class="onum">42.2</span> Experiments (grouping & comparing runs)</li>
-    <li><span class="onum">42.3</span> Model registry (registering & versioning)</li>
-    <li><span class="onum">42.4</span> Stage transitions (staging → production)</li>
+    <li><span class="onum">42.1</span> docker-compose.yml service definitions</li>
+    <li><span class="onum">42.2</span> Pod & Deployment (desired state, self-healing)</li>
+    <li><span class="onum">42.3</span> Service (stable network access)</li>
+    <li><span class="onum">42.4</span> ConfigMap & Secret (config/credentials)</li>
+    <li><span class="onum">42.5</span> Ingress (external routing)</li>
+    <li><span class="onum">42.6</span> kubectl apply / get / describe / logs</li>
   </ol>
 </div>
 
 <div class="step-block p2" id="step-43">
   <div class="step-head">
     <span class="step-num-badge">43</span>
+    <div><h3>MLflow</h3><p class="why">Tracks exactly which model version is actually live. <a href="https://mlflow.org/docs/latest/index.html">mlflow.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">43.1</span> Logging params & metrics (tracking runs)</li>
+    <li><span class="onum">43.2</span> Experiments (grouping & comparing runs)</li>
+    <li><span class="onum">43.3</span> Model registry (registering & versioning)</li>
+    <li><span class="onum">43.4</span> Stage transitions (staging → production)</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-44">
+  <div class="step-head">
+    <span class="step-num-badge">44</span>
     <div><h3>GitHub Actions (CI/CD)</h3><p class="why">Catches a broken change before it ships.</p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">43.1</span> Workflow YAML structure (workflows/jobs/steps)</li>
-    <li><span class="onum">43.2</span> Triggers (on: push / pull_request / schedule)</li>
-    <li><span class="onum">43.3</span> Secrets (encrypted env vars)</li>
-    <li><span class="onum">43.4</span> Running your eval script as a CI job</li>
+    <li><span class="onum">44.1</span> Workflow YAML structure (workflows/jobs/steps)</li>
+    <li><span class="onum">44.2</span> Triggers (on: push / pull_request / schedule)</li>
+    <li><span class="onum">44.3</span> Secrets (encrypted env vars)</li>
+    <li><span class="onum">44.4</span> Running your eval script as a CI job</li>
   </ol>
 </div>
 
 <div class="milestone">🏁 Project 7: a model containerized, registered, and deployed with real CI/CD.</div>
 
-<div class="step-block p2" id="step-44">
-  <div class="step-head">
-    <span class="step-num-badge">44</span>
-    <div><h3>Prometheus & Grafana</h3><p class="why">Tells you when something's broken before your users do. <a href="https://prometheus.io/docs/introduction/overview/">prometheus.io</a></p></div>
-  </div>
-  <ol class="outline">
-    <li><span class="onum">44.1</span> Metric types (counter / gauge / histogram)</li>
-    <li><span class="onum">44.2</span> Basic PromQL</li>
-    <li><span class="onum">44.3</span> Building a dashboard</li>
-    <li><span class="onum">44.4</span> Alert rules</li>
-  </ol>
-</div>
-
 <div class="step-block p2" id="step-45">
   <div class="step-head">
     <span class="step-num-badge">45</span>
+    <div><h3>Prometheus & Grafana</h3><p class="why">Tells you when something's broken before your users do. <a href="https://prometheus.io/docs/introduction/overview/">prometheus.io</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">45.1</span> Metric types (counter / gauge / histogram)</li>
+    <li><span class="onum">45.2</span> Basic PromQL</li>
+    <li><span class="onum">45.3</span> Building a dashboard</li>
+    <li><span class="onum">45.4</span> Alert rules</li>
+  </ol>
+</div>
+
+<div class="step-block p2" id="step-46">
+  <div class="step-head">
+    <span class="step-num-badge">46</span>
     <div><h3>Terraform & ArgoCD</h3><p class="why">Makes infrastructure reproducible instead of memory-based. <a href="https://developer.hashicorp.com/terraform/docs">developer.hashicorp.com</a></p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">45.1</span> Providers & resource blocks (Terraform)</li>
-    <li><span class="onum">45.2</span> State file (source of truth)</li>
-    <li><span class="onum">45.3</span> Modules (reusable configs)</li>
-    <li><span class="onum">45.4</span> plan → apply → destroy workflow</li>
-    <li><span class="onum">45.5</span> ArgoCD Application resource</li>
-    <li><span class="onum">45.6</span> Sync policies (manual vs. automated GitOps)</li>
+    <li><span class="onum">46.1</span> Providers & resource blocks (Terraform)</li>
+    <li><span class="onum">46.2</span> State file (source of truth)</li>
+    <li><span class="onum">46.3</span> Modules (reusable configs)</li>
+    <li><span class="onum">46.4</span> plan → apply → destroy workflow</li>
+    <li><span class="onum">46.5</span> ArgoCD Application resource</li>
+    <li><span class="onum">46.6</span> Sync policies (manual vs. automated GitOps)</li>
   </ol>
 </div>
 
 <div class="milestone">🏁 Project 8: full monitoring/alerting added to your flagship system.</div>
 
-<div class="step-block p2" id="step-46">
+<div class="phase-banner p3" id="phase3">PHASE 3 — SPECIALIZATION <span class="tag">the layer that makes you distinct, not another generic AI/ML engineer</span></div>
+
+<div class="step-block p3" id="step-47">
   <div class="step-head">
-    <span class="step-num-badge">46</span>
-    <div><h3>Portfolio integration</h3><p class="why">One coherent story instead of two separate skillsets.</p></div>
+    <span class="step-num-badge">47</span>
+    <div><h3>LLM-as-judge evaluation design</h3><p class="why">"If your resume doesn't mention evals, hiring managers assume you shipped unevaluated features" — this is the actual 2026 screening bar. <a href="https://docs.confident-ai.com/docs/metrics-llm-evals">docs.confident-ai.com</a></p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">46.1</span> Merging Phase 1 + Phase 2 narrative</li>
-    <li><span class="onum">46.2</span> Repositioning resume headline</li>
+    <li><span class="onum">47.1</span> Rubric-based scoring criteria</li>
+    <li><span class="onum">47.2</span> Calibrating a judge against human labels</li>
+    <li><span class="onum">47.3</span> Avoiding self-preference & position bias</li>
+    <li><span class="onum">47.4</span> DeepEval / Braintrust for automated pipelines</li>
   </ol>
 </div>
 
-<div class="checkpoint"><b>Complete:</b> a production-grade, monitored, agentic RAG system with a full eval suite — plus the math and infrastructure understanding underneath it. AI Engineer and ML Engineer, both covered.</div>
+<div class="step-block p3" id="step-48">
+  <div class="step-head">
+    <span class="step-num-badge">48</span>
+    <div><h3>Safety & red-teaming evals</h3><p class="why">Adversarial testing that almost nobody on a generic RAG-bootcamp resume has actually done. <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">owasp.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">48.1</span> Prompt injection & jailbreak testing</li>
+    <li><span class="onum">48.2</span> OWASP LLM Top 10 risk categories</li>
+    <li><span class="onum">48.3</span> Automated red-teaming (Garak, PyRIT)</li>
+    <li><span class="onum">48.4</span> Building a safety regression suite</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-49">
+  <div class="step-head">
+    <span class="step-num-badge">49</span>
+    <div><h3>Cost optimization</h3><p class="why">"Most engineers can build a working RAG. Very few can cut a production bill in half while keeping quality flat." <a href="https://docs.claude.com/en/docs/build-with-claude/prompt-caching">docs.claude.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">49.1</span> Prompt / prefix caching mechanics</li>
+    <li><span class="onum">49.2</span> Model routing & cascading (cheap-model-first)</li>
+    <li><span class="onum">49.3</span> Semantic caching for near-duplicate queries</li>
+    <li><span class="onum">49.4</span> Batching & token-budget tracking</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-50">
+  <div class="step-head">
+    <span class="step-num-badge">50</span>
+    <div><h3>LLM production observability</h3><p class="why">Ties your evals (Step 47), cost tracking (Step 49), and Prometheus dashboards (Step 45) into one system that watches quality, not just uptime. <a href="https://docs.arize.com/phoenix">docs.arize.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">50.1</span> Token-cost & latency dashboards (P50/P99)</li>
+    <li><span class="onum">50.2</span> Model/version drift detection</li>
+    <li><span class="onum">50.3</span> Wiring evals into CI as a regression gate</li>
+    <li><span class="onum">50.4</span> Alerting on quality regressions, not just uptime</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 9: add a safety/red-team eval suite and a cost-routing layer to your flagship system, with a live dashboard showing token spend, latency, and eval scores over time.</div>
+
+<div class="step-block p3" id="step-51">
+  <div class="step-head">
+    <span class="step-num-badge">51</span>
+    <div><h3>Quantization</h3><p class="why">Fitting a real model onto real hardware — the systems side almost no AI-engineer track ever touches. <a href="https://huggingface.co/docs/transformers/main/en/quantization/overview">huggingface.co</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">51.1</span> INT8 / INT4 basics</li>
+    <li><span class="onum">51.2</span> AWQ vs. GPTQ</li>
+    <li><span class="onum">51.3</span> FP8 on modern GPUs</li>
+    <li><span class="onum">51.4</span> Measuring quality loss vs. throughput gain</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-52">
+  <div class="step-head">
+    <span class="step-num-badge">52</span>
+    <div><h3>Knowledge distillation</h3><p class="why">Train a small, cheap model to imitate a big expensive one — and know when it beats quantization outright. <a href="https://arxiv.org/abs/1503.02531">arxiv.org</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">52.1</span> Teacher-student training loop</li>
+    <li><span class="onum">52.2</span> Soft targets & temperature</li>
+    <li><span class="onum">52.3</span> Distillation vs. quantization — when each wins</li>
+    <li><span class="onum">52.4</span> Distilling for a narrow task, not general capability</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-53">
+  <div class="step-head">
+    <span class="step-num-badge">53</span>
+    <div><h3>vLLM & high-throughput serving</h3><p class="why">Inference is now ~2/3 of all AI compute — this is how production LLM serving actually works underneath the API you've been calling. <a href="https://docs.vllm.ai/">docs.vllm.ai</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">53.1</span> Continuous batching</li>
+    <li><span class="onum">53.2</span> PagedAttention (KV-cache memory management)</li>
+    <li><span class="onum">53.3</span> OpenAI-compatible server deployment</li>
+    <li><span class="onum">53.4</span> Throughput vs. latency tradeoffs at scale</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-54">
+  <div class="step-head">
+    <span class="step-num-badge">54</span>
+    <div><h3>Speculative decoding & KV-cache tuning</h3><p class="why">1.3–2x speedups out of a serving stack — the difference between a hobby deployment and a production one. <a href="https://docs.vllm.ai/en/latest/features/spec_decode.html">docs.vllm.ai</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">54.1</span> Draft model + verification (speculative decoding)</li>
+    <li><span class="onum">54.2</span> Acceptance rate & when it helps</li>
+    <li><span class="onum">54.3</span> Prefix caching at the serving layer</li>
+    <li><span class="onum">54.4</span> Benchmarking throughput before/after</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 10: self-host a quantized open-weight model behind vLLM and publish a benchmark (throughput, latency, cost per 1M tokens) against the hosted API you were using.</div>
+
+<div class="step-block p3" id="step-55">
+  <div class="step-head">
+    <span class="step-num-badge">55</span>
+    <div><h3>Vision-language models</h3><p class="why">Text-only agents are the baseline everyone already has — VLMs are how you read documents, screenshots, and UIs like a human. <a href="https://docs.claude.com/en/docs/build-with-claude/vision">docs.claude.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">55.1</span> Image understanding via VLM APIs</li>
+    <li><span class="onum">55.2</span> OCR & document understanding</li>
+    <li><span class="onum">55.3</span> Visual question answering</li>
+    <li><span class="onum">55.4</span> Chart & table reasoning from images</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-56">
+  <div class="step-head">
+    <span class="step-num-badge">56</span>
+    <div><h3>Multimodal embeddings & retrieval</h3><p class="why">Extends the RAG pipeline you built in Step 13 to search images and text in the same vector space. <a href="https://huggingface.co/docs/transformers/en/model_doc/siglip">huggingface.co</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">56.1</span> CLIP / SigLIP joint embedding space</li>
+    <li><span class="onum">56.2</span> Image-to-text and text-to-image search</li>
+    <li><span class="onum">56.3</span> Adding an image modality to pgvector (Step 15)</li>
+    <li><span class="onum">56.4</span> Evaluating multimodal retrieval quality</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-57">
+  <div class="step-head">
+    <span class="step-num-badge">57</span>
+    <div><h3>Audio pipelines</h3><p class="why">Voice is the modality your text-only agent can't touch — real-time transcription and speech are their own engineering problem. <a href="https://github.com/openai/whisper">github.com/openai/whisper</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">57.1</span> Speech-to-text (Whisper-style)</li>
+    <li><span class="onum">57.2</span> Text-to-speech</li>
+    <li><span class="onum">57.3</span> Streaming/real-time audio vs. batch transcription</li>
+    <li><span class="onum">57.4</span> Latency budget for a voice agent</li>
+  </ol>
+</div>
+
+<div class="step-block p3" id="step-58">
+  <div class="step-head">
+    <span class="step-num-badge">58</span>
+    <div><h3>Building a multimodal agent</h3><p class="why">Combining vision + audio + text tool calls into one agentic system — the project that doesn't look like everyone else's RAG chatbot. <a href="https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview">docs.claude.com</a></p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">58.1</span> Routing between vision/audio/text tool calls</li>
+    <li><span class="onum">58.2</span> Shared agent state across modalities</li>
+    <li><span class="onum">58.3</span> Cost/latency budget across a multimodal turn</li>
+    <li><span class="onum">58.4</span> Evaluating a multimodal agent end-to-end</li>
+  </ol>
+</div>
+
+<div class="milestone">🏁 Project 11 (capstone): a multimodal agent — sees, hears, and reads — deployed live, cost-optimized, safety-evaluated, and monitored. This is the project that's actually hard to copy.</div>
+
+<div class="checkpoint"><b>Phase 3 done:</b> depth in evals/safety/cost, inference systems, and multimodal — the layer that separates you from the generic RAG-and-agents portfolio.</div>
+
+<div class="step-block p3" id="step-59">
+  <div class="step-head">
+    <span class="step-num-badge">59</span>
+    <div><h3>Portfolio integration</h3><p class="why">One coherent story instead of three separate skillsets.</p></div>
+  </div>
+  <ol class="outline">
+    <li><span class="onum">59.1</span> Merging all three phases into one narrative</li>
+    <li><span class="onum">59.2</span> Repositioning resume headline</li>
+    <li><span class="onum">59.3</span> Leading with the differentiated project, not the RAG chatbot</li>
+  </ol>
+</div>
+
+<div class="checkpoint"><b>Complete:</b> a production-grade, monitored, agentic RAG system with a full eval suite — plus the math and infrastructure understanding underneath it — plus cost-optimized inference and multimodal capability most AI-engineer portfolios don't have. AI Engineer and ML Engineer, both covered — and distinct.</div>
 
 <div class="risk-box" id="risk">
-  <b>One standing risk:</b> stopping at Phase 1 because it "works well enough" and never doing Phase 2. Put a real date on Step 27 now, before Phase 1 feels finished.
+  <b>One standing risk:</b> stopping at Phase 1 because it "works well enough" and never doing Phase 2 or 3. Put a real date on Step 27 now, before Phase 1 feels finished.
 </div>
 
 <footer class="foot">
-  Prepared for Hassan — pace: 5–10 hrs/week. 46 modules, zero to complete. Each linked resource is where the depth lives — this page is the outline of what to cover and in what order.
+  Prepared for Hassan — pace: 5–10 hrs/week. 59 modules, zero to complete. Each linked resource is where the depth lives — this page is the outline of what to cover and in what order.
 </footer>
 
 </main>

@@ -1,0 +1,31 @@
+Sprint Review — 14 July 2026
+
+Attendees: Sarah, Mike, Ahmed, Priya
+
+Sarah: Alright, let's start the sprint review. Mike, what's the status on the auth service?
+
+Mike: Auth service is done. Deployed to staging on Friday. Still waiting on the security audit though. Should come through by Wednesday.
+
+Sarah: Good, keep me posted. Ahmed?
+
+Ahmed: The dashboard redesign is mostly there. Got the charts working, but the data export feature is lagging. I need another two days.
+
+Sarah: Can we push that to next sprint? I'd rather ship what's ready this week.
+
+Priya: I agree. No point holding the release for one feature.
+
+Ahmed: Fine by me. I'll document the API for the export endpoint so someone else can pick it up.
+
+Sarah: Priya, what about the notification system?
+
+Priya: It's done and tested. All three channels — email, slack, in-app. Ready to go.
+
+Sarah: Great. So we ship on Friday with auth, dashboard (without export), and notifications. Let's also schedule a session with the QA team to walk through the release checklist.
+
+Mike: I'll set that up for Thursday morning.
+
+Sarah: Perfect. One more thing — the client mentioned latency issues on the search endpoint. Ahmed, can you investigate?
+
+Ahmed: Yeah, I'll take a look. Might be an unoptimized query.
+
+Sarah: Ok. Let's wrap up. Action items — Mike follows up on security audit, Ahmed documents the export API, Priya preps the release notes, and I'll coordinate with QA.
