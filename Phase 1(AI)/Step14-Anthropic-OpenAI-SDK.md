@@ -1,4 +1,4 @@
-# Step 10: Anthropic / OpenAI SDK
+# Step 14: Anthropic / OpenAI SDK
 
 > **What it covers:** Client setup, messages format, streaming, and tool-use/function-calling — everything needed to call an LLM from code.
 

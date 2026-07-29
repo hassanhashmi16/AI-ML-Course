@@ -1,4 +1,4 @@
-# Step 12: asyncio
+# Step 17: asyncio
 
 > **What it covers:** async/await syntax, asyncio.gather, the event loop concept, and when NOT to use async — running multiple LLM calls at once instead of waiting one by one.
 

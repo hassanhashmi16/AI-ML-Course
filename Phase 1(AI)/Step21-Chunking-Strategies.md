@@ -1,4 +1,4 @@
-# Step 14: Chunking Strategies
+# Step 21: Chunking Strategies
 
 > **What it covers:** Why documents need to be split before embedding, the different chunking strategies, and how chunk overlap, splitter parameters, and strategy choice affect retrieval quality in a RAG system.
 
