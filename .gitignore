@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Environments
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Experiment tracking (Steps 68, 70)
+mlruns/
+wandb/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
