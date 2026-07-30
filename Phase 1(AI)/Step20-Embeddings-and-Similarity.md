@@ -1,4 +1,4 @@
-# Step 19: Embeddings & Similarity Search
+# Step 20: Embeddings & Similarity Search
 
 > **What it covers:** What an embedding vector is, cosine similarity, embedding APIs, and the limits of pure similarity search — how "search by meaning" actually works.
 
@@ -48,7 +48,7 @@ This isn't programmed explicitly. The model learned it from observing patterns i
 
 An embedding model is a neural network (usually a transformer) that takes text as input and outputs a vector. The training process teaches the model: "put similar texts at nearby points, different texts at distant points."
 
-The input text passes through the transformer layers, which process each token in context of all other tokens (this is self-attention, covered in depth in Step 57). The final layer pools the token representations into a single vector. That vector is the embedding.
+The input text passes through the transformer layers, which process each token in context of all other tokens (this is self-attention, covered in depth in Step 59). The final layer pools the token representations into a single vector. That vector is the embedding.
 
 The specific numerical values of the embedding depend on:
 - The model architecture (how many layers, how wide)
@@ -68,7 +68,7 @@ Any task that involves measuring text relatedness:
 | **Anomaly detection** | Flag texts that are far from all clusters |
 | **Deduplication** | Find texts whose embeddings are nearly identical |
 
-In the course roadmap, you'll use embeddings most heavily for **RAG** (Retrieval-Augmented Generation), starting Step 21.
+In the course roadmap, you'll use embeddings most heavily for **RAG** (Retrieval-Augmented Generation), starting Step 22.
 
 ---
 
@@ -291,7 +291,7 @@ OpenAI's embedding API supports up to 2048 inputs per call. The response order m
 
 ### Async for many texts
 
-When embedding thousands of texts, use the async client (connecting to Step 17):
+When embedding thousands of texts, use the async client (connecting to Step 18):
 
 ```python
 from openai import AsyncOpenAI
@@ -327,7 +327,7 @@ embeddings_json = json.dumps(embedding)
 import numpy as np
 np.save("embeddings.npy", np.array(embeddings))
 
-# Option 3: Database (you'll use pgvector in Step 23)
+# Option 3: Database (you'll use pgvector in Step 24)
 # INSERT INTO documents (text, embedding) VALUES ('...', '[0.01, -0.02, ...]')
 ```
 
@@ -405,11 +405,11 @@ This is why vector databases use **approximate nearest neighbor (ANN)** search i
 
 | Problem | Solution (upcoming step) |
 |---|---|
-| Negation, query intent | Query rewriting, multi-step retrieval (Step 36) |
-| Large document coverage | Chunking (Step 21) |
+| Negation, query intent | Query rewriting, multi-step retrieval (Step 38) |
+| Large document coverage | Chunking (Step 22) |
 | Ranking quality | Reranking with a cross-encoder |
-| Not factual | RAG with citations, RAGAS evaluation (Step 28) |
-| Slow with many vectors | HNSW index in pgvector (Step 23) |
+| Not factual | RAG with citations, RAGAS evaluation (Step 30) |
+| Slow with many vectors | HNSW index in pgvector (Step 24) |
 
 ### When similarity search IS the right tool
 
@@ -470,7 +470,7 @@ The alpha parameter controls the blend. Alpha = 0 means pure embedding search. A
 
 **Why hybrid works:** BM25 catches exact matches and rare terms. Embeddings catch synonyms and conceptual similarity. They fail in complementary ways — BM25 misses synonyms, embeddings miss rare exact matches. Together, they cover both failure modes.
 
-Many vector databases (including pgvector, which you'll use in Step 23) support hybrid search natively. You'll also see this pattern in production RAG systems: BM25 as a fast first pass, embeddings for reranking, or both combined.
+Many vector databases (including pgvector, which you'll use in Step 24) support hybrid search natively. You'll also see this pattern in production RAG systems: BM25 as a fast first pass, embeddings for reranking, or both combined.
 
 ### Why this matters for the roadmap
 
@@ -520,7 +520,7 @@ Once you know this, the behavior of embeddings makes sense:
 
 ### What you'll build toward
 
-In Step 62 (LoRA/PEFT), you'll learn to fine-tune embedding models for your specific domain. For now, the pre-trained APIs are sufficient.
+In Step 64 (LoRA/PEFT), you'll learn to fine-tune embedding models for your specific domain. For now, the pre-trained APIs are sufficient.
 
 ---
 
@@ -552,7 +552,7 @@ If you ever build your own embedding pipeline (e.g., from an open-source model),
 
 Very short texts (a single word) produce poor embeddings — there's not enough context for the model to disambiguate meaning. Very long texts (thousands of tokens) dilute the embedding because the model averages over many topics.
 
-The sweet spot is a paragraph or short document (50–500 tokens). For longer documents, you'll use chunking (Step 21).
+The sweet spot is a paragraph or short document (50–500 tokens). For longer documents, you'll use chunking (Step 22).
 
 ### Embedding multiple segments
 
@@ -651,7 +651,7 @@ The bi-encoder eliminates 99.95% of documents. The cross-encoder carefully ranks
 
 ### Why this matters now
 
-In Step 21 (chunking) and Step 23 (pgvector), you'll use a bi-encoder (embedding model) for retrieval. In Step 28 (RAGAS), you'll evaluate whether your retrieval is good enough. If it isn't, a cross-encoder reranker is your first improvement — and understanding this distinction now means you'll know why and when to add it.
+In Step 22 (chunking) and Step 24 (pgvector), you'll use a bi-encoder (embedding model) for retrieval. In Step 30 (RAGAS), you'll evaluate whether your retrieval is good enough. If it isn't, a cross-encoder reranker is your first improvement — and understanding this distinction now means you'll know why and when to add it.
 
 ---
 
@@ -687,7 +687,7 @@ The same idea — represent an entity as a vector — applies everywhere in ML:
 | **Graphs** | Nodes in a network | Find related entities |
 | **Audio** | Raw audio → spectrogram features | Music similarity, speech search |
 
-The math is the same across all domains. An image embedding and a text embedding are both vectors of floats. You can even map multiple modalities into the same embedding space (CLIP does this for images and text — Step 83 in Phase 3).
+The math is the same across all domains. An image embedding and a text embedding are both vectors of floats. You can even map multiple modalities into the same embedding space (CLIP does this for images and text — Step 85 in Phase 3).
 
 Understanding this now means: when you learn about text embeddings, you're learning about a general technique that applies everywhere in AI/ML.
 
@@ -716,7 +716,7 @@ Signs of OOD degradation:
 **Mitigations:**
 - Test your embedding model on a few known-relevant pairs before committing
 - For specialized domains (legal, medical, code), use domain-specific embedding models (e.g., `gte-small` for code, `BioBERT` for biomedical)
-- Consider fine-tuning if the gap is large (covered in Step 62)
+- Consider fine-tuning if the gap is large (covered in Step 64)
 
 ### How to evaluate and choose an embedding model (MTEB)
 
@@ -759,7 +759,7 @@ BERT: "river bank" → [0.23, -0.11, ...]    # financial context
 BERT: "savings bank" → [-0.08, 0.34, ...]  # financial context  
 ```
 
-This is why modern embeddings handle polysemy (words with multiple meanings) correctly. The attention mechanism (covered in Step 57) lets each word's representation be influenced by every other word in the text.
+This is why modern embeddings handle polysemy (words with multiple meanings) correctly. The attention mechanism (covered in Step 59) lets each word's representation be influenced by every other word in the text.
 
 **Why this matters for your understanding:**
 - Static embeddings are why old search systems confused "river bank" with "savings bank"

@@ -1,4 +1,4 @@
-# Step 16: Pydantic
+# Step 17: Pydantic
 
 > **What it covers:** BaseModel, Field(), validators, nested models, serialization, and structured output — turning LLM responses into validated, typed data.
 
