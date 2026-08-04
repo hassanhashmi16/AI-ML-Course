@@ -6,11 +6,13 @@ Whenever asked to create a study material `.md` file for any step:
 
 1. **Research beyond the roadmap's linked resources.** Check official docs, top university courses (Stanford CS224N/CS336, MIT 6.S191, etc.), benchmark papers, and production best practices. Identify all genuinely important concepts for the topic.
 
-2. **Cross-check one external curriculum.** `github.com/rohitg00/ai-engineering-from-scratch` (MIT-licensed, `phases/<NN>-<phase>/<NN>-<lesson>/docs/en.md`) covers most of these topics in depth. Read the matching lesson before writing — not to copy, but to catch anything the roadmap outline missed.
+2. **Spread research across multiple independent sources — never lean on one.** The roadmap's linked resource is a starting point, not the whole bibliography. Pull from at least 3–4 distinct sources, mixing categories: official docs, online courses (MIT Missing Semester, Harvard CS50, Coursera courses, etc.), big-university curricula, and production practice guides (e.g., Google's Shell Style Guide). Prefer sources from different institutions/organizations so one bias or gap can't dominate the file.
 
-3. **Update the roadmap HTML first.** Add any missing subtopics to `AI_Engineer_StepByStep.html` before writing the `.md` file. This keeps the roadmap comprehensive and prevents gaps from accumulating.
+3. **Cross-check one external curriculum.** `github.com/rohitg00/ai-engineering-from-scratch` (MIT-licensed, `phases/<NN>-<phase>/<NN>-<lesson>/docs/en.md`) covers most of these topics in depth. Read the matching lesson before writing — not to copy, but to catch anything the roadmap outline missed.
 
-4. **Only then write the step `.md` file** with all concepts included upfront.
+4. **Update the roadmap HTML first.** Add any missing subtopics to `AI_Engineer_StepByStep.html` before writing the `.md` file. This keeps the roadmap comprehensive and prevents gaps from accumulating.
+
+5. **Only then write the step `.md` file** with all concepts included upfront.
 
 ## File structure
 
