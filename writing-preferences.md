@@ -1,5 +1,9 @@
 # Writing Preferences (Reference for Future Sessions)
 
+## Purpose
+
+Every step file is training material for becoming an AI/ML engineer who stands out — not someone who can just recite definitions. This governs every other rule below: depth over checkbox-coverage, production best practices over toy-tutorial shortcuts, and a real shipped deliverable over passive notes. When in doubt about how deep to go, what to include, or where to draw a scope line, default to what a demanding tech lead or hiring interviewer would expect, not what's minimally sufficient to pass a quiz.
+
 ## CRITICAL: Research-first protocol
 
 Whenever asked to create a study material `.md` file for any step:
@@ -36,14 +40,26 @@ If a step genuinely has no artifact, say so explicitly and give a written exerci
 
 ## Length discipline
 
-Target **250–450 lines** per step file. Hard ceiling around 600.
+No fixed line-count target or ceiling. Length follows the topic: how much material is genuinely necessary, how many subtopics the roadmap outline lists, and how much unpacking a concept needs to actually land. A mechanically simple topic with few subtopics should be short; a dense one with six subtopics and real code for each will run long — that's not a flaw to fix.
 
-Longer isn't more thorough — past a point it's undigested research, and it slows the roadmap down for no retention gain. If a file is running over, the fix is compression (tables instead of prose, one good example instead of three), not deletion of concepts. If a topic genuinely needs more, that's a signal it should be two steps, and the roadmap should say so.
+What's not acceptable regardless of length: undigested research dumped in, three examples where one would do, prose where a table would compress the same information, or padding to hit a number. The fix for a bloated file is compression (tables instead of prose, one good example instead of three), not trimming concepts that are genuinely needed. If a topic is so large that even compressed it dwarfs every other step, that's a signal it should be split into two steps — but "this file is long" alone is never the reason to cut content.
+
+## Teaching structure: motivate before you name
+
+"The Problem" section at the top of the file is not the only place this applies — every subtopic needs its own miniature version of it. Don't open a subsection with the feature's definition and jump straight to the correct, clean code. Show the version *without* the feature first — the duplicated setup copy-pasted across two tests, the confusing failure, the slow or flaky test — so the reader feels the specific pain the feature exists to fix. Only then introduce the feature as the fix for what they just watched happen. A freeCodeCamp pytest course (youtu.be/cHYq1MRoyI0) does this relentlessly well: fixtures are motivated by first writing two tests that each build their own `Rectangle` object, pointing out the duplication out loud, and only then introducing `@pytest.fixture` as the fix — never fixture-first.
+
+Two more patterns worth stealing on purpose:
+
+- **Simple case before complex case, same mechanism.** When a feature applies to both an easy version and a hard version of the same problem (mocking a plain dict lookup vs. mocking a real HTTP call), demonstrate the easy one first to isolate the mechanism cleanly, then the hard one to show it scales.
+- **Make invisible framework behavior visible before stating the rule.** When the framework does something you can't see happening — fixture teardown order, setup/teardown call sequence — show it with a minimal trace (print statements, a deliberately-broken run) before or alongside the formal rule, don't just assert the rule in prose.
+
+Where it fits, close a subsection with a plain, practitioner-voice rule of thumb for *when* to actually reach for the feature — "use X when Y" reads as usable judgment; "X is used for Y" reads as trivia to memorize.
 
 ## Content rules
 
 - **Explain basics from scratch.** Even if something seems obvious to an experienced dev, if it's a new concept for me, explain it. Assume I'm learning it for the first time.
 - **Fundamentals first.** Theory and understanding are equally as important as code. Don't just throw code at me.
+- **Narrate the first non-trivial example of any new mechanism, line by line.** A code block followed by one summary paragraph works fine for syntax I already have a mental model for. It does not work for anything that feels like magic on first read — a decorator that hands a test function an argument nobody declared, a `yield` that splits a function into two runs, a name that resolves somewhere non-obvious. For the *first* example of a genuinely new mechanism in a section, walk through it like you're explaining it out loud: what this line does, why it's here, what breaks without it — the way a good in-person explanation would, not the way a reference doc would. Once that mental model is established, later examples in the same section can go back to terser code + a short note; don't re-narrate the same mechanism twice.
 - **Concise depth.** Explain more in fewer words. No fluff. No padding. Every sentence should carry weight.
 - **Technical accuracy.** Don't oversimplify to the point of being wrong. Use correct terminology, but explain it.
 - **Real documentation.** Scrape the actual docs/sites referenced in the roadmap. Don't write from memory alone. The source material is the authority.
