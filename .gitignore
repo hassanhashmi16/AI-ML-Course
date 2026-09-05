@@ -27,3 +27,6 @@ wandb/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Personal notes (not for the repo)
+linkedin-post-instructions.md
