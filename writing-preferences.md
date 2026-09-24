@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Every step file is training material for becoming an AI/ML engineer who stands out — not someone who can just recite definitions. This governs every other rule below: depth over checkbox-coverage, production best practices over toy-tutorial shortcuts, and a real shipped deliverable over passive notes. When in doubt about how deep to go, what to include, or where to draw a scope line, default to what a demanding tech lead or hiring interviewer would expect, not what's minimally sufficient to pass a quiz.
+Every step file is training material for becoming an AI/ML engineer who stands out — not someone who can just recite definitions. This governs every other rule below: depth over checkbox-coverage, production best practices over toy-tutorial shortcuts, and a real shipped deliverable over passive notes. "Depth" means covering every important concept and explaining it from first principles — assume the reader has never seen the topic before — while keeping the writing tight. The goal is concise *teaching*, not a terse reference summary: a first-time reader should be able to follow without prior knowledge. When in doubt about what to include or where to draw a scope line, default to what a demanding tech lead or hiring interviewer would expect, not what's minimally sufficient to pass a quiz.
 
 ## CRITICAL: Research-first protocol
 
@@ -22,7 +22,7 @@ Whenever asked to create a study material `.md` file for any step:
 
 Required sections, in this order:
 
-1. **The problem** — 3–6 sentences. What breaks, what's impossible, or what you'd do badly *without* this topic. Motivation before mechanism. Never open with a definition.
+1. **The problem** — 2–4 sentences. What breaks, what's impossible, or what you'd do badly *without* this topic. Motivation before mechanism. Never open with a definition.
 2. **Foundational Concepts** — what the concept is and why it matters, before any code.
 3. **The body** — one section per roadmap subtopic (15.1, 15.2, …), plus any additional concepts needed for real understanding.
 4. **Pitfalls** — the specific ways this goes wrong in practice, and how you'd notice. Not optional; this is where most of the real value is.
@@ -36,30 +36,39 @@ The `.md` file is not the output of a step. It's the notes taken while producing
 
 Each step ends with **one named artifact committed to the repo** — a script, a module, a benchmark, a test suite, a config, a small tool. Concrete enough to name in a single line, small enough to finish in one sitting, and reusable in a later project or step. Examples: a token-counting CLI, a retrieval eval harness over 20 hand-written queries, a reusable retry/backoff decorator, a Dockerfile that actually builds.
 
+Deliverable code is teaching material too: **comment it line-by-line (or close to it).** Every non-obvious line gets an inline comment saying what it does and why it's there, so the artifact reads like a walkthrough, not a code dump. Keep the *logic* minimal, and keep the `.md` explanation to a few lines — but inside the artifact itself, be generous with comments. A deliverable you can't reread a month later isn't reusable.
+
 If a step genuinely has no artifact, say so explicitly and give a written exercise instead — but treat that as the exception. A phase where nothing was built is a phase that didn't happen.
 
 ## Length discipline
 
-No fixed line-count target or ceiling. Length follows the topic: how much material is genuinely necessary, how many subtopics the roadmap outline lists, and how much unpacking a concept needs to actually land. A mechanically simple topic with few subtopics should be short; a dense one with six subtopics and real code for each will run long — that's not a flaw to fix.
+Teach from first principles, then compress. Every concept is explained as if the reader is meeting it for the first time — what it is, why it exists, and how it works — and *then* the prose is tightened. Concise means no padding, no fluff, no repeated examples; it does not mean reducing concepts to one-line summaries that only make sense if you already know them. A first-time reader should never have to infer what a term means from context.
 
-What's not acceptable regardless of length: undigested research dumped in, three examples where one would do, prose where a table would compress the same information, or padding to hit a number. The fix for a bloated file is compression (tables instead of prose, one good example instead of three), not trimming concepts that are genuinely needed. If a topic is so large that even compressed it dwarfs every other step, that's a signal it should be split into two steps — but "this file is long" alone is never the reason to cut content.
+Two rules hold at once:
 
-## Teaching structure: motivate before you name
+- **Cut padding, never understanding.** Remove repetition and filler; keep the intuition and the mechanism.
+- **One clear explanation beats three terse bullets.** When a concept is new, a short explanatory paragraph is better than a bullet that assumes the reader already knows it.
 
-"The Problem" section at the top of the file is not the only place this applies — every subtopic needs its own miniature version of it. Don't open a subsection with the feature's definition and jump straight to the correct, clean code. Show the version *without* the feature first — the duplicated setup copy-pasted across two tests, the confusing failure, the slow or flaky test — so the reader feels the specific pain the feature exists to fix. Only then introduce the feature as the fix for what they just watched happen. A freeCodeCamp pytest course (youtu.be/cHYq1MRoyI0) does this relentlessly well: fixtures are motivated by first writing two tests that each build their own `Rectangle` object, pointing out the duplication out loud, and only then introducing `@pytest.fixture` as the fix — never fixture-first.
+Bullets and tables are for reference and comparison (Quick Reference, decision tables) — not a substitute for explaining a concept in the body. A mechanically simple topic should still be short; a dense topic runs longer because there is genuinely more to teach, not because of padding. If a topic is so large that even compressed it dwarfs every other step, split it into two steps.
 
-Two more patterns worth stealing on purpose:
+## Teaching structure: motivate, then name
 
-- **Simple case before complex case, same mechanism.** When a feature applies to both an easy version and a hard version of the same problem (mocking a plain dict lookup vs. mocking a real HTTP call), demonstrate the easy one first to isolate the mechanism cleanly, then the hard one to show it scales.
-- **Make invisible framework behavior visible before stating the rule.** When the framework does something you can't see happening — fixture teardown order, setup/teardown call sequence — show it with a minimal trace (print statements, a deliberately-broken run) before or alongside the formal rule, don't just assert the rule in prose.
+"The Problem" section at the top motivates before any definition — the reader should feel the specific pain the concept exists to fix. Keep it tight (2–4 sentences), but don't skip it.
 
-Where it fits, close a subsection with a plain, practitioner-voice rule of thumb for *when* to actually reach for the feature — "use X when Y" reads as usable judgment; "X is used for Y" reads as trivia to memorize.
+Each subtopic gets its own miniature version of the same shape, in this order:
+
+1. **Motivate** — one line on what breaks or is hard without the concept.
+2. **Define** — what it actually is, in plain words, assuming no prior knowledge.
+3. **Show** — a minimal example or diagram that makes the definition concrete.
+4. **Rule of thumb** — close with "use X when Y," which reads as usable judgment rather than trivia to memorize.
+
+When a mechanism is genuinely new (a decorator handing an argument nobody declared, a `yield` splitting a function, a name that resolves non-obviously), explain what it does and why it's there in a sentence or two — enough that a first-time reader isn't left guessing. Later examples of the same mechanism can go back to terse code + a short note.
 
 ## Content rules
 
 - **Explain basics from scratch.** Even if something seems obvious to an experienced dev, if it's a new concept for me, explain it. Assume I'm learning it for the first time.
 - **Fundamentals first.** Theory and understanding are equally as important as code. Don't just throw code at me.
-- **Narrate the first non-trivial example of any new mechanism, line by line.** A code block followed by one summary paragraph works fine for syntax I already have a mental model for. It does not work for anything that feels like magic on first read — a decorator that hands a test function an argument nobody declared, a `yield` that splits a function into two runs, a name that resolves somewhere non-obvious. For the *first* example of a genuinely new mechanism in a section, walk through it like you're explaining it out loud: what this line does, why it's here, what breaks without it — the way a good in-person explanation would, not the way a reference doc would. Once that mental model is established, later examples in the same section can go back to terser code + a short note; don't re-narrate the same mechanism twice.
+- **Explain genuinely new concepts from scratch.** If a concept is new to the reader, a one-line summary is not enough — it reads like a reference for someone who already knows it. Give the definition, the intuition for why it exists, and a minimal example. Keep it concise, but never leave a first-time reader to infer meaning from context. Only after a concept is established do later examples go back to terse code + a short note.
 - **Concise depth.** Explain more in fewer words. No fluff. No padding. Every sentence should carry weight.
 - **Technical accuracy.** Don't oversimplify to the point of being wrong. Use correct terminology, but explain it.
 - **Real documentation.** Scrape the actual docs/sites referenced in the roadmap. Don't write from memory alone. The source material is the authority.
