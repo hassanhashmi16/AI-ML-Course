@@ -1,0 +1,212 @@
+{
+  "corpus": "Eight-thousanders",
+  "source": "English Wikipedia (CC BY-SA 4.0)",
+  "note": "Structured facts for the 14 peaks above 8,000 m. Heights follow the figures used on the Wikipedia 'Eight-thousander' article, so the structured data and the retrieved text agree. `aliases` matter later: they are what turns 'Savage Mountain' into 'K2' during query rewriting (Step 10).",
+  "peaks": [
+    {
+      "name": "Everest",
+      "wiki_title": "Mount Everest",
+      "aliases": ["Chomolungma", "Sagarmatha"],
+      "height_m": 8849,
+      "countries": ["Nepal", "China"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1953,
+        "date": "1953-05-29",
+        "climbers": ["Edmund Hillary", "Tenzing Norgay"]
+      }
+    },
+    {
+      "name": "K2",
+      "wiki_title": "K2",
+      "aliases": ["Chogori", "Godwin-Austen", "Savage Mountain"],
+      "height_m": 8611,
+      "countries": ["Pakistan", "China"],
+      "range": "Karakoram",
+      "first_ascent": {
+        "year": 1954,
+        "date": "1954-07-31",
+        "climbers": ["Achille Compagnoni", "Lino Lacedelli"]
+      }
+    },
+    {
+      "name": "Kangchenjunga",
+      "wiki_title": "Kangchenjunga",
+      "aliases": ["Kanchenjunga"],
+      "height_m": 8586,
+      "countries": ["Nepal", "India"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1955,
+        "date": "1955-05-25",
+        "climbers": ["George Band", "Joe Brown"]
+      }
+    },
+    {
+      "name": "Lhotse",
+      "wiki_title": "Lhotse",
+      "aliases": [],
+      "height_m": 8516,
+      "countries": ["Nepal", "China"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1956,
+        "date": "1956-05-18",
+        "climbers": ["Fritz Luchsinger", "Ernst Reiss"]
+      }
+    },
+    {
+      "name": "Makalu",
+      "wiki_title": "Makalu",
+      "aliases": [],
+      "height_m": 8485,
+      "countries": ["Nepal", "China"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1955,
+        "date": "1955-05-15",
+        "climbers": ["Jean Couzy", "Lionel Terray"]
+      }
+    },
+    {
+      "name": "Cho Oyu",
+      "wiki_title": "Cho Oyu",
+      "aliases": ["Qowowuyag"],
+      "height_m": 8188,
+      "countries": ["Nepal", "China"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1954,
+        "date": "1954-10-19",
+        "climbers": ["Joseph Joechler", "Pasang Dawa Lama", "Herbert Tichy"]
+      }
+    },
+    {
+      "name": "Dhaulagiri I",
+      "wiki_title": "Dhaulagiri",
+      "aliases": ["Dhaulagiri"],
+      "height_m": 8167,
+      "countries": ["Nepal"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1960,
+        "date": "1960-05-13",
+        "climbers": [
+          "Kurt Diemberger",
+          "Peter Diener",
+          "Nawang Dorje",
+          "Nima Dorje",
+          "Ernst Forrer",
+          "Albin Schelbert"
+        ]
+      }
+    },
+    {
+      "name": "Manaslu",
+      "wiki_title": "Manaslu",
+      "aliases": ["Kutang"],
+      "height_m": 8163,
+      "countries": ["Nepal"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1956,
+        "date": "1956-05-09",
+        "climbers": ["Toshio Imanishi", "Gyalzen Norbu"]
+      }
+    },
+    {
+      "name": "Nanga Parbat",
+      "wiki_title": "Nanga Parbat",
+      "aliases": ["Diamir", "Killer Mountain"],
+      "height_m": 8125,
+      "countries": ["Pakistan"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1953,
+        "date": "1953-07-03",
+        "climbers": ["Hermann Buhl"]
+      }
+    },
+    {
+      "name": "Annapurna I",
+      "wiki_title": "Annapurna I",
+      "aliases": ["Annapurna"],
+      "height_m": 8091,
+      "countries": ["Nepal"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1950,
+        "date": "1950-06-03",
+        "climbers": ["Maurice Herzog", "Louis Lachenal"]
+      }
+    },
+    {
+      "name": "Gasherbrum I",
+      "wiki_title": "Gasherbrum I",
+      "aliases": ["Hidden Peak", "K5"],
+      "height_m": 8080,
+      "countries": ["Pakistan", "China"],
+      "range": "Karakoram",
+      "first_ascent": {
+        "year": 1958,
+        "date": "1958-07-05",
+        "climbers": ["Andrew Kauffman", "Pete Schoening"]
+      }
+    },
+    {
+      "name": "Broad Peak",
+      "wiki_title": "Broad Peak",
+      "aliases": ["Falchan Kangri", "K3"],
+      "height_m": 8051,
+      "countries": ["Pakistan", "China"],
+      "range": "Karakoram",
+      "first_ascent": {
+        "year": 1957,
+        "date": "1957-06-09",
+        "climbers": [
+          "Fritz Wintersteller",
+          "Marcus Schmuck",
+          "Kurt Diemberger",
+          "Hermann Buhl"
+        ]
+      }
+    },
+    {
+      "name": "Gasherbrum II",
+      "wiki_title": "Gasherbrum II",
+      "aliases": ["K4"],
+      "height_m": 8034,
+      "countries": ["Pakistan", "China"],
+      "range": "Karakoram",
+      "first_ascent": {
+        "year": 1956,
+        "date": "1956-07-07",
+        "climbers": ["Fritz Moravec", "Josef Larch", "Hans Willenpart"]
+      }
+    },
+    {
+      "name": "Shishapangma",
+      "wiki_title": "Shishapangma",
+      "aliases": ["Gosainthan", "Xixabangma"],
+      "height_m": 8027,
+      "countries": ["China"],
+      "range": "Himalaya",
+      "first_ascent": {
+        "year": 1964,
+        "date": "1964-05-02",
+        "climbers": [
+          "Xu Jing",
+          "Chang Chun-yen",
+          "Wang Fuzhou",
+          "Chen San",
+          "Cheng Tien-liang",
+          "Wu Tsung-yue",
+          "Sodnam Doji",
+          "Migmar Trashi",
+          "Doji",
+          "Yonten"
+        ]
+      }
+    }
+  ]
+}

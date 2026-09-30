@@ -1,0 +1,25 @@
+# --- AI: generation + embeddings ---
+# Same SDK Project 1 used. `google-generativeai` wraps both the chat model
+# (Step 13) and the embedding model (Step 6) behind one client.
+google-generativeai
+
+# --- Structured output ---
+# Validates the generator's answer + citations shape (Step 13), like Project 1.
+pydantic
+
+# --- Configuration ---
+python-dotenv
+
+# --- Postgres + pgvector ---
+# psycopg 3 is the modern driver. pgvector adds a Python type adapter so you
+# can pass and read vector columns as plain lists (Step 5 onward).
+psycopg[binary]
+pgvector
+
+# --- Reranking ---
+# Hosted cross-encoder (Step 11). API, not local, so there is no torch install.
+cohere
+
+# --- Web API ---
+# FastAPI + uvicorn in a single install (Step 14).
+fastapi[standard]

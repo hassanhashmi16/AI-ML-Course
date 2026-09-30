@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Secrets. `.env.example` is the template and IS committed; real keys are not.
+.env
+.env.*
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Fetched corpus: reproducible with `python -m ingest.fetch_corpus`.
+# Delete this line if you'd rather commit the raw article text for offline runs.
+data/raw/
