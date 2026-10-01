@@ -1,0 +1,42 @@
+# Step 5 deliverable: Postgres + pgvector, as a throwaway local service.
+#
+#   docker compose up -d        start it (first run also creates the schema)
+#   docker compose ps           check it is healthy
+#   docker compose down         stop it (keeps the data volume)
+#   docker compose down -v      stop it AND delete the data
+#
+# Why Docker instead of installing Postgres directly: pgvector is an extension
+# you have to compile or install separately, and getting that wrong is a rabbit
+# hole. The image below ships Postgres with pgvector already built in, so the
+# only thing you install is Docker.
+
+services:
+  db:
+    # The tag pins the Postgres major version. pgvector publishes matching
+    # images (pg16, pg17, ...). Pin it so an upgrade is a decision, not a surprise.
+    image: pgvector/pgvector:pg17
+    container_name: ragdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ragdb
+    ports:
+      # host:container. The host port matches the port in DATABASE_URL.
+      - "5432:5432"
+    volumes:
+      # Named volume: the data survives `docker compose down` (but not `down -v`).
+      - rag_pgdata:/var/lib/postgresql/data
+      # Anything in this directory is executed by Postgres on FIRST startup only,
+      # while the data directory is still empty. That is how the schema applies
+      # itself with no manual step. Read-only so the container cannot edit it.
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      # `docker compose up --wait` blocks until this reports healthy, which is
+      # how the scripts know the database is actually ready to accept queries.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ragdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  rag_pgdata:
