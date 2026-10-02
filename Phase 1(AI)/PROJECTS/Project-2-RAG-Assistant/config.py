@@ -56,10 +56,18 @@ DATABASE_URL = os.getenv(
 # get quietly worse. Verify these names against the current docs before relying
 # on them (names pinned as of September 2026).
 # ---------------------------------------------------------------------------
-GEMINI_MODEL = "gemini-2.0-flash"          # generation; matches Project 1
-EMBED_MODEL = "models/text-embedding-004"  # Gemini embeddings (768-dim)
-EMBED_DIM = 768                            # MUST match vector(N) in db/schema.sql
-COHERE_RERANK_MODEL = "rerank-v3.5"        # hosted cross-encoder reranker
+GEMINI_MODEL = "gemini-3.8-flash"      # generation (current flash, verified Sep 2026)
+EMBED_MODEL = "gemini-embedding-001"   # embeddings; 3072-dim native, truncated to EMBED_DIM
+EMBED_DIM = 768                        # MUST match vector(N) in db/schema.sql
+COHERE_RERANK_MODEL = "rerank-v3.5"    # hosted cross-encoder reranker
+
+
+# ---------------------------------------------------------------------------
+# Embedding
+# Chunks per embedding request. Kept modest on purpose: a request also has a
+# token budget, and ~20 chunks of ~500 tokens stays comfortably under it.
+# ---------------------------------------------------------------------------
+EMBED_BATCH_SIZE = 20
 
 
 # ---------------------------------------------------------------------------

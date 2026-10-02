@@ -1,7 +1,8 @@
 # --- AI: generation + embeddings ---
-# Same SDK Project 1 used. `google-generativeai` wraps both the chat model
-# (Step 13) and the embedding model (Step 6) behind one client.
-google-generativeai
+# `google-genai` is the maintained Google SDK. The old `google-generativeai`
+# package is end-of-life. One client covers both the chat model (Step 13) and
+# the embedding model (Step 6).
+google-genai
 
 # --- Structured output ---
 # Validates the generator's answer + citations shape (Step 13), like Project 1.
