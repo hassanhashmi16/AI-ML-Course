@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import sys
 
-from config import RAW_DIR
+from config import PEAKS_JSON, RAW_DIR
 from ingest.chunk import chunk_section
 from ingest.embed import embed_texts
 from ingest.parse import parse_document
@@ -29,6 +29,7 @@ from ingest.store import (
     file_hash,
     get_document,
     insert_chunks,
+    load_peaks,
     upsert_document,
 )
 
@@ -91,13 +92,19 @@ def main() -> None:
             tally[action] += 1
             print(f"{action:8} {path.name:<28} {chunk_count:>4} chunks")
 
+        # The structured facts live in peaks.json; load them into the peaks table
+        # too, so Step 12 can answer exact-fact questions without touching retrieval.
+        peaks = json.loads(PEAKS_JSON.read_text(encoding="utf-8"))["peaks"]
+        peak_count = load_peaks(conn, peaks)
+        conn.commit()
+
         documents, chunks = counts(conn)
     finally:
         conn.close()
 
     print("-" * 46)
     print(f"added {tally['added']}, updated {tally['updated']}, skipped {tally['skipped']}")
-    print(f"database now holds {documents} documents and {chunks} chunks")
+    print(f"database now holds {documents} documents, {chunks} chunks, {peak_count} peaks")
 
 
 if __name__ == "__main__":

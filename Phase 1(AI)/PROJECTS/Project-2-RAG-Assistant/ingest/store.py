@@ -130,3 +130,86 @@ def counts(conn: psycopg.Connection) -> tuple[int, int]:
         cur.execute("SELECT count(*) FROM chunks")
         chunks = cur.fetchone()[0]
     return documents, chunks
+
+
+def load_peaks(conn: psycopg.Connection, peaks: list[dict]) -> int:
+    """Upsert the structured facts (from data/peaks.json) into the peaks table.
+
+    Idempotent via ON CONFLICT (name): re-running updates rows in place instead of
+    duplicating them. This table is what Step 12 answers exact-fact questions from
+    ("how tall is K2?") without going anywhere near retrieval.
+    """
+    with conn.cursor() as cur:
+        for peak in peaks:
+            ascent = peak.get("first_ascent") or {}
+            cur.execute(
+                """
+                INSERT INTO peaks
+                    (name, aliases, height_m, countries, mountain_range,
+                     first_ascent_year, first_ascent_date, first_ascenters)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (name) DO UPDATE SET
+                    aliases           = EXCLUDED.aliases,
+                    height_m          = EXCLUDED.height_m,
+                    countries         = EXCLUDED.countries,
+                    mountain_range    = EXCLUDED.mountain_range,
+                    first_ascent_year = EXCLUDED.first_ascent_year,
+                    first_ascent_date = EXCLUDED.first_ascent_date,
+                    first_ascenters   = EXCLUDED.first_ascenters
+                """,
+                (
+                    peak["name"],
+                    peak.get("aliases", []),
+                    peak["height_m"],
+                    peak.get("countries", []),
+                    peak.get("range"),
+                    ascent.get("year"),
+                    ascent.get("date"),
+                    ascent.get("climbers", []),
+                ),
+            )
+    return len(peaks)
+
+
+def list_peaks(conn: psycopg.Connection) -> list[dict]:
+    """Every peak, tallest first. Used by the API's GET /peaks."""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT name, height_m, countries, mountain_range, first_ascent_year
+            FROM peaks ORDER BY height_m DESC
+            """
+        )
+        rows = cur.fetchall()
+    return [
+        {
+            "name": row[0],
+            "height_m": int(row[1]),
+            "countries": row[2],
+            "range": row[3],
+            "first_ascent_year": row[4],
+        }
+        for row in rows
+    ]
+
+
+def log_query(
+    conn: psycopg.Connection,
+    *,
+    question: str,
+    used_table: bool,
+    retrieved_ids: list[int],
+    latency_ms: int,
+    answer_chars: int,
+) -> None:
+    """Record one answered question. The future monitoring hook (Project 8)."""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO query_log
+                (question, used_table, retrieved_ids, latency_ms, answer_chars)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (question, used_table, retrieved_ids, latency_ms, answer_chars),
+        )
+    conn.commit()

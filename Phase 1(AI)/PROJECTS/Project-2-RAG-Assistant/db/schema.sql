@@ -94,3 +94,19 @@ CREATE INDEX IF NOT EXISTS chunks_tsv_idx
 -- re-ingest (Step 7).
 CREATE INDEX IF NOT EXISTS chunks_document_id_idx
     ON chunks (document_id);
+
+-- ---------------------------------------------------------------------------
+-- query_log: one row per question the API answers.
+-- No feature reads this yet. It is the hook that Project 8's monitoring attaches
+-- to: latency, spend, and drift over time all come from a table like this. Writing
+-- it now means monitoring is a later add-on, not a retrofit.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS query_log (
+    id            bigserial PRIMARY KEY,
+    asked_at      timestamptz NOT NULL DEFAULT now(),
+    question      text        NOT NULL,
+    used_table    boolean     NOT NULL,        -- answered from peaks, or via RAG
+    retrieved_ids int[]       NOT NULL DEFAULT '{}',
+    latency_ms    int,
+    answer_chars  int
+);

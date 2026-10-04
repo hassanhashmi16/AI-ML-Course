@@ -56,7 +56,11 @@ DATABASE_URL = os.getenv(
 # get quietly worse. Verify these names against the current docs before relying
 # on them (names pinned as of September 2026).
 # ---------------------------------------------------------------------------
-GEMINI_MODEL = "gemini-3.8-flash"      # generation (current flash, verified Sep 2026)
+# `flash-latest` is a rolling alias, not a frozen version. The frozen
+# `gemini-3.8-flash` started returning 503 (overloaded) for structured output; the
+# alias sidesteps that by always pointing at a served model. Trade-off: the alias
+# can move under you, so a formal benchmark should pin what it resolves to.
+GEMINI_MODEL = "gemini-flash-latest"
 EMBED_MODEL = "gemini-embedding-001"   # embeddings; 3072-dim native, truncated to EMBED_DIM
 EMBED_DIM = 768                        # MUST match vector(N) in db/schema.sql
 COHERE_RERANK_MODEL = "rerank-v3.5"    # hosted cross-encoder reranker
