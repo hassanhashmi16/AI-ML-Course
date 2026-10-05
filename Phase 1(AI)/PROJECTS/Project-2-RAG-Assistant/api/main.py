@@ -109,6 +109,16 @@ def ask(body: Question) -> dict:
     }
 
 
+def _explain(exc: Exception) -> str:
+    """A short, honest message for a failure that happened mid-stream."""
+    text = str(exc)
+    if "RESOURCE_EXHAUSTED" in text or "429" in text:
+        return "The model is rate-limited right now. Try again shortly."
+    if "UNAVAILABLE" in text or "503" in text:
+        return "The model is busy right now. Try again shortly."
+    return "The answer could not be generated. Try again."
+
+
 @app.post("/ask-stream")
 def ask_stream(body: Question) -> StreamingResponse:
     """Stream the answer as newline-delimited JSON (one object per line).
@@ -124,18 +134,32 @@ def ask_stream(body: Question) -> StreamingResponse:
     """
 
     def events():
-        for kind, payload in stream_answer(body.question):
-            if kind == "sources":
-                yield json.dumps(
-                    {
-                        "type": "sources",
-                        "sources": [
-                            {"source": s.source, "section": s.section} for s in payload
-                        ],
-                    }
-                ) + "\n"
-            else:
-                yield json.dumps({"type": "token", "text": payload}) + "\n"
+        # The 200 status was already sent before this runs, so an exception here
+        # cannot become an HTTP error. Unhandled, it just aborts the connection and
+        # the browser can only report a bare "network error". Catching it lets us
+        # send a real message the UI can show instead.
+        try:
+            for kind, payload in stream_answer(body.question):
+                if kind == "sources":
+                    yield json.dumps(
+                        {
+                            "type": "sources",
+                            "sources": [
+                                {
+                                    "source": s.source,
+                                    "section": s.section,
+                                    # A short excerpt so the UI can show what the
+                                    # answer was grounded in, not just a label.
+                                    "preview": s.preview(150),
+                                }
+                                for s in payload
+                            ],
+                        }
+                    ) + "\n"
+                else:
+                    yield json.dumps({"type": "token", "text": payload}) + "\n"
+        except Exception as exc:  # noqa: BLE001 - reported as an event, not a crash
+            yield json.dumps({"type": "error", "message": _explain(exc)}) + "\n"
         yield json.dumps({"type": "done"}) + "\n"
 
     return StreamingResponse(events(), media_type="application/x-ndjson")

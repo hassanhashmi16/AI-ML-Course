@@ -1,0 +1,20 @@
+{"question": "which eight-thousander is the deadliest?", "relevant": [["list-eight-thousanders.txt", "Climbing history > Deadliest"]]}
+{"question": "what is the fatality rate on Annapurna?", "relevant": [["annapurna-i.txt", "Climbing history > Fatality rate"]]}
+{"question": "who first climbed Annapurna?", "relevant": [["annapurna-i.txt", "Climbing history > Climbing expeditions"]]}
+{"question": "which was the first eight-thousander to be climbed?", "relevant": [["annapurna-i.txt", "Climbing history > Climbing expeditions"], ["list-eight-thousanders.txt", "Climbing history > First ascents"]]}
+{"question": "how difficult are the climbing routes on K2?", "relevant": [["k2.txt", "Climbing routes and difficulties"]]}
+{"question": "where is K2 located?", "relevant": [["k2.txt", "Geographical setting"]]}
+{"question": "is supplemental oxygen used on K2?", "relevant": [["k2.txt", "Climbing routes and difficulties > Use of supplemental oxygen"]]}
+{"question": "give me the first ascents of the eight-thousanders", "relevant": [["list-eight-thousanders.txt", "Climbing history > First ascents"]]}
+{"question": "who made the first ascent of Nanga Parbat?", "relevant": [["nanga-parbat.txt", "Climbing history > First ascent"]]}
+{"question": "how tall is Gasherbrum I?", "relevant": [["gasherbrum-i.txt", "Introduction"]]}
+{"question": "what happened on Gasherbrum I in 1958?", "relevant": [["gasherbrum-i.txt", "Timeline"]]}
+{"question": "what were the winter expeditions on K2?", "relevant": [["k2.txt", "Climbing history > Winter expeditions"]]}
+{"question": "what are the other routes on K2?", "relevant": [["k2.txt", "Climbing routes and difficulties > Other routes"]]}
+{"question": "what were the early attempts on K2?", "relevant": [["k2.txt", "Climbing history > Early attempts"]]}
+{"question": "how does Everest compare in height to the others?", "relevant": [["everest.txt", "Surveys > Comparisons"], ["everest.txt", "Introduction"]]}
+{"question": "is Savage Mountain harder than Everest?", "relevant": [["k2.txt", "Introduction"]]}
+{"question": "which mountain is also called Chomolungma?", "relevant": [["everest.txt", "Name"]]}
+{"question": "Gosainthan is another name for which peak?", "relevant": [["shishapangma.txt", "Name"]]}
+{"question": "which eight-thousander is 8,586 metres high?", "relevant": [["kangchenjunga.txt", "Geography"], ["kangchenjunga.txt", "Introduction"]]}
+{"question": "why is Nanga Parbat known as the Killer Mountain?", "relevant": [["nanga-parbat.txt", "Introduction"]]}

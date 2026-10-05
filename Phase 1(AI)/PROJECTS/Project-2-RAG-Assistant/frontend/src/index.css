@@ -1,0 +1,111 @@
+/* Design tokens: "rock and snow".
+ *
+ * The black is not pure black. It is a cold basalt - a near-neutral with a
+ * whisper of blue chroma (hue 250) so it reads as stone, and so the greys feel
+ * related to each other instead of empty. The light is snow, carrying the same
+ * faint cast. Everything is OKLCH, where equal lightness steps look equal.
+ *
+ * No hue anywhere else. This surface is genuinely monochrome: hierarchy comes
+ * from lightness, weight, and space, never from colour.
+ */
+
+:root {
+  /* Stone scale (dark -> light) */
+  --rock-950: oklch(0.16 0.012 250);
+  --rock-900: oklch(0.21 0.012 250); /* the rock black: ink + primary action */
+  --rock-700: oklch(0.34 0.01 250);
+  --rock-500: oklch(0.52 0.008 250);
+  --rock-400: oklch(0.64 0.007 250);
+  --rock-200: oklch(0.8 0.006 250);
+
+  /* Snow scale */
+  --snow: oklch(0.973 0.004 250); /* page canvas */
+  --snow-raised: oklch(0.998 0.002 250); /* surfaces */
+
+  --line: oklch(0.89 0.005 250);
+  --line-strong: oklch(0.8 0.007 250);
+
+  /* Semantic roles */
+  --canvas: var(--snow);
+  --surface: var(--snow-raised);
+  --ink: var(--rock-900);
+  --ink-soft: var(--rock-700);
+  --muted: var(--rock-500);
+  --faint: var(--rock-400);
+
+  --font-ui: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* 1-4-9 rhythm: every spacing decision is a multiple of 4, 16, or 36 */
+  --s1: 4px;
+  --s4: 16px;
+  --s9: 36px;
+
+  --measure: 66ch;
+  --radius: 2px; /* rock is angular; keep corners close to square */
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Uppercase mono labels, like instrument readouts: ELEVATION, SOURCES */
+.label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Focus is architecture, not decoration: visible, offset, consistent. */
+:focus-visible {
+  outline: 2px solid var(--rock-900);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* Motion only where it explains a state change, and never against the user's wish. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

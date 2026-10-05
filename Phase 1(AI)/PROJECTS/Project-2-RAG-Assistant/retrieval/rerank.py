@@ -23,6 +23,8 @@ only cares that it takes (query, candidates, top_k) and returns reordered chunks
 """
 from __future__ import annotations
 
+import time
+
 import cohere
 
 from config import COHERE_API_KEY, COHERE_RERANK_MODEL, RERANK_K
@@ -31,6 +33,10 @@ from retrieval.results import Retrieved
 # The .env.example template value. Treated as "not configured" so the error
 # message is helpful instead of a confusing 401 from the API.
 _PLACEHOLDER = "your_cohere_key_here"
+
+# The trial key allows only 10 rerank calls a minute, so a 429 here means "wait a
+# moment", not "give up". Four attempts with a doubling delay ride that out.
+_MAX_ATTEMPTS = 4
 
 
 def rerank(
@@ -53,12 +59,21 @@ def rerank(
         )
 
     client = cohere.ClientV2(api_key=COHERE_API_KEY)
-    response = client.rerank(
-        model=COHERE_RERANK_MODEL,
-        query=query,
-        documents=[candidate.content for candidate in candidates],
-        top_n=top_k,
-    )
+    delay = 6.0
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
+        try:
+            response = client.rerank(
+                model=COHERE_RERANK_MODEL,
+                query=query,
+                documents=[candidate.content for candidate in candidates],
+                top_n=top_k,
+            )
+            break
+        except Exception as exc:  # noqa: BLE001 - re-raised unless rate limited
+            if attempt == _MAX_ATTEMPTS or getattr(exc, "status_code", None) != 429:
+                raise
+            time.sleep(delay)
+            delay *= 2
 
     # `result.index` points back into the ORIGINAL candidate list, so we map it to
     # the Retrieved object and overwrite its score with the cross-encoder's

@@ -78,6 +78,11 @@ def rewrite_query(question: str) -> list[str]:
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 response_schema=Rewrites,
+                # Deterministic. Without this the model returns slightly different
+                # queries each run, so the downstream search results move on their
+                # own and no two runs (or evals) are comparable. Rewriting is an
+                # extraction task, not a creative one.
+                temperature=0,
             ),
         )
         parsed = getattr(response, "parsed", None) or Rewrites.model_validate_json(

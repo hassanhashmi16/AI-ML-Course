@@ -29,7 +29,7 @@ import time
 from dataclasses import dataclass
 
 from google import genai
-from google.genai import errors, types
+from google.genai import types
 from pydantic import BaseModel
 
 from config import GEMINI_API_KEY, GEMINI_MODEL, RERANK_K
@@ -42,9 +42,19 @@ if not GEMINI_API_KEY:
 
 _client = genai.Client(api_key=GEMINI_API_KEY)
 
-# 503s come from capacity, not from anything we did, and the fix is to wait briefly
-# and ask again. Four attempts with doubling delay rides out a short busy spell.
+# 5xx means the model is briefly overloaded, so waiting a moment and asking again is
+# right. 429 is deliberately NOT retried: on the free tier it is a hard daily cap
+# (20 requests/day), and a retry loop would only make the user wait a minute to see an
+# error that waiting cannot fix. That limit is surfaced immediately instead.
 _MAX_ATTEMPTS = 4
+_BACKOFF_BASE_S = 2.0
+
+_RETRYABLE = {500, 502, 503, 504}
+
+
+def _retryable(exc: Exception) -> bool:
+    """True for a failure worth waiting out rather than reporting to the user."""
+    return getattr(exc, "code", None) in _RETRYABLE
 
 
 class LLMAnswer(BaseModel):
@@ -102,7 +112,7 @@ def _generate(question: str, sources: list[Retrieved]) -> LLMAnswer:
         temperature=0,
     )
 
-    delay = 2.0
+    delay = _BACKOFF_BASE_S
     for attempt in range(1, _MAX_ATTEMPTS + 1):
         try:
             response = _client.models.generate_content(
@@ -111,8 +121,8 @@ def _generate(question: str, sources: list[Retrieved]) -> LLMAnswer:
             return getattr(response, "parsed", None) or LLMAnswer.model_validate_json(
                 response.text
             )
-        except errors.ServerError:
-            if attempt == _MAX_ATTEMPTS:
+        except Exception as exc:  # noqa: BLE001 - re-raised unless retryable
+            if attempt == _MAX_ATTEMPTS or not _retryable(exc):
                 raise
             time.sleep(delay)
             delay *= 2
@@ -157,6 +167,32 @@ Sources:
 {context}"""
 
 
+def _stream_text(contents: str):
+    """Yield the answer's text, retrying a throttled or overloaded start.
+
+    Retrying is only safe while nothing has been sent. If the call fails before the
+    first token we can simply ask again; if it fails mid-answer we let it through,
+    because repeating it would show the user the start of the answer twice.
+    """
+    delay = _BACKOFF_BASE_S
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
+        sent = False
+        try:
+            for event in _client.models.generate_content_stream(
+                model=GEMINI_MODEL, contents=contents
+            ):
+                text = getattr(event, "text", None)
+                if text:
+                    sent = True
+                    yield text
+            return
+        except Exception as exc:  # noqa: BLE001 - re-raised unless retryable
+            if sent or attempt == _MAX_ATTEMPTS or not _retryable(exc):
+                raise
+            time.sleep(delay)
+            delay *= 2
+
+
 def stream_answer(question: str, k: int = RERANK_K):
     """Yield the answer incrementally, for the streaming API endpoint.
 
@@ -185,12 +221,8 @@ def stream_answer(question: str, k: int = RERANK_K):
         for i, source in enumerate(sources, start=1)
     )
     contents = STREAM_PROMPT.format(context=context) + f"\n\nQuestion: {question}"
-    for event in _client.models.generate_content_stream(
-        model=GEMINI_MODEL, contents=contents
-    ):
-        text = getattr(event, "text", None)
-        if text:
-            yield "token", text
+    for text in _stream_text(contents):
+        yield "token", text
 
 
 def main() -> None:
