@@ -1,0 +1,6 @@
+# Generated traces are output, not source. Regenerate with `python demo.py`.
+traces/
+
+# Dataset rows promoted from traces are output too (the real ones land in a step's
+# golden set, which IS committed).
+golden_from_traces.jsonl

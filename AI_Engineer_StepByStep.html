@@ -796,6 +796,11 @@
     <li><span class="onum">30.3</span> Context precision</li>
     <li><span class="onum">30.4</span> Context recall</li>
     <li><span class="onum">30.5</span> evaluate() &amp; building a golden dataset</li>
+    <li><span class="onum">30.6</span> LLM-as-judge: how these metrics actually score, and how they lie (judge bias, self-evaluation, JSON failures, drift)</li>
+    <li><span class="onum">30.7</span> Calibration: does the judge agree with humans? (Spearman rho, the 0.7 floor)</li>
+    <li><span class="onum">30.8</span> Synthetic test-set generation — a golden dataset without hand-labelling</li>
+    <li><span class="onum">30.9</span> Noise sensitivity &amp; factual correctness (the metrics beyond the four)</li>
+    <li><span class="onum">30.10</span> Versioned datasets &amp; CI regression gates</li>
   </ol>
 </div>
 
@@ -809,6 +814,11 @@
     <li><span class="onum">31.2</span> Reading a trace (spans, latency, token spend)</li>
     <li><span class="onum">31.3</span> Creating a dataset from real runs</li>
     <li><span class="onum">31.4</span> OpenTelemetry-based tracing &amp; self-hosted options (Langfuse, Phoenix)</li>
+    <li><span class="onum">31.5</span> The span hierarchy &amp; GenAI semantic conventions (<code>gen_ai.*</code> attributes everyone parses)</li>
+    <li><span class="onum">31.6</span> Capturing content vs redacting it (prompts are PII; opt-in by default)</li>
+    <li><span class="onum">31.7</span> Propagating context across services (traceparent, MCP round-trips, sub-agents)</li>
+    <li><span class="onum">31.8</span> Metrics alongside traces (token usage, duration histograms, dashboards, alerting)</li>
+    <li><span class="onum">31.9</span> Sampling &amp; the cost of tracing at scale</li>
   </ol>
 </div>
 
