@@ -6,9 +6,9 @@ import "./chat.css";
 const API = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
 
 const EXAMPLES = [
-  "Which eight-thousander is the deadliest?",
-  "Who first climbed Annapurna?",
-  "How hard is K2 compared to Everest?",
+  { label: "Climbing history", question: "How did the first ascent of K2 unfold?" },
+  { label: "Routes & terrain", question: "What makes the north face of Annapurna difficult to climb?" },
+  { label: "Compare the peaks", question: "How hard is K2 compared to Everest?" },
 ];
 
 export default function Chat() {
@@ -17,6 +17,7 @@ export default function Chat() {
   const [peaksFailed, setPeaksFailed] = useState(false);
 
   const [question, setQuestion] = useState("");
+  const [submittedQuestion, setSubmittedQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
   const [status, setStatus] = useState("idle"); // idle | loading | error | success
@@ -58,6 +59,7 @@ export default function Chat() {
     abortRef.current = controller;
 
     setStatus("loading");
+    setSubmittedQuestion(q);
     setAnswer("");
     setSources([]);
     setError("");
@@ -101,7 +103,7 @@ export default function Chat() {
     }
   }
 
-  function useQuestion(text) {
+  function selectQuestion(text) {
     setQuestion(text);
     inputRef.current?.focus();
   }
@@ -117,11 +119,14 @@ export default function Chat() {
       </p>
 
       <aside className="rail" aria-label="Summit register">
-        <p className="label">Summit register</p>
+        <a className="wordmark" href="#main"><span className="wordmark__symbol" aria-hidden="true">△</span> FIELD GUIDE <span>01</span></a>
+        <div className="rail__heading">
+        <p className="label">Summit register / 8,000 m +</p>
         <h2 className="rail__title">The Fourteen</h2>
         <p className="rail__note">
           Peaks above 8,000 m, tallest first. Pick one to start a question.
         </p>
+        </div>
 
         {peaks === null && <p className="rail__status">Loading…</p>}
         {peaksFailed && <p className="rail__status">Peak list unavailable.</p>}
@@ -133,7 +138,7 @@ export default function Chat() {
                 <button
                   type="button"
                   className="peak"
-                  onClick={() => useQuestion(`Who first climbed ${peak.name}?`)}
+                  onClick={() => selectQuestion(`Who first climbed ${peak.name}?`)}
                 >
                   <span className="peak__rank">{String(index + 1).padStart(2, "0")}</span>
                   <span className="peak__name">{peak.name}</span>
@@ -146,37 +151,38 @@ export default function Chat() {
             ))}
           </ol>
         )}
+        <div className="rail__foot"><span className="label">Two mountain ranges</span><p>Himalaya &amp; Karakoram</p><span>Fourteen summits. A world of stories.</span></div>
       </aside>
 
-      <main className="main">
+      <main className="main" id="main">
+        <div className="edition"><span>THE EXPEDITION ARCHIVE</span><span>A DOCUMENT Q&amp;A PROJECT</span></div>
         <header className="masthead">
-          {/* A ridge line, drawn not photographed: monochrome, one hairline. */}
+          <div className="masthead__copy">
+          <p className="label">Above eight thousand metres</p>
+          <h1 className="title">Eight-Thousanders<span className="title__period">.</span></h1>
+          <p className="lede">
+            Explore the world’s highest peaks, through the accounts that tell their story.
+            Ask a question and read the source passages alongside the answer.
+          </p>
+          </div>
+          {/* An illustrative mountain profile, not a geographic elevation model. */}
           <svg
             className="ridge"
-            viewBox="0 0 1200 90"
-            preserveAspectRatio="none"
+            viewBox="0 0 800 180"
             aria-hidden="true"
           >
-            <path
-              d="M0 78 L96 44 L150 62 L228 22 L300 58 L372 34 L444 66 L520 14 L596 54 L666 38 L742 70 L820 30 L900 62 L980 42 L1064 74 L1140 50 L1200 68"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1"
-              vectorEffect="non-scaling-stroke"
-            />
+            <path className="ridge__back" d="M0 169 82 127 122 140 214 72 281 126 345 95 408 138 497 86 554 125 638 55 716 134 800 103V180H0Z" />
+            <path className="ridge__front" d="M0 180 109 156 195 115 229 133 353 22 461 120 496 107 583 157 665 120 736 153 800 166V180Z" />
+            <path className="ridge__snow" d="m353 22-49 61 34-14 15 20 13-29 26 13Z" />
+            <path className="ridge__line" d="m353 22 16 74 92 24m-108-98-72 113-86-20m174-19 30 57 97-46m-143-85-8 115-116-4m116 4 29 43m-93-45-19 45m321-23 82-37 12 40" />
+            <path className="ridge__contour" d="M0 174Q142 145 257 165T509 165 800 174M0 180Q165 158 290 174T575 176 800 180" />
           </svg>
-
-          <p className="label">Expedition knowledge base</p>
-          <h1 className="title">Eight-Thousanders</h1>
-          <p className="lede">
-            Ask about the 14 peaks above 8,000 m. Every answer is drawn from the
-            source articles and cites the passage it came from.
-          </p>
+          <div className="masthead__caption"><span>14 SUMMITS</span><span>HISTORY · ROUTES · EXPEDITIONS</span><span>8,000–8,849 M</span></div>
         </header>
 
         <form className="ask" onSubmit={ask}>
           <label className="label" htmlFor="question">
-            Your question
+            Ask the archive
           </label>
           <div className="ask__row">
             <input
@@ -186,7 +192,7 @@ export default function Chat() {
               type="text"
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
-              placeholder="Who first climbed Annapurna?"
+              placeholder="What would you like to know about the peaks?"
               autoComplete="off"
             />
             <button
@@ -194,7 +200,7 @@ export default function Chat() {
               className="ask__submit"
               disabled={!question.trim() || status === "loading"}
             >
-              {status === "loading" ? "Searching" : "Ask"}
+              {status === "loading" ? "Searching…" : <>Ask <span aria-hidden="true">↗</span></>}
             </button>
           </div>
         </form>
@@ -202,16 +208,18 @@ export default function Chat() {
         <section className="response">
           {status === "idle" && (
             <div className="idle">
-              <p className="label">Try</p>
+              <div className="section-heading"><p className="label">A place to begin</p><span>Follow your curiosity</span></div>
               <ul className="examples">
                 {EXAMPLES.map((example) => (
-                  <li key={example}>
+                  <li key={example.label}>
                     <button
                       type="button"
                       className="example"
-                      onClick={() => useQuestion(example)}
+                      onClick={() => selectQuestion(example.question)}
                     >
-                      {example}
+                      <span className="example__label">{example.label}</span>
+                      <span className="example__question">{example.question}</span>
+                      <span className="example__arrow" aria-hidden="true">↗</span>
                     </button>
                   </li>
                 ))}
@@ -236,24 +244,26 @@ export default function Chat() {
             </div>
           )}
 
-          {status === "success" && (
+          {(status === "success" || (status === "loading" && answer)) && (
             <article className="answer-block">
-              <p className="label">Answer</p>
+              <div className="section-heading"><p className="label">From the archive</p><span>{status === "loading" ? "Writing answer…" : "Response"}</span></div>
+              <h2 className="answer__question">{submittedQuestion}</h2>
               <p className="answer">{answer}</p>
 
               {sources.length > 0 && (
                 <details className="sources" open>
                   <summary className="sources__summary">
-                    <span className="label">Sources</span>
+                    <span className="label">Source passages</span>
                     <span className="sources__count">{sources.length}</span>
                   </summary>
                   <ul className="sources__list">
                     {sources.map((source, index) => (
                       <li key={`${source.source}-${source.section}-${index}`}>
-                        <span className="sources__index">{index + 1}</span>
+                        <span className="sources__index">{String(index + 1).padStart(2, "0")}</span>
                         <span className="sources__body">
                           <span className="sources__origin">
-                            {source.source} · {source.section}
+                            <strong>{source.source.replace(/\.(txt|md|pdf)$/i, "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())}</strong>
+                            <span>{source.section}</span>
                           </span>
                           {source.preview && (
                             <span className="sources__preview">{source.preview}…</span>
@@ -269,8 +279,7 @@ export default function Chat() {
         </section>
 
         <footer className="colophon">
-          Grounded in 15 source articles · hybrid retrieval (dense + keyword) ·
-          cross-encoder rerank
+          <span>Eight-Thousanders / A learning project</span><span>Read the sources. Explore further. ↗</span>
         </footer>
       </main>
     </div>

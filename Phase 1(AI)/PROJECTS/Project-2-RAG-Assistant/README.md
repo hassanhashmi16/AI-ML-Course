@@ -20,4 +20,16 @@ copy .env.example .env           # then fill in your keys
 
 ## Status
 
-Step 1 (skeleton + config) is complete. See `STEPS.md` for what each later step adds.
+The implementation now includes the pipeline from corpus ingestion through the
+React interface:
+
+- Fetching, parsing, chunking, embedding, and storing the source articles in Postgres with pgvector.
+- Dense and keyword retrieval, query rewriting, reciprocal rank fusion, and cross-encoder reranking.
+- Structured lookups for exact facts, plus generated answers with source references.
+- A FastAPI service with blocking and streaming answer endpoints, and a React UI with a Sources panel.
+- A retrieval evaluation harness over 20 labelled questions, comparing dense, hybrid, and hybrid + rerank using recall@5, MRR, and nDCG.
+
+This is a local project; a public deployment is still ahead. The streaming UI
+shows the retrieved sources, while the blocking endpoint returns the sources
+selected by the model's citations. See `STEPS.md` for the build plan and how
+this project extends into the later agent and monitoring work.

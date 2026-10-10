@@ -2,216 +2,636 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Engineer + ML Engineer — Course Outline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A working roadmap from Python fundamentals to AI systems, machine learning, and deployment. 91 modules with practical project milestones.">
+<title>AI &amp; ML Engineering · A Working Roadmap</title>
 <style>
-  :root {
-    --bg: #0f1115;
-    --panel: #171a21;
-    --card: #1c1f28;
-    --border: #2a2e3a;
-    --text: #e4e6eb;
-    --muted: #9aa1b1;
-    --accent0: #fdba74;
-    --accent1: #7dd3fc;
-    --accent2: #c4b5fd;
-    --gold: #fbbf24;
-    --green: #86efac;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-    font-size: 15px;
-  }
-  a { color: var(--accent1); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .layout { display: flex; min-height: 100vh; }
+:root {
+  --bg: #111518;
+  --panel: #151a1e;
+  --card: #191f24;
+  --border: #2b343a;
+  --text: #e8edee;
+  --muted: #a0adb4;
+  --accent0: #d8b18a;
+  --accent1: #a8c7cc;
+  --accent2: #bdb1d1;
+  --green: #a6c2af;
+  --gold: #d8b980;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
 
-  /* ---------- SIDEBAR ---------- */
-  nav.side {
-    width: 290px;
-    flex-shrink: 0;
-    background: var(--panel);
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: 24px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--accent1);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent1);
+  outline-offset: 4px;
+}
+
+.layout {
+  display: flex;
+  max-width: 1500px;
+  margin: auto;
+  min-height: 100vh;
+}
+
+nav.side {
+  flex-shrink: 0;
+  width: 264px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  padding: 28px 20px;
+  background: var(--panel);
+  border-inline: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.side-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  color: var(--text);
+  font: 11px var(--mono);
+  letter-spacing: .08em;
+}
+
+.side-brand span {
+  padding: 4px 7px;
+  border: 1px solid #47545c;
+  font-size: 10px;
+}
+
+.side-title {
+  color: var(--muted);
+  font: 10px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  margin: 0 0 18px 8px;
+}
+
+details.phase-group {
+  margin-bottom: 8px;
+}
+
+details.phase-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 10px 8px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+
+details.phase-group summary::-webkit-details-marker {
+  display: none;
+}
+
+details.phase-group summary::after {
+  content: '+';
+  font: 14px var(--mono);
+  color: var(--muted);
+}
+
+details.phase-group[open] summary::after {
+  content: '−';
+}
+
+details.p0 summary {
+  color: var(--accent0);
+}
+
+details.p1 summary {
+  color: var(--accent1);
+}
+
+details.p2 summary {
+  color: var(--accent2);
+}
+
+details.p3 summary {
+  color: var(--green);
+}
+
+.steplist {
+  padding: 8px 0 10px;
+}
+
+.steplist a {
+  display: block;
+  padding: 6px 9px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--muted);
+  border-left: 1px solid transparent;
+}
+
+.steplist a:hover, .steplist a[aria-current="location"] {
+  background: #ffffff05;
+  color: var(--text);
+  border-left-color: var(--accent1);
+  text-decoration: none;
+}
+
+.divider {
+  margin: 24px 0 16px;
+  border-top: 1px solid var(--border);
+}
+
+.foot-links a {
+  display: block;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.side-note {
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+main {
+  min-width: 0;
+  flex: 1;
+  max-width: 1130px;
+  padding: 38px 60px 80px;
+}
+
+.eyebrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font: 10px var(--mono);
+  letter-spacing: .12em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
+}
+
+header h1 {
+  font-size: clamp(30px,3.6vw,49px);
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: 1.15;
+  margin: 30px 0 14px;
+}
+
+header .sub {
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 64ch;
+  line-height: 1.75;
+}
+
+.overview {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  margin: 27px 0 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.overview a {
+  padding: 16px 15px;
+  border-right: 1px solid var(--border);
+  color: var(--text);
+  transition: background 150ms;
+}
+
+.overview a:last-child {
+  border-right: 0;
+}
+
+.overview a:hover {
+  background: var(--card);
+  text-decoration: none;
+}
+
+.overview span {
+  display: block;
+  font: 9px var(--mono);
+  letter-spacing: .05em;
+  color: var(--muted);
+}
+
+.overview strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 10px 0 6px;
+}
+
+.overview .p0 strong {
+  color: var(--accent0);
+}
+
+.overview .p1 strong {
+  color: var(--accent1);
+}
+
+.overview .p2 strong {
+  color: var(--accent2);
+}
+
+.overview .p3 strong {
+  color: var(--green);
+}
+
+.intro-block {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 17px 0;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.intro-block b {
+  flex-shrink: 0;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.built {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+
+.built > span {
+  font: 9px var(--mono);
+  color: var(--muted);
+  letter-spacing: .1em;
+  margin-right: auto;
+}
+
+.built a {
+  color: var(--text);
+}
+
+.phase-banner {
+  margin: 42px 0 20px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font: 12px/1.6 var(--mono);
+  letter-spacing: .07em;
+  scroll-margin-top: 24px;
+}
+
+.phase-banner.p0 {
+  color: var(--accent0);
+}
+
+.phase-banner.p1 {
+  color: var(--accent1);
+}
+
+.phase-banner.p2 {
+  color: var(--accent2);
+}
+
+.phase-banner.p3 {
+  color: var(--green);
+}
+
+.phase-banner .tag {
+  display: block;
+  color: var(--muted);
+  font: 12px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  margin-top: 7px;
+}
+
+.step-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 23px 25px;
+  margin-bottom: 14px;
+  scroll-margin-top: 24px;
+}
+
+.step-head {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.step-num-badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #46535b;
+  border-radius: 3px;
+  color: var(--accent1);
+  font: 12px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.p0 .step-num-badge {
+  color: var(--accent0);
+}
+
+.p2 .step-num-badge {
+  color: var(--accent2);
+}
+
+.p3 .step-num-badge {
+  color: var(--green);
+}
+
+.step-head h3 {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0 0 6px;
+  letter-spacing: -.015em;
+}
+
+.step-head .why {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.step-head .why a {
+  margin-left: 4px;
+  overflow-wrap: anywhere;
+}
+
+ol.outline {
+  list-style: none;
+  margin: 16px 0 0 52px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+}
+
+ol.outline li {
+  padding-left: 46px;
+  position: relative;
+  margin-bottom: 5px;
+  color: #c5ced2;
+}
+
+ol.outline li:last-child {
+  margin-bottom: 0;
+}
+
+ol.outline .onum {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  min-width: 34px;
+  color: var(--muted);
+  font: 10px var(--mono);
+}
+
+.milestone {
+  margin: 19px 0;
+  padding: 16px 20px;
+  border: 1px solid #65553b;
+  border-left: 3px solid var(--gold);
+  border-radius: 3px;
+  background: #211f1a;
+  color: #dfc799;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.checkpoint {
+  margin: 18px 0 0;
+  padding: 18px 20px;
+  border: 1px solid #394e43;
+  border-left: 3px solid var(--green);
+  border-radius: 3px;
+  background: #18211d;
+  color: #b6cdbf;
+  font-size: 13px;
+}
+
+.risk-box {
+  margin-top: 36px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent0);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.risk-box b {
+  color: var(--accent0);
+}
+
+footer.foot {
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.mobile-nav {
+  display: none;
+}
+
+@media (min-width: 1600px) {
+
+  .layout {
     border-right: 1px solid var(--border);
-    padding: 20px 14px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
   }
-  nav.side .side-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin: 0 0 14px 4px;
+}
+
+@media (max-width: 1150px) {
+
+  nav.side {
+    width: 230px;
+    padding-inline: 15px;
   }
-  details.phase-group { margin-bottom: 6px; border-radius: 8px; overflow: hidden; }
-  details.phase-group summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 9px 10px;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 8px;
+
+  main {
+    padding-inline: 34px;
+  }
+
+  .overview a {
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 850px) {
+
+  nav.side {
+    display: none;
+  }
+
+  main {
+    padding: 24px 22px 60px;
+  }
+
+  .mobile-nav {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    user-select: none;
+    gap: 18px;
+    padding: 12px 0;
+    margin-top: 16px;
+    border-bottom: 1px solid var(--border);
+    font: 10px var(--mono);
+    flex-wrap: wrap;
   }
-  details.phase-group summary::-webkit-details-marker { display: none; }
-  details.phase-group summary::after {
-    content: "▸";
-    color: var(--muted);
-    font-size: 11px;
-    transition: transform 0.15s ease;
-  }
-  details.phase-group[open] summary::after { transform: rotate(90deg); }
-  details.p0 summary { background: #7c2d1233; color: var(--accent0); }
-  details.p1 summary { background: #0c4a6e33; color: var(--accent1); }
-  details.p2 summary { background: #3b076433; color: var(--accent2); }
-  details.p3 summary { background: #14532d33; color: var(--green); }
-  details.phase-group .steplist { padding: 4px 4px 8px; }
-  details.phase-group a {
-    display: block;
-    color: var(--text);
-    font-size: 12.5px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    margin-bottom: 1px;
-  }
-  details.phase-group a:hover { background: #23273347; text-decoration: none; }
-  nav.side .divider { height: 1px; background: var(--border); margin: 14px 4px; }
-  nav.side .foot-links a { display: block; font-size: 12.5px; color: var(--muted); padding: 4px 10px; }
 
-  /* ---------- MAIN ---------- */
-  main { flex: 1; max-width: 840px; padding: 40px 44px 120px; }
-  header h1 { font-size: 26px; margin: 0 0 6px; }
-  header .sub { color: var(--muted); font-size: 14.5px; margin-bottom: 16px; }
+  header h1 {
+    margin-top: 24px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 520px) {
+
+  .overview {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+
+  .overview a:nth-child(2) {
+    border-right: 0;
+  }
+
+  .overview a:nth-child(-n+2) {
+    border-bottom: 1px solid var(--border);
+  }
+
   .intro-block {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 16px 0;
-    font-size: 13.5px;
-    color: var(--muted);
+    display: block;
   }
-  .intro-block b { color: var(--gold); }
 
-  .phase-banner {
-    margin: 46px 0 16px;
-    padding: 14px 20px;
-    border-radius: 10px;
-    font-size: 19px;
-    font-weight: 700;
-    scroll-margin-top: 16px;
+  .intro-block b {
+    display: block;
+    margin-bottom: 6px;
   }
-  .phase-banner .tag { display:block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top:3px; }
-  .phase-banner.p0 { background: linear-gradient(90deg,#7c2d12,#0f1115); border-left: 4px solid var(--accent0); }
-  .phase-banner.p1 { background: linear-gradient(90deg,#0c4a6e,#0f1115); border-left: 4px solid var(--accent1); }
-  .phase-banner.p2 { background: linear-gradient(90deg,#4c1d95,#0f1115); border-left: 4px solid var(--accent2); }
-  .phase-banner.p3 { background: linear-gradient(90deg,#14532d,#0f1115); border-left: 4px solid var(--green); }
+
+  .built {
+    gap: 10px 16px;
+  }
+
+  .built > span {
+    flex-basis: 100%;
+  }
 
   .step-block {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 20px 14px;
-    margin-bottom: 12px;
-    scroll-margin-top: 16px;
-  }
-  .step-head { display: flex; gap: 12px; align-items: flex-start; }
-  .step-num-badge {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--accent1);
-    color: var(--accent1);
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-  }
-  .p0 .step-num-badge { border-color: var(--accent0); color: var(--accent0); }
-  .p2 .step-num-badge { border-color: var(--accent2); color: var(--accent2); }
-  .p3 .step-num-badge { border-color: var(--green); color: var(--green); }
-  .step-head h3 { margin: 0 0 3px; font-size: 16px; }
-  .step-head .why { color: var(--muted); font-size: 13.5px; margin: 0; }
-  .step-head .why a { margin-left: 6px; white-space: nowrap; }
-  ol.outline {
-    margin: 10px 0 2px 40px;
-    padding: 0;
-    font-size: 13.5px;
-  }
-  ol.outline li { margin-bottom: 3px; color: var(--text); }
-  ol.outline li .onum {
-    display: inline-block;
-    min-width: 34px;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    padding: 19px 16px;
   }
 
-  .milestone {
-    position: relative;
-    margin: 10px 0 14px;
-    padding: 10px 16px;
-    background: #1a1408;
-    border: 1px solid #4a3a10;
-    border-left: 3px solid var(--gold);
-    border-radius: 8px;
-    font-size: 13.5px;
-    color: var(--gold);
+  .step-head {
+    gap: 12px;
   }
-  .milestone b { color: var(--gold); }
-  .checkpoint {
-    background: #062b1a;
-    border: 1px solid #14532d;
-    border-left: 4px solid var(--green);
-    border-radius: 10px;
-    padding: 14px 20px;
-    margin: 8px 0 0;
-    font-size: 13.5px;
+
+  .step-head h3 {
+    font-size: 17px;
   }
-  .checkpoint b { color: var(--green); }
-  .risk-box {
-    background: #2a0e0e;
-    border: 1px solid #5c1a1a;
-    border-left: 4px solid #f87171;
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin: 44px 0 0;
-    font-size: 13.5px;
+
+  ol.outline {
+    margin-left: 0;
   }
-  .risk-box b { color: #f87171; }
-  footer.foot {
-    margin-top: 36px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 12px;
+
+  .phase-banner {
+    font-size: 11px;
   }
-  @media (max-width: 900px) {
-    nav.side { display: none; }
-    main { padding: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
   }
+
+  * {
+    transition: none !important;
+  }
+}
+
+@media print {
+
+  nav.side, .mobile-nav {
+    display: none;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .step-block {
+    break-inside: avoid;
+    background: white;
+  }
+
+  .step-head h3, ol.outline li {
+    color: black;
+  }
+}
 </style>
 </head>
 <body>
 <div class="layout">
 
-<nav class="side">
-  <div class="side-title">Course Outline</div>
+<nav class="side" aria-label="Roadmap modules">
+  <a class="side-brand" href="#top">THE LEARNING LOG <span>AI / ML</span></a>
+  <div class="side-title">The roadmap / 91 modules</div>
 
-  <details class="phase-group p0" open>
+  <details class="phase-group p0">
     <summary>Phase 0 · Foundations</summary>
     <div class="steplist">
       <a href="#step-1">1. Python syntax basics</a>
@@ -265,7 +685,7 @@
     </div>
   </details>
 
-  <details class="phase-group p2" open>
+  <details class="phase-group p2">
     <summary>Phase 2 · ML Engineering</summary>
     <div class="steplist">
       <a href="#step-43">43. NumPy</a>
@@ -304,7 +724,7 @@
     </div>
   </details>
 
-  <details class="phase-group p3" open>
+  <details class="phase-group p3">
     <summary>Phase 3 · Specialization</summary>
     <div class="steplist">
       <a href="#step-76">76. LLM-as-judge evals</a>
@@ -328,18 +748,29 @@
 
   <div class="divider"></div>
   <div class="foot-links">
+    <a href="#top">Back to overview ↗</a>
     <a href="#risk">Standing risk</a>
   </div>
+  <p class="side-note">Learn the concept.<br>Build something with it.<br>Carry it into the next step.</p>
 </nav>
 
 <main>
 
-<header>
-  <h1>AI Engineer + ML Engineer — Course Outline</h1>
-  <div class="sub">91 modules, zero to complete. Each module: what it is, why it matters, one resource, and its lesson outline.</div>
-  <div class="intro-block">
-    <b>How to use this:</b> go in order, top to bottom (or jump via the sidebar). Each module's outline (15.1, 15.2, ...) is the actual scope of that module — what to make sure you cover before moving on. Milestones (gold boxes) are the checkpoints that prove you're ready for the next module. AI Engineering = the front end: building products on top of AI. ML Engineering = the back end: understanding what's underneath. Phase 3 = the differentiation layer — evals/cost, inference systems, and multimodal — the depth most AI-engineer portfolios skip. This runs through all three, in order.
+<header id="top">
+  <div class="eyebrow"><span>HASSAN / A WORKING ROADMAP</span><span>FOUNDATIONS → WORKING SYSTEMS</span></div>
+  <h1>AI &amp; ML Engineering</h1>
+  <div class="sub">From the first Python script to building and deploying AI systems. A path through the concepts, with projects that bring them together.</div>
+  <div class="overview" aria-label="The four phases">
+    <a class="p0" href="#phase0"><span>PHASE 00 / 14 MODULES</span><strong>Foundations</strong><span>Python &amp; engineering habits</span></a>
+    <a class="p1" href="#phase1"><span>PHASE 01 / 28 MODULES</span><strong>AI Engineering</strong><span>LLMs, retrieval &amp; agents</span></a>
+    <a class="p2" href="#phase2"><span>PHASE 02 / 33 MODULES</span><strong>ML Engineering</strong><span>Models, training &amp; deployment</span></a>
+    <a class="p3" href="#phase3"><span>PHASE 03 / 16 MODULES</span><strong>Specialization</strong><span>Evaluation, inference &amp; multimodal</span></a>
   </div>
+  <div class="intro-block">
+    <b>LEARN → BUILD → REPEAT</b><span>Follow the modules in order. Each includes the scope and a resource; the gold milestones bring the work together into a project.</span>
+  </div>
+  <div class="built"><span>BUILT ALONG THE WAY</span><a href="https://github.com/hassanhashmi16/AI-ML-Course/tree/main/Phase%201%28AI%29/PROJECTS/Project-1-Meeting-Summarizer" target="_blank" rel="noopener noreferrer">Meeting notes summarizer ↗</a><a href="https://github.com/hassanhashmi16/AI-ML-Course/tree/main/Phase%201%28AI%29/PROJECTS/Project-2-RAG-Assistant" target="_blank" rel="noopener noreferrer">Eight-Thousanders RAG assistant ↗</a></div>
+  <nav class="mobile-nav" aria-label="Jump to phase"><a href="#phase0">00 Foundations</a><a href="#phase1">01 AI</a><a href="#phase2">02 ML</a><a href="#phase3">03 Specialization</a></nav>
 </header>
 
 <div class="phase-banner p0" id="phase0">PHASE 0 — PYTHON &amp; ENGINEERING FOUNDATIONS</div>
@@ -1705,7 +2136,8 @@
 </div>
 
 <footer class="foot">
-  Prepared for Hassan — pace: 5–10 hrs/week. 91 modules, zero to complete. Each linked resource is where the depth lives — this page is the outline of what to cover and in what order.
+  Hassan’s working roadmap · 91 modules across four phases · Suggested pace: 5–10 hrs/week.<br>
+  This page maps the learning path. The repository holds the notes and the work produced along the way.
 </footer>
 
 </main>
