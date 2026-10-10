@@ -28,5 +28,10 @@ wandb/
 .DS_Store
 Thumbs.db
 
-# Personal notes (not for the repo)
+# Personal / working notes (how I work, not part of the roadmap)
 linkedin-post-instructions.md
+writing-preferences.md
+project-workflow.md
+
+# Superseded material
+old/
