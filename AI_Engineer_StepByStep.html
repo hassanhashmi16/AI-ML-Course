@@ -13,10 +13,10 @@
   --border: #2b343a;
   --text: #e8edee;
   --muted: #a0adb4;
-  --accent0: #d8b18a;
-  --accent1: #a8c7cc;
-  --accent2: #bdb1d1;
-  --green: #a6c2af;
+  --accent0: #ffbd69;
+  --accent1: #64c8ff;
+  --accent2: #c6a0ff;
+  --green: #68dfa7;
   --gold: #d8b980;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
@@ -622,6 +622,77 @@ footer.foot {
     color: black;
   }
 }
+/* Phase colours run through every level of the roadmap. */
+.p0 { --phase: var(--accent0); --phase-fill: #292118; --phase-edge: #79512a; }
+.p1 { --phase: var(--accent1); --phase-fill: #142634; --phase-edge: #2c6080; }
+.p2 { --phase: var(--accent2); --phase-fill: #251d35; --phase-edge: #614582; }
+.p3 { --phase: var(--green); --phase-fill: #142a22; --phase-edge: #28684c; }
+.overview { gap: 10px; border: 0; overflow: visible; }
+.overview a, .overview a:last-child {
+  border: 1px solid var(--phase-edge);
+  border-top: 3px solid var(--phase);
+  border-radius: 6px;
+  background: var(--phase-fill);
+}
+.overview a:hover { background: var(--phase-fill); outline: 1px solid var(--phase); }
+.overview .phase-meter { height: 4px; margin: 16px 0 9px; background: #ffffff15; border-radius: 10px; overflow: hidden; }
+.phase-meter > span { height: 100%; width: 0; background: var(--phase); }
+.overview .phase-count { font-size: 10px; color: var(--phase); }
+details.phase-group summary { border-radius: 4px; background: var(--phase-fill); border: 1px solid var(--phase-edge); border-left: 3px solid var(--phase); padding: 11px 9px; }
+.side-phase-count { margin-left: auto; margin-right: 8px; color: var(--phase); font: 9px var(--mono); }
+.phase-banner { padding: 19px 22px; border: 1px solid var(--phase-edge); border-left: 5px solid var(--phase); border-radius: 6px; background: var(--phase-fill); font-size: 14px; }
+.phase-banner .phase-count { display: block; margin-top: 10px; font: 10px var(--mono); color: var(--phase); letter-spacing: 0; }
+.step-block { border-left: 3px solid var(--phase); background: linear-gradient(105deg, var(--phase-fill), var(--card) 38%); transition: border-color 160ms, box-shadow 160ms; }
+.step-num-badge { background: var(--phase-fill); border-color: var(--phase-edge); color: var(--phase); }
+.step-head > div { min-width: 0; }
+.step-block.is-done { border-color: var(--phase-edge); border-left-color: var(--phase); }
+.step-block.is-done .step-num-badge { background: var(--phase); color: var(--bg); }
+.module-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 20px 0 0 52px; padding-top: 14px; border-top: 1px solid var(--border); }
+.done-control { display: inline-flex; align-items: center; gap: 10px; min-height: 36px; font-size: 12px; color: var(--muted); }
+.done-control input { width: 18px; height: 18px; margin: 0; accent-color: var(--phase); }
+.done-control:has(input:checked) { color: var(--phase); }
+.module-state { font: 10px var(--mono); color: var(--muted); }
+.is-done .module-state { color: var(--phase); }
+.steplist a { display: flex; justify-content: space-between; gap: 8px; }
+.steplist a.is-done { color: var(--text); }
+.nav-done { color: var(--phase); font-size: 12px; }
+.steplist a[aria-current="location"] { border-left-color: var(--phase); background: var(--phase-fill); }
+.progress-panel { margin: 25px 0 0; padding: 24px; border: 1px solid #40515b; border-radius: 7px; background: linear-gradient(115deg, #1c2b33, #182025); }
+.progress-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.progress-heading h2 { margin: 0; font-size: 17px; font-weight: 500; letter-spacing: -.02em; }
+.progress-heading > span { font: 11px var(--mono); color: var(--accent1); }
+.progress-stats { display: flex; align-items: baseline; gap: 10px; margin: 16px 0 12px; }
+.progress-stats strong { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -.04em; }
+.progress-stats span { color: var(--muted); font-size: 12px; }
+.progress-panel progress { display: block; width: 100%; height: 7px; border: 0; border-radius: 9px; overflow: hidden; background: #ffffff12; accent-color: var(--accent1); }
+.progress-panel progress::-webkit-progress-bar { background: #ffffff12; }
+.progress-panel progress::-webkit-progress-value { background: var(--accent1); border-radius: 9px; }
+.progress-panel progress::-moz-progress-bar { background: var(--accent1); }
+.progress-next { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 22px; }
+.progress-next p { margin: 0; color: var(--muted); font-size: 12px; }
+.next-link { display: block; margin-top: 5px; font-size: 15px; color: var(--text); }
+.progress-next > span { color: var(--muted); font-size: 11px; max-width: 23ch; }
+.progress-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--border); margin-top: 20px; padding-top: 13px; }
+.save-note { font-size: 10px; color: var(--muted); }
+.progress-notice { margin: 12px 0 0; min-height: 20px; color: var(--accent1); font-size: 12px; }
+.side-progress { margin: -12px 8px 22px; }
+.side-progress span { font: 10px var(--mono); color: var(--text); }
+.side-progress progress { display: block; width: 100%; height: 4px; margin-top: 10px; accent-color: var(--accent1); }
+.tracker-only { display: none; }
+.tracking-ready .tracker-only { display: block; }
+.tracking-ready .overview .tracker-only { display: block; }
+@media (max-width: 520px) {
+  .overview a:nth-child(2), .overview a:nth-child(-n+2) { border: 1px solid var(--phase-edge); border-top: 3px solid var(--phase); }
+  .module-footer { margin-left: 0; gap: 8px; }
+  .progress-panel { padding: 18px; }
+  .progress-heading { align-items: flex-start; }
+  .progress-heading > span { font-size: 10px; }
+  .progress-next { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .progress-next > span { max-width: none; }
+  .save-note { margin-left: 0; flex-basis: 100%; }
+  .phase-banner { font-size: 12px; padding: 16px; }
+}
+@media print { .progress-panel, .module-footer, .side-progress { display: none !important; } .step-block { background: white; } }
 </style>
 </head>
 <body>
@@ -630,6 +701,7 @@ footer.foot {
 <nav class="side" aria-label="Roadmap modules">
   <a class="side-brand" href="#top">THE LEARNING LOG <span>AI / ML</span></a>
   <div class="side-title">The roadmap / 91 modules</div>
+  <div class="side-progress tracker-only"><span id="side-progress-count">0 modules completed</span><progress id="side-progress-bar" value="0" max="91" aria-label="Roadmap completion"></progress></div>
 
   <details class="phase-group p0">
     <summary>Phase 0 · Foundations</summary>
@@ -760,6 +832,15 @@ footer.foot {
   <div class="eyebrow"><span>HASSAN / A WORKING ROADMAP</span><span>FOUNDATIONS → WORKING SYSTEMS</span></div>
   <h1>AI &amp; ML Engineering</h1>
   <div class="sub">From the first Python script to building and deploying AI systems. A path through the concepts, with projects that bring them together.</div>
+  <section class="progress-panel tracker-only" aria-label="Your learning progress">
+    <div class="progress-heading"><h2>Your work is adding up.</h2><span id="progress-percent">0% COMPLETE</span></div>
+    <div class="progress-stats"><strong id="progress-completed">0</strong><span id="progress-total">of 91 modules completed</span></div>
+    <progress id="progress-bar" value="0" max="91" aria-label="Modules completed"></progress>
+    <div class="progress-next"><div><p id="next-caption">Your next step</p><a id="next-module" class="next-link" href="#step-1">1. Python syntax basics →</a></div><span>One concept. One thing you can build. Then the next step.</span></div>
+    <div class="progress-tools"><span class="save-note" id="save-note">Progress recorded in this roadmap file</span></div>
+    <p class="progress-notice" id="progress-notice">Finish the next step, then ask your agent to mark it done.</p>
+  </section>
+  <noscript><p>Enable JavaScript to display the completion recorded in this roadmap.</p></noscript>
   <div class="overview" aria-label="The four phases">
     <a class="p0" href="#phase0"><span>PHASE 00 / 14 MODULES</span><strong>Foundations</strong><span>Python &amp; engineering habits</span></a>
     <a class="p1" href="#phase1"><span>PHASE 01 / 28 MODULES</span><strong>AI Engineering</strong><span>LLMs, retrieval &amp; agents</span></a>
@@ -1319,6 +1400,7 @@ footer.foot {
     <li><span class="onum">36.4</span> Memory (short-term vs. long-term)</li>
     <li><span class="onum">36.5</span> Sequential vs. hierarchical process</li>
     <li><span class="onum">36.6</span> When multi-agent loses to one good agent (cost, latency, error compounding)</li>
+    <li><span class="onum">36.7</span> Crews vs. Flows — when event-driven orchestration beats an autonomous crew</li>
   </ol>
 </div>
 
@@ -1330,7 +1412,7 @@ footer.foot {
   <ol class="outline">
     <li><span class="onum">37.1</span> Tools / resources / prompts primitives</li>
     <li><span class="onum">37.2</span> Server vs. client architecture</li>
-    <li><span class="onum">37.3</span> Transports (stdio vs. HTTP/SSE)</li>
+    <li><span class="onum">37.3</span> Transports (stdio vs. Streamable HTTP, and the legacy SSE transport)</li>
     <li><span class="onum">37.4</span> Connecting a client to a server</li>
     <li><span class="onum">37.5</span> Writing your own MCP server</li>
     <li><span class="onum">37.6</span> MCP security: tool poisoning, confused-deputy attacks &amp; OAuth 2.1 auth</li>
@@ -2142,5 +2224,115 @@ footer.foot {
 
 </main>
 </div>
+<script>
+(() => {
+  'use strict';
+
+  // PROGRESS: All steps from 1 through this number are completed (inclusive).
+  // Future agents: change only this number when Hassan finishes the next step.
+  // Use 0 for no completed steps. No browser storage or other edits are needed.
+  const COMPLETED_THROUGH_STEP = 36;
+  const phases = ['p0', 'p1', 'p2', 'p3'];
+  const modules = Array.from(document.querySelectorAll('.step-block')).map((card) => {
+    const title = card.querySelector('h3').textContent.trim();
+    const key = card.id;
+    const label = document.createElement('label');
+    label.className = 'done-control';
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.disabled = true;
+    input.title = 'Completion is recorded in the roadmap source.';
+    const labelText = document.createElement('span');
+    labelText.textContent = 'Not completed';
+    label.append(input, labelText);
+    const stateText = document.createElement('span');
+    stateText.className = 'module-state';
+    const footer = document.createElement('div');
+    footer.className = 'module-footer';
+    footer.append(label, stateText);
+    card.append(footer);
+    const nav = document.querySelector(`.steplist a[href="#${card.id}"]`);
+    const navDone = document.createElement('span');
+    navDone.className = 'nav-done';
+    navDone.setAttribute('aria-hidden', 'true');
+    nav?.append(navDone);
+    return { card, title, key, input, labelText, stateText, nav, navDone,
+      phase: phases.find((phase) => card.classList.contains(phase)),
+      number: card.querySelector('.step-num-badge').textContent.trim() };
+  });
+  const phaseViews = phases.map((phase, index) => {
+    const overview = document.querySelector(`.overview .${phase}`);
+    const meter = document.createElement('div');
+    meter.className = 'phase-meter';
+    const fill = document.createElement('span');
+    meter.append(fill);
+    const count = document.createElement('span');
+    count.className = 'phase-count';
+    overview.append(meter, count);
+    const bannerCount = document.createElement('span');
+    bannerCount.className = 'phase-count';
+    document.getElementById(`phase${index}`).append(bannerCount);
+    const sideCount = document.createElement('span');
+    sideCount.className = 'side-phase-count';
+    document.querySelector(`details.${phase} summary`).append(sideCount);
+    return { phase, fill, count, bannerCount, sideCount };
+  });
+  const completed = new Set(modules
+    .filter((module) => Number(module.number) <= COMPLETED_THROUGH_STEP)
+    .map((module) => module.key));
+  document.getElementById('save-note').textContent =
+    `Progress recorded in this file · completed through Step ${COMPLETED_THROUGH_STEP}`;
+
+  function render() {
+    const total = modules.length;
+    const count = completed.size;
+    document.getElementById('progress-completed').textContent = count;
+    document.getElementById('progress-total').textContent = `of ${total} modules completed`;
+    document.getElementById('progress-percent').textContent = `${Math.round(count / total * 100)}% COMPLETE`;
+    document.getElementById('side-progress-count').textContent = `${count} / ${total} completed`;
+    for (const id of ['progress-bar', 'side-progress-bar']) {
+      const bar = document.getElementById(id);
+      bar.max = total;
+      bar.value = count;
+    }
+    for (const module of modules) {
+      const done = completed.has(module.key);
+      module.input.checked = done;
+      module.card.classList.toggle('is-done', done);
+      module.labelText.textContent = done ? 'Completed' : 'Not completed';
+      module.input.setAttribute('aria-label', `${module.title}: ${done ? 'completed' : 'not completed'}`);
+      module.stateText.textContent = done ? '✓ One more piece built.' : 'Learn it. Build with it.';
+      module.nav?.classList.toggle('is-done', done);
+      module.navDone.textContent = done ? '✓' : '';
+    }
+    for (const view of phaseViews) {
+      const members = modules.filter((module) => module.phase === view.phase);
+      const done = members.filter((module) => completed.has(module.key)).length;
+      view.fill.style.width = `${done / members.length * 100}%`;
+      view.count.textContent = `${done} / ${members.length} completed`;
+      view.bannerCount.textContent = done === members.length ? `✓ Phase complete · ${done} modules` : `${done} of ${members.length} modules completed`;
+      view.sideCount.textContent = `${done}/${members.length}`;
+    }
+    const next = modules.find((module) => !completed.has(module.key));
+    const nextLink = document.getElementById('next-module');
+    document.getElementById('next-caption').textContent = next ? 'Your next step' : 'Every module checked off';
+    nextLink.textContent = next ? `${next.number}. ${next.title} →` : 'Look back at what you built →';
+    nextLink.href = next ? `#${next.card.id}` : '#top';
+  }
+
+  document.getElementById('next-module').addEventListener('click', () => {
+    const next = modules.find((module) => !completed.has(module.key));
+    if (!next) return;
+    const group = document.querySelector(`details.${next.phase}`);
+    group.open = true;
+    // Focus the destination so keyboard users land at the same step as the scroll.
+    next.card.tabIndex = -1;
+    next.card.focus({ preventScroll: true });
+  });
+
+  render();
+  document.body.classList.add('tracking-ready');
+})();
+</script>
 </body>
 </html>
