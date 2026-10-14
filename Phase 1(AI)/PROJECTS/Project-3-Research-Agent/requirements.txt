@@ -1,0 +1,28 @@
+# --- AI: generation + tool calling ---
+# `google-genai` is the maintained Google SDK (the old `google-generativeai`
+# package is end-of-life). One client handles both the chat model and its native
+# function-calling mechanism, which is what the agent loop drives (Steps 9-10).
+google-genai
+
+# --- Configuration ---
+# Reads the GEMINI_API_KEY / TAVILY_API_KEY from a local .env file.
+python-dotenv
+
+# --- Web search ---
+# `ddgs` is the maintained DuckDuckGo search library (the old
+# `duckduckgo_search` name is deprecated). Free and keyless, so the project runs
+# for anyone. Tavily below is an optional upgrade, used only if its key is set.
+ddgs
+# Optional. Better result quality; skipped entirely when TAVILY_API_KEY is unset.
+tavily-python
+
+# --- Page fetching + extraction ---
+# httpx fetches the page; trafilatura strips the HTML down to the main article
+# text so we don't feed the model navigation bars and cookie banners.
+httpx
+trafilatura
+
+# --- Structured output ---
+# Validates the brief the model produces and the arguments it passes to tools,
+# the same discipline Projects 1 and 2 used for their structured outputs.
+pydantic
