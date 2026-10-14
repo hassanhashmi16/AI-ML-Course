@@ -43,6 +43,12 @@ class Message(TypedDict, total=False):
     tool_name: str     # set when role == "model" and it requested a tool
     tool_args: dict    # arguments the model passed to that tool
     tool_result: str   # set when role == "tool": what the tool returned
+    # Gemini returns an opaque `thought_signature` with every function call and
+    # requires it back when the call is replayed in the transcript. Dropping it
+    # is a 400 error ("Function call is missing a thought_signature"). Stored
+    # base64-encoded because state must stay JSON-serializable — the SDK's type
+    # is `bytes`, which json.dumps cannot write.
+    thought_signature: str
 
 
 class Note(TypedDict):

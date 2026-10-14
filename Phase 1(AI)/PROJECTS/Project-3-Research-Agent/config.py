@@ -52,10 +52,14 @@ TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
 # Models
 # Pin exact names. Library defaults move under you, and a silent model change is
 # the hardest bug to notice: the code still runs and answers just get quietly
-# worse. This mirrors Project 2's model, which is already working with your key
+# worse. The default mirrors Project 2's model, which works with your key
 # (names pinned as of October 2026).
+#
+# Overridable from the environment on purpose: model availability is not
+# something code should have to change for. When a model returns 503 ("high
+# demand"), set GEN_MODEL in .env to another one rather than editing this line.
 # ---------------------------------------------------------------------------
-GEN_MODEL = "gemini-3.6-flash"  # the tool-calling / generation model
+GEN_MODEL = os.getenv("GEN_MODEL", "gemini-3.6-flash")  # tool-calling / generation model
 
 
 # ---------------------------------------------------------------------------
