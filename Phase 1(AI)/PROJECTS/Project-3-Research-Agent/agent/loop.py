@@ -18,10 +18,12 @@ from __future__ import annotations
 
 from typing import Callable
 
+from agent import tracing
 from agent.checkpoint import CheckpointStore
 from agent.llm import call_model
 from agent.policy import should_stop
 from agent.state import AgentState
+from config import GEN_MODEL
 from memory.store import MemoryStore
 from tools.brief import make_brief_tools
 from tools.notes import make_note_tools
@@ -98,7 +100,19 @@ def run(
             break
 
         # --- ask the model what to do next ---------------------------------
-        reply = call_model(state)
+        # Each model call is a CLIENT span: it leaves this process. The attribute
+        # names are OpenTelemetry's GenAI conventions, so any backend can read
+        # them without a translator (Step 31.5).
+        with tracing.span(
+            "call_model", kind="CLIENT", **{"gen_ai.request.model": GEN_MODEL}
+        ) as model_span:
+            reply = call_model(state)
+            model_span.set("gen_ai.usage.input_tokens", reply.get("input_tokens", 0))
+            model_span.set("gen_ai.usage.output_tokens", reply.get("output_tokens", 0))
+            # Content is recorded only when capture is explicitly enabled: the
+            # prompt is the whole transcript, and transcripts hold the user's
+            # data (Step 31.6 — off by default).
+            model_span.record_content(completion=reply.get("text") or None)
 
         # Count the spend even on the last turn — the budget must reflect what
         # was actually used, not what was intended.
@@ -150,7 +164,23 @@ def run(
 
         # `dispatch` never raises: failures come back as an error *string*,
         # which is simply the observation the model reads next.
-        result = dispatch(tool_name, reply.get("tool_args") or {})
+        #
+        # The span is named per tool (`tool.web_search`, `tool.fetch_page`) rather
+        # than all of them sharing `execute_tool`: the whole value of a waterfall
+        # is telling stages apart at a glance, and four bars called `execute_tool`
+        # tell you nothing about which one went wrong. Step 31 learned this with
+        # `retrieve` vs `rerank`; here the equivalent is the tool name.
+        with tracing.span(
+            f"tool.{tool_name}", kind="INTERNAL", **{"gen_ai.tool.name": tool_name}
+        ) as tool_span:
+            result = dispatch(tool_name, reply.get("tool_args") or {})
+            tool_span.set("tool.result_chars", len(result))
+            if result.startswith("ERROR:"):
+                # A tool failure is an outcome, so the span says so — a green span
+                # with the error buried in an attribute is how you miss it.
+                tool_span.status = "ERROR"
+                tool_span.set("error.message", result[:160])
+
         state["messages"].append(
             {"role": "tool", "tool_name": tool_name, "tool_result": result}
         )

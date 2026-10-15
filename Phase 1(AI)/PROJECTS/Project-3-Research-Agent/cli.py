@@ -26,6 +26,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from agent import tracing
 from agent.checkpoint import CheckpointStore
 from agent.loop import run
 from agent.state import AgentState, new_state
@@ -40,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
     make_stdout_safe()
 
     args = _parse_args(argv)
+    # Off unless asked for: traces record structure by default, and prompts are
+    # the user's data (Step 31.6).
+    tracing.set_capture_content(args.capture_content)
 
     # Both stores live in the same SQLite file but in different tables; each
     # opens its own connection, which is why they are separate objects.
@@ -58,10 +62,22 @@ def main(argv: list[str] | None = None) -> int:
             # difference is where the state came from.
             state = new_state(args.topic, args.session, _new_run_id())
 
-        result = run(state, memory, checkpoints, on_event=_printer)
+        # The root span. Opened here rather than inside the loop so a whole run is
+        # one trace — the loop's model and tool spans nest under it automatically
+        # — and so the loop itself stays ignorant of tracing.
+        with tracing.span(
+            "invoke_agent",
+            kind="INTERNAL",
+            **{
+                "gen_ai.agent.name": "research-agent",
+                "run.id": state["run_id"],
+                "session.id": state["session_id"],
+            },
+        ) as root_span:
+            result = run(state, memory, checkpoints, on_event=_printer)
 
         _write_back(memory, result)
-        _report(result)
+        _report(result, trace_id=root_span.trace_id)
 
         # A brief is the definition of success, so its absence is a failed exit
         # code even though the agent behaved correctly.
@@ -99,6 +115,12 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         metavar="RUN_ID",
         help="continue a run from its latest checkpoint instead of starting fresh; "
         "the topic and session come from the checkpoint",
+    )
+    parser.add_argument(
+        "--capture-content",
+        action="store_true",
+        help="also record prompts and model replies in the trace (off by default: "
+        "they are your data, and they are large)",
     )
     args = parser.parse_args(argv)
 
@@ -196,7 +218,7 @@ def _subject(note_text: str) -> str:
     return " ".join(note_text.split())[:80]
 
 
-def _report(state: AgentState) -> None:
+def _report(state: AgentState, trace_id: str = "") -> None:
     """One summary at the end, whether the run finished or stopped."""
     print("\n" + "-" * 60)
     print(f"  status   {state['status']}  ({state['stop_reason']})")
@@ -205,6 +227,10 @@ def _report(state: AgentState) -> None:
         print(f"  brief    {state['brief_path']}")
     else:
         print("  brief    none written")
+    if trace_id:
+        # The path, not the contents: the trace is for when a run looks wrong,
+        # and `trace_view.py` turns it into a waterfall.
+        print(f"  trace    {Path('traces') / (trace_id + '.jsonl')}")
     print("-" * 60)
 
 

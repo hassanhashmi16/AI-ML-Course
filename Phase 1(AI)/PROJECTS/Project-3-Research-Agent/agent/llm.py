@@ -60,11 +60,15 @@ build on it — but prefer fresh sources for anything time-sensitive.
 
 
 class ModelReply(TypedDict, total=False):
-    """A parsed model turn: text, a tool call, or (rarely) both, plus tokens."""
+    """A parsed model turn: text, a tool call, or (rarely) both, plus token counts."""
     text: str
     tool_name: str
     tool_args: dict
+    # Totals drive the budget; the split exists for tracing, where the GenAI
+    # convention wants input and output counted separately (`gen_ai.usage.*`).
     tokens: int
+    input_tokens: int
+    output_tokens: int
     # Base64 of the SDK's `bytes` signature. Base64 rather than raw bytes so the
     # value survives JSON when the loop puts it into the checkpoint.
     thought_signature: str
@@ -215,6 +219,8 @@ def _parse(response: types.GenerateContentResponse) -> ModelReply:
     """
     usage = getattr(response, "usage_metadata", None)
     tokens = (usage.total_token_count or 0) if usage else 0
+    input_tokens = (usage.prompt_token_count or 0) if usage else 0
+    output_tokens = (usage.candidates_token_count or 0) if usage else 0
 
     texts: list[str] = []
     for candidate in response.candidates or []:
@@ -225,6 +231,8 @@ def _parse(response: types.GenerateContentResponse) -> ModelReply:
                     tool_name=part.function_call.name or "",
                     tool_args=dict(part.function_call.args or {}),
                     tokens=tokens,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
                 )
                 signature = getattr(part, "thought_signature", None)
                 if signature:
@@ -236,4 +244,9 @@ def _parse(response: types.GenerateContentResponse) -> ModelReply:
             if text:
                 texts.append(text)
 
-    return ModelReply(text="\n".join(texts).strip(), tokens=tokens)
+    return ModelReply(
+        text="\n".join(texts).strip(),
+        tokens=tokens,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+    )

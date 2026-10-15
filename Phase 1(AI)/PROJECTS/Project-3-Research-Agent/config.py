@@ -96,9 +96,13 @@ MAX_TOOL_RESULT_CHARS = 6000
 # Agent budget
 # These are the guardrails from Step 12. Defined here, enforced in policy.py.
 # An agent with no ceiling is an agent that can loop forever and burn money.
+#
+# Overridable from the environment for the same reason the model is: a
+# demonstration or a test wants a cheap run, and nobody should have to edit
+# source to get one. `MAX_STEPS=3 python cli.py --topic "..."`
 # ---------------------------------------------------------------------------
-MAX_STEPS = 25            # hard cap on model<->tool turns before we stop
-TOKEN_BUDGET = 120_000    # rough ceiling on tokens spent across a single run
+MAX_STEPS = int(os.getenv("MAX_STEPS", "25"))        # hard cap on model<->tool turns
+TOKEN_BUDGET = int(os.getenv("TOKEN_BUDGET", "120000"))  # rough ceiling per run
 
 
 # ---------------------------------------------------------------------------

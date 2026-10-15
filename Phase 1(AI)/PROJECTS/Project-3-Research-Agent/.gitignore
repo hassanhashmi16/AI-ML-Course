@@ -20,3 +20,6 @@ data/agent.db
 
 # Generated briefs are output, not source.
 briefs/
+
+# Trace files: runtime output from agent/tracing.py, one per run.
+traces/
