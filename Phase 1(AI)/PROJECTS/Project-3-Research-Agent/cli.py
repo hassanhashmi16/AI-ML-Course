@@ -24,11 +24,12 @@ import argparse
 import sys
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
 from agent.checkpoint import CheckpointStore
 from agent.loop import run
 from agent.state import AgentState, new_state
-from config import DB_PATH
+from config import BASE_DIR, DB_PATH
 from console import make_stdout_safe
 from memory.store import MemoryStore
 
@@ -145,13 +146,11 @@ def _write_back(memory: MemoryStore, state: AgentState) -> None:
     """Store what this run should still know next time.
 
     Two things, matching the store's two kinds of memory: an **episode** saying
-    what happened, and the **facts** the run learned. The episode is what makes
-    the next run's opening message able to say "you looked at this before".
+    what happened, and the **facts** the run learned. Both are recalled into the
+    next run's opening message, so both are written as sentences the model can
+    read — the episode is context ("I have been here before"), not bookkeeping.
     """
-    outcome = state["brief_path"] or f"no brief ({state['stop_reason']})"
-    memory.log_episode(
-        state["session_id"], f"researched '{state['topic']}' -> {outcome}"
-    )
+    memory.log_episode(state["session_id"], _episode_text(state))
 
     for note in state["notes"]:
         # provenance="tool" because every note traces to a page a tool fetched.
@@ -163,6 +162,25 @@ def _write_back(memory: MemoryStore, state: AgentState) -> None:
             note["text"],
             provenance="tool",
         )
+
+
+def _episode_text(state: AgentState) -> str:
+    """One readable line about what this run did.
+
+    The brief path is made relative first: this text gets recalled into a future
+    prompt, and an absolute Windows path ("D:\\AI-ML-Course\\...") is both noise
+    to the model and a leak of one machine's layout. Learned from the memory
+    demo, where the raw path showed up verbatim in run 2's opening message.
+    """
+    if not state["brief_path"]:
+        return f"researched '{state['topic']}' but produced no brief ({state['stop_reason']})"
+
+    try:
+        shown = Path(state["brief_path"]).relative_to(BASE_DIR)
+    except ValueError:
+        # Not under the project directory (shouldn't happen); show it as given.
+        shown = Path(state["brief_path"])
+    return f"researched '{state['topic']}' and wrote {shown}"
 
 
 def _subject(note_text: str) -> str:

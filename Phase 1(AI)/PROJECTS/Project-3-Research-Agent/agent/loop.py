@@ -166,6 +166,11 @@ def run(
     # else that left the loop is a stop, with its reason recorded above.
     state["status"] = "done" if state["done"] else "stopped"
 
+    # One final snapshot. `status` and `stop_reason` are set here — *after* the
+    # per-turn writes — so without this the newest row on disk would still say
+    # "running" and the stored record could never say how the run ended.
+    _snapshot(checkpoints, state)
+
     _emit(
         on_event,
         "stop",
