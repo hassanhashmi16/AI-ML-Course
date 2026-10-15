@@ -1425,13 +1425,14 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
 <div class="step-block p1" id="step-38">
   <div class="step-head">
     <span class="step-num-badge">38</span>
-    <div><h3>Agentic RAG</h3><p class="why">Merge retrieval + agents into one system (Steps 20–37 combined).</p></div>
+    <div><h3>Agentic RAG</h3><p class="why">Merge retrieval + agents into one system (Steps 20–37 combined). Classic RAG is an open loop: when retrieval misses, the generator answers anyway, fluently and with citations. Agentic RAG closes the loop — route by difficulty, grade the evidence, rewrite and retry, then check the answer is grounded before it ships. <a href="https://arxiv.org/abs/2501.09136">arxiv.org</a></p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">38.1</span> Agent-driven retrieval decisions</li>
-    <li><span class="onum">38.2</span> Query rewriting</li>
-    <li><span class="onum">38.3</span> Multi-hop retrieval</li>
-    <li><span class="onum">38.4</span> Self-correction &amp; grounding checks before answering</li>
+    <li><span class="onum">38.1</span> Agent-driven retrieval decisions — retrieve-or-not, and retrieval as a tool</li>
+    <li><span class="onum">38.2</span> Query rewriting &amp; decomposition — rewrite, HyDE, multi-query, step-back, sub-questions</li>
+    <li><span class="onum">38.3</span> Multi-hop retrieval — iterating with intermediate results</li>
+    <li><span class="onum">38.4</span> Self-correction &amp; grounding checks before answering — grade the evidence, then grade the answer</li>
+    <li><span class="onum">38.5</span> Evaluating &amp; operating the loop — retry budgets, latency, and the five rates</li>
   </ol>
 </div>
 
@@ -2231,7 +2232,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
   // PROGRESS: All steps from 1 through this number are completed (inclusive).
   // Future agents: change only this number when Hassan finishes the next step.
   // Use 0 for no completed steps. No browser storage or other edits are needed.
-  const COMPLETED_THROUGH_STEP = 37;
+  const COMPLETED_THROUGH_STEP = 38;
   const phases = ['p0', 'p1', 'p2', 'p3'];
   const modules = Array.from(document.querySelectorAll('.step-block')).map((card) => {
     const title = card.querySelector('h3').textContent.trim();
