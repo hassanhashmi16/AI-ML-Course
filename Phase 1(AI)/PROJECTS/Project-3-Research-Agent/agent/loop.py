@@ -16,6 +16,8 @@ it). One writer means one place where state can go wrong, and it is here.
 """
 from __future__ import annotations
 
+from typing import Callable
+
 from agent.checkpoint import CheckpointStore
 from agent.llm import call_model
 from agent.policy import should_stop
@@ -24,6 +26,11 @@ from memory.store import MemoryStore
 from tools.brief import make_brief_tools
 from tools.notes import make_note_tools
 from tools.registry import dispatch, register
+
+# An observer for the run: `hook(event_name, data)`. The loop never prints —
+# reporting is a caller's concern — so the CLI (Step 13) and the tracer (Step 16)
+# both attach here instead of the loop growing an output concern.
+EventHook = Callable[[str, dict], None]
 
 # Importing a stateless tool module *is* how it registers itself (Step 4).
 # The `# noqa` markers say "this import is used for its side effect, on purpose"
@@ -36,6 +43,7 @@ def run(
     state: AgentState,
     memory: MemoryStore | None = None,
     checkpoints: CheckpointStore | None = None,
+    on_event: EventHook | None = None,
 ) -> AgentState:
     """Run the agent until it finishes or a budget stops it.
 
@@ -48,23 +56,42 @@ def run(
     at the start and after every turn. Pass the state from `latest(run_id)` to
     continue a run that died — the transcript is already there, so the opening
     message is not added again.
+
+    Pass `on_event` to watch the run as it happens (the CLI prints a trace with
+    it; the tracer in Step 16 will attach the same way).
     """
     _register_tools(state)
+
+    resumed = bool(state["messages"])
+    recalled: list[dict] = []
 
     if not state["messages"]:
         # A fresh run. On a *resumed* run the transcript is already there (that
         # is the whole point of Step 11), so the opening message must not be
         # added twice — otherwise the model would read the topic twice.
-        facts = memory.recall(state["session_id"], state["topic"]) if memory else []
-        state["messages"].append({"role": "user", "text": _opening_message(state, facts)})
+        recalled = memory.recall(state["session_id"], state["topic"]) if memory else []
+        state["messages"].append({"role": "user", "text": _opening_message(state, recalled)})
         # Snapshot before the first model call, so a crash on turn 1 still leaves
         # a resumable run rather than nothing at all.
         _snapshot(checkpoints, state)
 
-    while not state["done"]:
+    _emit(
+        on_event,
+        "start",
+        run_id=state["run_id"],
+        topic=state["topic"],
+        session=state["session_id"],
+        resumed=resumed,
+        memories=len(recalled),
+    )
+
+    while True:
         # --- stopping rules -----------------------------------------------
-        # Policy decides, the loop obeys. `done` is only one of four reasons a
-        # run can end here; the other three are budgets and a detected spin.
+        # Policy decides, the loop obeys — including the success case. Asking
+        # here rather than in the `while` condition means there is exactly one
+        # exit path, so no run can ever end without a reason recorded (a
+        # `while not state["done"]` loop exits through the condition instead,
+        # leaving `stop_reason` empty on every successful run — learned live).
         stop, reason = should_stop(state)
         if stop:
             state["stop_reason"] = reason
@@ -82,6 +109,16 @@ def run(
         # rather than leaving it to be inferred from the transcript.
         if reply.get("text"):
             state["plan"] = reply["text"]
+
+        turn = state["step"] + 1
+        _emit(
+            on_event,
+            "model",
+            turn=turn,
+            text=reply.get("text", ""),
+            tool_name=reply.get("tool_name", ""),
+            tool_args=reply.get("tool_args") or {},
+        )
 
         tool_name = reply.get("tool_name")
         if not tool_name:
@@ -118,6 +155,8 @@ def run(
             {"role": "tool", "tool_name": tool_name, "tool_result": result}
         )
 
+        _emit(on_event, "tool", turn=turn, name=tool_name, result=result)
+
         state["step"] += 1
         # Snapshot after every completed turn: the most a crash can cost is the
         # turn in flight, never the run.
@@ -127,7 +166,29 @@ def run(
     # else that left the loop is a stop, with its reason recorded above.
     state["status"] = "done" if state["done"] else "stopped"
 
+    _emit(
+        on_event,
+        "stop",
+        status=state["status"],
+        reason=state["stop_reason"],
+        step=state["step"],
+        tokens=state["token_usage"],
+        brief_path=state["brief_path"],
+        notes=len(state["notes"]),
+    )
+
     return state
+
+
+def _emit(hook: EventHook | None, event: str, **data) -> None:
+    """Send one event to the observer, if anyone is watching.
+
+    Cheap and unconditional at the call sites: a run with no observer behaves
+    exactly as it did before the hook existed, so watching never changes what is
+    being watched (the observer effect would otherwise be a debugging hazard).
+    """
+    if hook is not None:
+        hook(event, data)
 
 
 def _snapshot(checkpoints: CheckpointStore | None, state: AgentState) -> None:
