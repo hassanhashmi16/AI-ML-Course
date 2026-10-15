@@ -19,6 +19,7 @@ LangGraph.
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Literal, TypedDict
 
 # Who produced a message. "model" is the assistant, "tool" is a tool's output
@@ -84,6 +85,22 @@ class AgentState(TypedDict):
     status: Status
     done: bool                # the model declared it finished
     brief_path: str           # where the written brief landed (Step 7)
+    # Why the run ended. Set by the loop from policy.should_stop(). A run can
+    # stop for reasons the model knows nothing about (budgets, a detected
+    # spin), and "why did this stop?" is the first question you ask of a run
+    # that did not finish — so it is recorded, checkpointed, and reported.
+    stop_reason: str
+
+
+def now_iso() -> str:
+    """The canonical timestamp for this schema: UTC, ISO 8601, seconds precision.
+
+    Every `created_at` / `retrieved_at` in state is produced here. A `datetime`
+    object would be the natural Python value, but it is not JSON-serializable —
+    and the checkpoint writes the state wholesale with `json.dumps` — so the
+    conversion happens at the source, once, instead of at each call site.
+    """
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def new_state(topic: str, session_id: str, run_id: str) -> AgentState:
@@ -106,4 +123,5 @@ def new_state(topic: str, session_id: str, run_id: str) -> AgentState:
         status="running",
         done=False,
         brief_path="",
+        stop_reason="",
     )

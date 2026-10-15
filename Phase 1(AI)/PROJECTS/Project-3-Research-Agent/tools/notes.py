@@ -15,20 +15,8 @@ dependency is made explicit by a closure instead of hidden in a global.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-from agent.state import AgentState
+from agent.state import AgentState, now_iso
 from tools.registry import ToolSpec
-
-
-def _now() -> str:
-    """UTC timestamp as an ISO 8601 string.
-
-    A `datetime` object would be the natural Python choice, but state must stay
-    JSON-serializable for the checkpoint (Step 11), so it becomes a string here
-    rather than at the serialization boundary.
-    """
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def make_note_tools(state: AgentState) -> list[ToolSpec]:
@@ -43,7 +31,7 @@ def make_note_tools(state: AgentState) -> list[ToolSpec]:
                 return f"Already saved as note {index}. Nothing to do."
 
         state["notes"].append(
-            {"text": text, "source_url": source_url, "created_at": _now()}
+            {"text": text, "source_url": source_url, "created_at": now_iso()}
         )
         suffix = f" Source: {source_url}" if source_url else ""
         return f"Saved note {len(state['notes'])}.{suffix}"

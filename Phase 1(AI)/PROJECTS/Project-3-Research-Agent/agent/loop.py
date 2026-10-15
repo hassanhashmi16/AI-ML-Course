@@ -16,9 +16,10 @@ it). One writer means one place where state can go wrong, and it is here.
 """
 from __future__ import annotations
 
+from agent.checkpoint import CheckpointStore
 from agent.llm import call_model
+from agent.policy import should_stop
 from agent.state import AgentState
-from config import MAX_STEPS, TOKEN_BUDGET
 from memory.store import MemoryStore
 from tools.brief import make_brief_tools
 from tools.notes import make_note_tools
@@ -31,13 +32,22 @@ import tools.fetch_page  # noqa: F401
 import tools.web_search  # noqa: F401
 
 
-def run(state: AgentState, memory: MemoryStore | None = None) -> AgentState:
+def run(
+    state: AgentState,
+    memory: MemoryStore | None = None,
+    checkpoints: CheckpointStore | None = None,
+) -> AgentState:
     """Run the agent until it finishes or a budget stops it.
 
     Callers do not need to prep the state beyond `new_state(...)`: this function
     registers the run's tools, loads what it already knows, and seeds the first
     message. It returns the same state object it was given, mutated, so callers
     can inspect `brief_path`, `status`, and the transcript afterwards.
+
+    Pass `checkpoints` to make the run crash-resumable: the state is snapshotted
+    at the start and after every turn. Pass the state from `latest(run_id)` to
+    continue a run that died — the transcript is already there, so the opening
+    message is not added again.
     """
     _register_tools(state)
 
@@ -47,17 +57,17 @@ def run(state: AgentState, memory: MemoryStore | None = None) -> AgentState:
         # added twice — otherwise the model would read the topic twice.
         facts = memory.recall(state["session_id"], state["topic"]) if memory else []
         state["messages"].append({"role": "user", "text": _opening_message(state, facts)})
+        # Snapshot before the first model call, so a crash on turn 1 still leaves
+        # a resumable run rather than nothing at all.
+        _snapshot(checkpoints, state)
 
     while not state["done"]:
-        # --- budget guards ------------------------------------------------
-        # Both of these move into agent/policy.py in Step 12. They live here for
-        # now so the loop is safe to run the moment it exists: an agent without
-        # a ceiling is an agent that can loop and spend forever.
-        if state["step"] >= MAX_STEPS:
-            state["status"] = "stopped"
-            break
-        if state["token_usage"] >= TOKEN_BUDGET:
-            state["status"] = "stopped"
+        # --- stopping rules -----------------------------------------------
+        # Policy decides, the loop obeys. `done` is only one of four reasons a
+        # run can end here; the other three are budgets and a detected spin.
+        stop, reason = should_stop(state)
+        if stop:
+            state["stop_reason"] = reason
             break
 
         # --- ask the model what to do next ---------------------------------
@@ -75,12 +85,12 @@ def run(state: AgentState, memory: MemoryStore | None = None) -> AgentState:
 
         tool_name = reply.get("tool_name")
         if not tool_name:
-            # The model replied with text and asked for nothing that exists.
-            # For now that ends the run as "stopped" (not "done") — the brief
-            # was never written. Step 12's policy will handle this better by
-            # nudging the model instead of giving up.
+            # The model replied with text and requested no tool, so there is
+            # nothing to execute and nothing left to drive the loop. `done` is
+            # set only by `write_brief`, so a run ending here produced no brief —
+            # the reason records that rather than leaving a silent empty result.
             state["messages"].append({"role": "model", "text": reply.get("text", "")})
-            state["status"] = "stopped"
+            state["stop_reason"] = "the model replied without calling a tool"
             break
 
         # --- record the request, then execute it ---------------------------
@@ -109,12 +119,25 @@ def run(state: AgentState, memory: MemoryStore | None = None) -> AgentState:
         )
 
         state["step"] += 1
+        # Snapshot after every completed turn: the most a crash can cost is the
+        # turn in flight, never the run.
+        _snapshot(checkpoints, state)
 
-    # `write_brief` sets `done`; anything else that broke the loop is a stop.
-    if state["done"]:
-        state["status"] = "done"
+    # `done` is set only by `write_brief`, so it means "a brief exists". Anything
+    # else that left the loop is a stop, with its reason recorded above.
+    state["status"] = "done" if state["done"] else "stopped"
 
     return state
+
+
+def _snapshot(checkpoints: CheckpointStore | None, state: AgentState) -> None:
+    """Save the state, if checkpointing is enabled for this run.
+
+    Optional by design: a caller (like the quick live test in the README) may not
+    want a database at all, and the loop should still run.
+    """
+    if checkpoints is not None:
+        checkpoints.save(state)
 
 
 def _register_tools(state: AgentState) -> None:

@@ -19,9 +19,9 @@ from __future__ import annotations
 
 import re
 import sqlite3
-from datetime import datetime, timezone
 from pathlib import Path
 
+from agent.state import now_iso
 from config import DB_PATH, MEMORY_TOP_K
 
 # Words too common to carry signal. Without this, "the battery" and "a battery"
@@ -36,11 +36,6 @@ _STOPWORDS = {
 # memory gets poisoned, so it is rejected at the door rather than stored and
 # distrusted later (Step 35's write-policy lesson).
 _TRUSTED_PROVENANCE = {"user", "tool"}
-
-
-def _now() -> str:
-    """UTC timestamp as an ISO 8601 string, matching the state schema's rule."""
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _terms(text: str) -> set[str]:
@@ -130,7 +125,7 @@ class MemoryStore:
             INSERT INTO memories (session_id, kind, subject, content, provenance, created_at)
             VALUES (?, 'semantic', ?, ?, ?, ?)
             """,
-            (session_id, subject, content, provenance, _now()),
+            (session_id, subject, content, provenance, now_iso()),
         )
 
         if existing is not None:
@@ -155,7 +150,7 @@ class MemoryStore:
             INSERT INTO memories (session_id, kind, subject, content, provenance, created_at)
             VALUES (?, 'episodic', '', ?, ?, ?)
             """,
-            (session_id, content, provenance, _now()),
+            (session_id, content, provenance, now_iso()),
         )
         self.conn.commit()
 
