@@ -9,8 +9,9 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1 and 2 are complete: reference cases, environment, and configuration.
-Next is Step 3, the shared request/evidence/report models and investigation state.
+Steps 1-3 are complete: reference cases, environment and configuration, and the
+shared request/evidence/report contracts with the investigation state.
+Next is Step 4, the bounded GitHub readers.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

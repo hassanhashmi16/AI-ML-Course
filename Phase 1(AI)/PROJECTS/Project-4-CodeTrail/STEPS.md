@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1 and 2 complete; reference cases and tested environment ready.
-> **Next:** Step 3.
+> **Status:** Steps 1-3 complete; reference cases, tested environment, and shared contracts ready.
+> **Next:** Step 4.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -159,7 +159,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Created `pyproject.toml`, `requirements.lock`, `.gitignore`, `.env.example`, `config.py`, `scripts/check_setup.py`, and the setup README. Built a local CPython 3.14.6 environment and installed hash-locked runtime/dev/eval dependencies using uv 0.13.1. All 17 runtime integrations and Ragas imported; actual framework entry points and a Document construction probe passed. `pip check` passed, as did configuration validation, template loading, environment precedence, secret masking, path anchoring, Python syntax, and ignore-rule checks. Resolved Ragas 0.4.3's import failure by bounding LangChain Community to 0.4.1 and regenerating the lock. No provider requests, model-weight downloads, or Step 3 implementation were part of this step.
 
-#### Step 3: Define requests, evidence, and investigation state
+#### Step 3: Define requests, evidence, and investigation state [done]
 
 **What:** Describe the information passed between the collector, retriever, graph, and report.
 
@@ -172,6 +172,8 @@ Project-4-CodeTrail/
 **Check:** The manually verified example fits the schemas; an unknown finding stays distinguishable from a supported claim.
 
 **Structure:** This combines Project 2's document/answer contracts with Project 3's explicit agent state.
+
+**Completed:** 16 October 2026. Added `models.py` (request, snapshot, source record, supporting excerpt, claim, timeline event, coverage, and report models; the `make_source_id` helper; validators that enforce the honesty rules) and `agent/state.py` (typed LangGraph state with reducers for accumulating collections, budget counters, and a `new_state` factory), plus `scripts/check_models.py` as the repeatable check. Check: the CT-001 demo case passes through the schemas end to end; a documented claim carries its excerpt while the CT-003-style unknown stays structurally distinct; and the schemas reject a documented claim with no excerpt, an unknown claim carrying excerpts, a non-GitHub URL, a `..` path, a partial report with no stated limitation, and a misspelled field. No provider calls or later-step implementation.
 
 ### Phase B — GitHub evidence
 
@@ -457,6 +459,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1 and 2**, 16 October 2026. See [reference cases](docs/demo-cases.md) and the [setup guide](README.md).
-- Next: **Step 3 — Define requests, evidence, and investigation state.**
+- Completed build steps: **Steps 1-3**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), and the shared contracts in `models.py` / `agent/state.py`, checked by `scripts/check_models.py`.
+- Next: **Step 4 — Read repository code and file history.**
 
