@@ -1,0 +1,20 @@
+# The environment and download/model caches are rebuilt from the lock/config.
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Real credentials stay local; the placeholder template is safe to commit.
+.env
+.env.*
+!.env.example
+
+# Source caches, vector collections, checkpoints, and generated reports.
+data/
+reports/
+
+# Frontend build artifacts, once Step 18 creates the React app.
+frontend/node_modules/
+frontend/dist/

@@ -1,0 +1,41 @@
+# This manifest explains our direct dependencies; requirements.lock records
+# the exact resolved versions, including the dependencies these packages need.
+[project]
+name = "codetrail"
+version = "0.1.0"
+description = "Trace the decisions behind a public repository's code."
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    # Shared schemas, validated environment settings, and document/tool types.
+    "pydantic>=2,<3",
+    "pydantic-settings>=2,<3",
+    "langchain-core>=1,<2",
+    # Provider and retrieval integrations replace our earlier custom plumbing.
+    "langchain-google-genai",
+    "langchain-text-splitters",
+    "langchain-qdrant",
+    "langchain-cohere",
+    "qdrant-client",
+    "fastembed",
+    # Graph execution, persistent checkpoints, and optional trace collection.
+    "langgraph>=1,<2",
+    "langgraph-checkpoint-sqlite",
+    "langsmith",
+    # Public GitHub reads and an on-disk cache of normalized evidence.
+    "PyGithub",
+    "diskcache",
+    # API and streaming response support; the React app comes in Step 18.
+    "fastapi",
+    "uvicorn",
+    "sse-starlette",
+]
+
+[project.optional-dependencies]
+# Ragas 0.4.3 imports VertexAI from Community; 0.4.2 removed that module.
+# This narrow compatibility bound is verified by the setup smoke check.
+eval = ["ragas>=0.4.3,<0.5", "langchain-community>=0.4.1,<0.4.2"]
+dev = ["pytest", "uv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
