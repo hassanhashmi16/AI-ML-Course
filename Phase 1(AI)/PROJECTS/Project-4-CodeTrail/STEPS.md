@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-3 complete; reference cases, tested environment, and shared contracts ready.
-> **Next:** Step 4.
+> **Status:** Steps 1-4 complete; reference cases, tested environment, shared contracts, and bounded GitHub readers ready.
+> **Next:** Step 5.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -177,7 +177,7 @@ Project-4-CodeTrail/
 
 ### Phase B — GitHub evidence
 
-#### Step 4: Read repository code and file history
+#### Step 4: Read repository code and file history [done]
 
 **What:** Build bounded GitHub readers for files, commits, and relevant changes.
 
@@ -190,6 +190,8 @@ Project-4-CodeTrail/
 **Check:** A selected file and its introducing change are inspectable; file/commit limits produce a visible coverage warning.
 
 **Structure:** These readers are the code-history equivalents of Project 3's fetch tool, implemented through an SDK.
+
+**Completed:** 16 October 2026. Added `github_source/client.py` (authenticated PyGithub client, repository validation, ref-to-SHA resolution returning a `RepoSnapshot`) and `github_source/code.py` (`read_file`, `list_file_history`, `inspect_change`, `discover_files`; every reader is SHA-addressed and reports truncation as a visible warning), plus `scripts/check_github.py` as the live check. Check: against the pinned Flask 2.2.0 snapshot, the ref resolved to the documented SHA; `src/flask/ctx.py` was read with its canonical URL and retained blob revision (438 lines); a three-commit history bound reported "showing 3 of 34" as a warning; the newest change to the file was inspected with changed-file metadata; discovery returned a bounded deterministic file set with a warning; a missing repository and a missing ref produced clear errors. Finding during the check: slicing a PyGithub `PaginatedList` raised `IndexError` past its length, so the PR-lead lookup iterates with a manual cap instead. GitHub API reads only; no model calls. Ran on the anonymous rate limit, so a `GITHUB_TOKEN` in `.env` remains recommended before building the collector.
 
 #### Step 5: Collect discussions and cache the evidence
 
@@ -459,6 +461,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-3**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), and the shared contracts in `models.py` / `agent/state.py`, checked by `scripts/check_models.py`.
-- Next: **Step 4 — Read repository code and file history.**
+- Completed build steps: **Steps 1-4**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), and the GitHub readers (`github_source/`), checked by `scripts/check_models.py` and `scripts/check_github.py`.
+- Next: **Step 5 — Collect discussions and cache the evidence.**
 
