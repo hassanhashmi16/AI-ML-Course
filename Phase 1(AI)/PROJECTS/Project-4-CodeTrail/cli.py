@@ -16,6 +16,7 @@ import argparse
 from langchain_core.messages import HumanMessage
 
 from agent.graph import build_graph
+from agent.memory import save_findings
 from agent.persistence import new_thread_id, open_checkpointer, saved_state
 from agent.state import new_state
 from agent.tools import ToolContext
@@ -62,14 +63,23 @@ def _context(repo, snapshot, collector):
     return context, client
 
 
-def _print_report(result: dict) -> None:
+def _print_report(result: dict, *, context=None, records=None, thread_id=None) -> None:
     report = result.get("report")
     if report is None:
         print("no report produced; inspect the thread or resume again")
         return
     path = save_report(report)
-    print(f"report: {path}")
-    print(f"status: {report.status} | claims: {len(report.claims)}")
+    message = f"report: {path}\nstatus: {report.status} | claims: {len(report.claims)}"
+    if context is not None:
+        finding_ids = save_findings(
+            context.client,
+            context.embeddings,
+            report,
+            records or {},
+            thread_id=thread_id,
+        )
+        message += f" | findings saved: {len(finding_ids)}"
+    print(message)
 
 
 def investigate(args) -> None:
@@ -101,7 +111,12 @@ def investigate(args) -> None:
                 state["sources"] = dict(collector.sources)
                 state["messages"] = [HumanMessage(content=args.question)]
                 result = graph.invoke(state, config)
-            _print_report(result)
+            _print_report(
+                result,
+                context=context,
+                records=dict(collector.sources),
+                thread_id=thread,
+            )
         finally:
             client.close()
     finally:
@@ -144,7 +159,12 @@ def resume(args) -> None:
             )
             graph = build_graph(context, checkpointer=saver)
             result = graph.invoke(None, {"configurable": {"thread_id": args.thread}})
-            _print_report(result)
+            _print_report(
+                result,
+                context=context,
+                records=dict(collector.sources),
+                thread_id=args.thread,
+            )
         finally:
             client.close()
             collector.close()
