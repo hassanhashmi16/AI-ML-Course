@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-5 complete; reference cases, tested environment, shared contracts, GitHub readers, and the cached evidence collector ready.
-> **Next:** Step 6.
+> **Status:** Steps 1-6 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, and source-mapped chunks ready.
+> **Next:** Step 7.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -211,7 +211,7 @@ Project-4-CodeTrail/
 
 ### Phase C — Retrieval and a working RAG baseline
 
-#### Step 6: Turn evidence into searchable documents
+#### Step 6: Turn evidence into searchable documents [done]
 
 **What:** Convert source records into LangChain Documents and split them into chunks.
 
@@ -224,6 +224,8 @@ Project-4-CodeTrail/
 **Check:** Each sample chunk maps to its original source excerpt and valid location.
 
 **Structure:** The full evidence record supports inspection; its chunks support retrieval.
+
+**Completed:** 16 October 2026. Added `ingest/documents.py` (`SourceRecord` to LangChain `Document`, carrying traceable identity metadata) and `ingest/split.py` (language-aware splitters for Python/Markdown, generic otherwise; character offsets plus line numbers per chunk; stable `chunk_id` from `(source_id, start, end)`), plus `scripts/check_chunks.py`. Check: 4 records (ctx.py, PR #4682, 2 reviews) produced 22 chunks (file=18, pull_request=2, review=2); every chunk is an exact substring of its record at its recorded offsets with in-bounds line numbers; re-splitting produced an identical `chunk_id` sequence; the sample chunk ctx.py L229-L256 carries "AppContext". GitHub reads replayed from the Step 5 cache; no model calls.
 
 #### Step 7: Embed and index with Qdrant
 
@@ -463,6 +465,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-5**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), and the GitHub readers and collector (`github_source/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, and `scripts/check_collect.py`.
-- Next: **Step 6 — Turn evidence into searchable documents.**
+- Completed build steps: **Steps 1-6**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), and the ingest layer (`ingest/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, and `scripts/check_chunks.py`.
+- Next: **Step 7 — Embed and index with Qdrant.**
 
