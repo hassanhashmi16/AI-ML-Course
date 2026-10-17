@@ -194,6 +194,7 @@ class SourceRecord(Contract):
     title: str | None = None
     author: str | None = None
     source_date: AwareDatetime | None = None  # when this material was created
+    state: str | None = None  # open/closed/merged for discussions; None elsewhere
     content: str = Field(min_length=1)        # the retained source text
     content_revision: str | None = None       # e.g. blob SHA or last-edited marker
     relationships: list[str] = Field(default_factory=list)  # related source_ids

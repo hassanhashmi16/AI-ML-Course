@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-4 complete; reference cases, tested environment, shared contracts, and bounded GitHub readers ready.
-> **Next:** Step 5.
+> **Status:** Steps 1-5 complete; reference cases, tested environment, shared contracts, GitHub readers, and the cached evidence collector ready.
+> **Next:** Step 6.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -193,7 +193,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `github_source/client.py` (authenticated PyGithub client, repository validation, ref-to-SHA resolution returning a `RepoSnapshot`) and `github_source/code.py` (`read_file`, `list_file_history`, `inspect_change`, `discover_files`; every reader is SHA-addressed and reports truncation as a visible warning), plus `scripts/check_github.py` as the live check. Check: against the pinned Flask 2.2.0 snapshot, the ref resolved to the documented SHA; `src/flask/ctx.py` was read with its canonical URL and retained blob revision (438 lines); a three-commit history bound reported "showing 3 of 34" as a warning; the newest change to the file was inspected with changed-file metadata; discovery returned a bounded deterministic file set with a warning; a missing repository and a missing ref produced clear errors. Finding during the check: slicing a PyGithub `PaginatedList` raised `IndexError` past its length, so the PR-lead lookup iterates with a manual cap instead. GitHub API reads only; no model calls. Ran on the anonymous rate limit, so a `GITHUB_TOKEN` in `.env` remains recommended before building the collector.
 
-#### Step 5: Collect discussions and cache the evidence
+#### Step 5: Collect discussions and cache the evidence [done]
 
 **What:** Follow PR and issue relationships and save a reusable evidence bundle.
 
@@ -206,6 +206,8 @@ Project-4-CodeTrail/
 **Check:** The bundle contains the expected discussion evidence, a repeat collection uses the cache, and truncated or failed reads remain visible.
 
 **Structure:** This is our source ingestion layer. It also supplies the live readers that the agent will later use to expand an investigation.
+
+**Completed:** 16 October 2026. Added `github_source/discussions.py` (`read_pull`, `read_issue`, `read_comments`, `read_reviews`; PR state and edit markers retained, comments keep their parent thread) and `github_source/collect.py` (diskcache-backed `Collector`: cache-first single reads and listings keyed by stable IDs, visible truncation/failure warnings, computed `Coverage`, JSON bundle export), plus `scripts/check_collect.py`. Also added the `state` field to `SourceRecord` and fixed a latent PyGithub `PaginatedList` slicing bug in `list_file_history` (islice, not `[:cap]`). Check: one demo trail collected (ctx.py + bounded history + PR #4682 with state=merged and its merge-commit lead converted to `cbebdae`, matching docs/demo-cases.md, plus 2 reviews); the repeat collection replayed with 5 hits / 0 misses and identical sources; a deliberately missing PR produced a visible warning; coverage reported incomplete with notes; the saved bundle reloaded and matched. Live GitHub reads only; no model calls.
 
 ### Phase C — Retrieval and a working RAG baseline
 
@@ -461,6 +463,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-4**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), and the GitHub readers (`github_source/`), checked by `scripts/check_models.py` and `scripts/check_github.py`.
-- Next: **Step 5 — Collect discussions and cache the evidence.**
+- Completed build steps: **Steps 1-5**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), and the GitHub readers and collector (`github_source/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, and `scripts/check_collect.py`.
+- Next: **Step 6 — Turn evidence into searchable documents.**
 

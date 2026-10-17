@@ -9,10 +9,10 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-4 are complete: reference cases, environment and configuration, the
-shared request/evidence/report contracts with the investigation state, and the
-bounded GitHub readers.
-Next is Step 5, collecting discussions and caching the evidence.
+Steps 1-5 are complete: reference cases, environment and configuration, the
+shared request/evidence/report contracts with the investigation state, the
+bounded GitHub readers, and the cached evidence collector.
+Next is Step 6, turning evidence into searchable documents.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

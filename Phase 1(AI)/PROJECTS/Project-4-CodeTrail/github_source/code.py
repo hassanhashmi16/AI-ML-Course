@@ -12,6 +12,8 @@ one -- the failure this step's check exists to catch.
 
 from __future__ import annotations
 
+from itertools import islice
+
 from github import GithubException
 from github.Commit import Commit
 from github.Repository import Repository
@@ -106,8 +108,10 @@ def list_file_history(
     """Commits that touched ``path``, newest first, capped with a visible warning."""
     cap = limit if limit is not None else settings.max_commits
     commits = repo.get_commits(path=path, sha=snapshot.sha)
-    total = commits.totalCount  # forces one page fetch, then slices lazily
-    records = [_commit_record(snapshot, commit) for commit in commits[:cap]]
+    total = commits.totalCount  # forces one page fetch; islice walks lazily
+    # islice, not [:cap]: slicing a PyGithub PaginatedList raises IndexError
+    # once the slice reaches past the end of the list.
+    records = [_commit_record(snapshot, commit) for commit in islice(commits, cap)]
     warning = None
     if total > len(records):
         warning = (
