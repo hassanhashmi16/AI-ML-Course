@@ -70,6 +70,8 @@ Rules:
 - Never invent source IDs. If the evidence cannot answer the question, say so
   in `summary` and list what is missing in `unresolved`.
 
+{feedback_block}
+
 Return the structured answer."""
 
 
@@ -145,12 +147,27 @@ def answer_question(
     documents: list[Document],
     coverage: Coverage,
     llm=None,
+    feedback: str | None = None,
 ) -> tuple[Report, list[str]]:
-    """One retrieval pass -> a validated, cited Report (plus validation issues)."""
+    """One retrieval pass -> a validated, cited Report (plus validation issues).
+
+    ``feedback`` carries reviewer notes from a previous attempt (grounding
+    revision), so the model can correct claims it could not support.
+    """
     records_by_id = {record.source_id: record for record in records}
     llm = llm or build_llm()
+    feedback_block = (
+        "Reviewer feedback from a previous attempt (address it or remove the claim):\n"
+        f"{feedback}"
+        if feedback
+        else ""
+    )
     draft = llm.with_structured_output(AnswerDraft).invoke(
-        PROMPT.format(question=question, evidence=format_evidence(documents))
+        PROMPT.format(
+            question=question,
+            evidence=format_evidence(documents),
+            feedback_block=feedback_block,
+        )
     )
 
     claims, issues = validate_claims(draft.claims, records_by_id)

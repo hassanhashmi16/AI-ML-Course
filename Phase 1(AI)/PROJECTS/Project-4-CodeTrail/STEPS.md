@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-11 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, and the LangGraph investigation workflow ready.
-> **Next:** Step 12.
+> **Status:** Steps 1-12 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, and budgets/corrective grading/grounding ready.
+> **Next:** Step 13.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -309,7 +309,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `agent/nodes.py` (investigate, tool execution with call counting and state sync, evidence grading, conditional routing, synthesis over gathered evidence) and `agent/graph.py` (StateGraph: investigate, tools, grade, investigate-or-synthesize), extended the state with `messages` (add_messages), `evidence_sufficient`, and `investigation_rounds`, added PR leads to `read_change`, and added `console.py` for Windows-safe output. Findings during the check: Groq rejects a prose reply in tool-choice mode, so the grader prompt now forbids answering and a grader failure degrades to "proceed" with a note; tool results reached the collector but not the graph state, so the tools node now syncs sources into state (the explicit trail); model quotes that drop markdown backticks are located formatting-insensitively while the stored quote is replaced by the exact source span (paraphrases still fail). Check: the LocalStack question followed a two-step trail (search_evidence then read_discussion), graded sufficient, synthesized a complete report (1 documented claim, verbatim citation against 5 inspected sources), saved and reloaded; a Windows cp1252 print crash on model punctuation was fixed by the console helper. Live Groq calls for decisions, grading, and synthesis; embeddings, search, and reranking stayed local.
 
-#### Step 12: Add corrective retrieval, grounding, and budgets
+#### Step 12: Add corrective retrieval, grounding, and budgets [done]
 
 **What:** Make the workflow react to weak evidence and stop predictably.
 
@@ -322,6 +322,8 @@ Project-4-CodeTrail/
 **Check:** Fixtures demonstrate a successful retry, an unsupported claim being revised/downgraded, and an exhausted budget returning an honest partial result.
 
 **Structure:** This applies Step 38's closed-loop retrieval around the working investigation, with explicit documented/inferred/unknown outcomes.
+
+**Completed:** 16 October 2026. Added `agent/policy.py` (tool/source/token/time budgets plus repeated-action detection, each returning a reason) and extended `agent/nodes.py`: grading is skipped when a budget is spent and repeats the reason; insufficient grades hand the missing evidence back to the investigator as guidance; `investigate` accumulates provider token usage; synthesis now runs a separate grounding pass (`ClaimSupport`) that judges whether each claim is supported by its quote, attempts one revision with reviewer feedback, and downgrades claims still unsupported into `unresolved` with status=partial. State gained `started_at` and `tokens_used`; `answer_question` accepts revision feedback. Check: fixtures proved budget stops (tool cap, repeated action) with the grader skipped, a failed grade routing back to investigation and a sufficient one routing to synthesis, an exhausted budget producing an honest partial report, and a citation-valid but semantically unsupported claim being revised then downgraded. Findings: the initial grounding judge was too strict (rejected quotes that plainly stated the reasons), so its prompt now judges substance rather than wording. The live graph regression kept one documented claim and downgraded one, status=partial, report saved and reloaded. Fixtures make no model calls; the graph regression used Groq for decisions, grading, grounding, and synthesis.
 
 ### Phase E — Persistence and observability
 
@@ -475,6 +477,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-11**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), and the investigation graph (`agent/graph.py` + `agent/nodes.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, and `scripts/check_graph.py`.
-- Next: **Step 12 — Add corrective retrieval, grounding, and budgets.**
+- Completed build steps: **Steps 1-12**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), and the policy (`agent/policy.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, and `scripts/check_policy.py`.
+- Next: **Step 13 — Add persistent checkpoints and resume.**
 

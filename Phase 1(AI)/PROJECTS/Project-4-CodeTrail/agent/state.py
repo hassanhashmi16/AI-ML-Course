@@ -15,6 +15,7 @@ replaces its own record instead of duplicating evidence (idempotent replay).
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from operator import add
 from typing import Annotated, TypedDict
 
@@ -71,6 +72,10 @@ class InvestigationState(TypedDict):
     evidence_sufficient: bool | None
     investigation_rounds: int
 
+    # Budgets: wall-clock start and accumulated model tokens (policy reads these).
+    started_at: str
+    tokens_used: int
+
     # The finished artifact, set by finalization; None while running.
     report: Report | None
 
@@ -92,5 +97,7 @@ def new_state(request: InvestigationRequest, snapshot: RepoSnapshot) -> Investig
         answer_revisions=0,
         evidence_sufficient=None,
         investigation_rounds=0,
+        started_at=datetime.now(timezone.utc).isoformat(),
+        tokens_used=0,
         report=None,
     )
