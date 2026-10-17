@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-14 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, budgets/corrective grading/grounding, durable checkpoints with CLI resume, and reusable findings memory ready.
-> **Next:** Step 15.
+> **Status:** Steps 1-15 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, budgets/corrective grading/grounding, durable checkpoints with CLI resume, reusable findings memory, and local traces with public progress events ready.
+> **Next:** Step 16.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -359,7 +359,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `agent/memory.py`: a `Finding` record (repository, base SHA, question, statement, label, source_id, quote, line range, source revision, thread, created_at), deterministic upsert IDs, saving a finished report's cited claims into a **separate** Qdrant collection, recall filtered by repository + base SHA, revalidation against current evidence (supported / stale / unverified), and lead formatting. `cli.py` now saves findings after each report (both investigate and resume). Check: a finding saved from a cited report was recalled by a fresh client and fresh collector and revalidated as supported; another repository and another revision recalled nothing; changed evidence made the finding stale. No model calls; embeddings are local.
 
-#### Step 15: Add traces and meaningful progress events
+#### Step 15: Add traces and meaningful progress events [done]
 
 **What:** Expose what the workflow did, where it spent time, and why it stopped.
 
@@ -372,6 +372,8 @@ Project-4-CodeTrail/
 **Check:** A run has linked retrieval/model/tool stages and readable progress; core operation still works without a tracing account.
 
 **Structure:** This replaces the homemade tracing layer and prepares the event contract the API/UI will consume.
+
+**Completed:** 16 October 2026. Added `api/events.py` (the small public `ProgressEvent` contract: kind, stage, short message, thread, duration, scalar data, timestamp -- no prompts or completions) and `agent/observability.py` (`StageLog` JSONL traces under `data/traces/`, graph streaming projected into events with per-stage durations and tool names, termination status/reason in `run_finished`, and `configure_tracing()` that enables LangSmith only when explicitly configured and hides inputs/outputs). `cli.py` now runs investigations through `run_with_events` and prints the event count and log path. Check: a fixture run produced the ordered stream run, model, tools, grading, model, tools, grading, synthesis, run; named both tools; recorded durations; wrote a 9-line JSONL file matching the events; leaked no prompt text; and ran with tracing off. No model calls.
 
 ### Phase F — Evaluation and product surface
 
@@ -481,6 +483,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-14**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), persistence (`agent/persistence.py` + `cli.py`), and findings memory (`agent/memory.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, `scripts/check_resume.py`, and `scripts/check_memory.py`.
-- Next: **Step 15 — Add traces and meaningful progress events.**
+- Completed build steps: **Steps 1-15**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), persistence (`agent/persistence.py` + `cli.py`), findings memory (`agent/memory.py`), and observability (`agent/observability.py` + `api/events.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, `scripts/check_resume.py`, `scripts/check_memory.py`, and `scripts/check_traces.py`.
+- Next: **Step 16 — Evaluate baseline versus investigation.**
 

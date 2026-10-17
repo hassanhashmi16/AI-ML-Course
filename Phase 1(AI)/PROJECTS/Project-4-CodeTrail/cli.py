@@ -17,6 +17,7 @@ from langchain_core.messages import HumanMessage
 
 from agent.graph import build_graph
 from agent.memory import save_findings
+from agent.observability import configure_tracing, run_with_events
 from agent.persistence import new_thread_id, open_checkpointer, saved_state
 from agent.state import new_state
 from agent.tools import ToolContext
@@ -110,13 +111,16 @@ def investigate(args) -> None:
                 )
                 state["sources"] = dict(collector.sources)
                 state["messages"] = [HumanMessage(content=args.question)]
-                result = graph.invoke(state, config)
+                events, result, log_path = run_with_events(
+                    graph, state, config, thread_id=thread
+                )
             _print_report(
                 result,
                 context=context,
                 records=dict(collector.sources),
                 thread_id=thread,
             )
+            print(f"events: {len(events)} | log: {log_path}")
         finally:
             client.close()
     finally:
@@ -158,13 +162,19 @@ def resume(args) -> None:
                 list(collector.sources.values()),
             )
             graph = build_graph(context, checkpointer=saver)
-            result = graph.invoke(None, {"configurable": {"thread_id": args.thread}})
+            events, result, log_path = run_with_events(
+                graph,
+                None,
+                {"configurable": {"thread_id": args.thread}},
+                thread_id=args.thread,
+            )
             _print_report(
                 result,
                 context=context,
                 records=dict(collector.sources),
                 thread_id=args.thread,
             )
+            print(f"events: {len(events)} | log: {log_path}")
         finally:
             client.close()
             collector.close()
@@ -172,6 +182,7 @@ def resume(args) -> None:
 
 def main() -> None:
     make_stdout_safe()
+    print(configure_tracing())
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
 
