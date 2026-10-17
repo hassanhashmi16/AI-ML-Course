@@ -18,6 +18,9 @@ from __future__ import annotations
 from operator import add
 from typing import Annotated, TypedDict
 
+from langchain_core.messages import AnyMessage
+from langgraph.graph.message import add_messages
+
 from models import (
     Claim,
     InvestigationRequest,
@@ -43,6 +46,10 @@ class InvestigationState(TypedDict):
     request: InvestigationRequest
     snapshot: RepoSnapshot
 
+    # The investigator's conversation: model decisions and tool results.
+    # add_messages merges by message ID, so replay never duplicates turns.
+    messages: Annotated[list[AnyMessage], add_messages]
+
     # Collected evidence by stable ID; `retrieved` holds the IDs selected for
     # the current step (overwritten each retrieval round, not accumulated).
     sources: Annotated[dict[str, SourceRecord], _merge_sources]
@@ -60,6 +67,10 @@ class InvestigationState(TypedDict):
     retrieval_rounds: int
     answer_revisions: int
 
+    # Control fields written by the grade node and read by graph edges.
+    evidence_sufficient: bool | None
+    investigation_rounds: int
+
     # The finished artifact, set by finalization; None while running.
     report: Report | None
 
@@ -69,6 +80,7 @@ def new_state(request: InvestigationRequest, snapshot: RepoSnapshot) -> Investig
     return InvestigationState(
         request=request,
         snapshot=snapshot,
+        messages=[],
         sources={},
         retrieved=[],
         notes=[],
@@ -78,5 +90,7 @@ def new_state(request: InvestigationRequest, snapshot: RepoSnapshot) -> Investig
         tool_calls=0,
         retrieval_rounds=0,
         answer_revisions=0,
+        evidence_sufficient=None,
+        investigation_rounds=0,
         report=None,
     )

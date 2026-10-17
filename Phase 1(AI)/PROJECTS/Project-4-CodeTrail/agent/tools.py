@@ -179,6 +179,15 @@ def build_tools(context: ToolContext) -> list[BaseTool]:
         )
         if warning:
             output += f"\nwarning: {warning}"
+        if record.relationships:
+            leads: list[str] = []
+            for relationship in record.relationships:
+                if ":pr:" in relationship:
+                    number = relationship.rsplit(":pr:", 1)[-1]
+                    leads.append(f"  pull request #{number} (source_id {relationship})")
+                else:
+                    leads.append(f"  {relationship}")
+            output += "\nleads (read a PR number with read_discussion):\n" + "\n".join(leads)
         return _clip(output, TOOL_CHAR_LIMIT)
 
     @tool

@@ -25,6 +25,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_DIR))
 
 from config import settings  # noqa: E402
+from console import make_stdout_safe  # noqa: E402
 from generation.answer import DraftClaim, answer_question, save_report  # noqa: E402
 from github_source.client import get_github, get_repository, resolve_ref  # noqa: E402
 from github_source.collect import Collector  # noqa: E402
@@ -50,6 +51,7 @@ QUESTION = "Why did Flask replace the LocalStack-based context storage with dire
 
 
 def main() -> None:
+    make_stdout_safe()
     gh = get_github()
     repo = get_repository(gh, REPO)
     snapshot = resolve_ref(gh, REPO, "2.2.0")

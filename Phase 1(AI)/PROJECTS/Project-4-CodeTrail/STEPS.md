@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-10 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, and the investigator tools ready.
-> **Next:** Step 11.
+> **Status:** Steps 1-11 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, and the LangGraph investigation workflow ready.
+> **Next:** Step 12.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -293,7 +293,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `agent/tools.py`: five LangChain tools (`search_evidence`, `read_code`, `list_file_history`, `read_change`, `read_discussion`) closing over a trusted `ToolContext` (repository, pinned SHA, collector, index client) so repository scope is injected, never model-supplied. Read tools index newly fetched records before returning; all outputs are budgeted. Check: search returned three scoped citable source_ids; `read_discussion(4682)` made the PR searchable in the same run (absent before, found by the follow-up query); `list_file_history` to `read_change(095651b)` followed a real commit trail and included ctx.py among changed files; `read_code` returned file text with its source_id; every output stayed within budget (max 3,403 chars). No model calls; GitHub reads replayed from the Step 5 cache.
 
-#### Step 11: Build the LangGraph investigation workflow
+#### Step 11: Build the LangGraph investigation workflow [done]
 
 **What:** Connect retrieval, model decisions, and tool execution into a stateful investigation.
 
@@ -306,6 +306,8 @@ Project-4-CodeTrail/
 **Check:** A demo question follows a real multi-hop trail and produces the shared report format.
 
 **Structure:** LangGraph takes over Project 3's custom loop; our nodes express CodeTrail's investigation strategy.
+
+**Completed:** 16 October 2026. Added `agent/nodes.py` (investigate, tool execution with call counting and state sync, evidence grading, conditional routing, synthesis over gathered evidence) and `agent/graph.py` (StateGraph: investigate, tools, grade, investigate-or-synthesize), extended the state with `messages` (add_messages), `evidence_sufficient`, and `investigation_rounds`, added PR leads to `read_change`, and added `console.py` for Windows-safe output. Findings during the check: Groq rejects a prose reply in tool-choice mode, so the grader prompt now forbids answering and a grader failure degrades to "proceed" with a note; tool results reached the collector but not the graph state, so the tools node now syncs sources into state (the explicit trail); model quotes that drop markdown backticks are located formatting-insensitively while the stored quote is replaced by the exact source span (paraphrases still fail). Check: the LocalStack question followed a two-step trail (search_evidence then read_discussion), graded sufficient, synthesized a complete report (1 documented claim, verbatim citation against 5 inspected sources), saved and reloaded; a Windows cp1252 print crash on model punctuation was fixed by the console helper. Live Groq calls for decisions, grading, and synthesis; embeddings, search, and reranking stayed local.
 
 #### Step 12: Add corrective retrieval, grounding, and budgets
 
@@ -473,6 +475,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-10**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), and the investigator tools (`agent/tools.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, and `scripts/check_tools.py`.
-- Next: **Step 11 — Build the LangGraph investigation workflow.**
+- Completed build steps: **Steps 1-11**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), and the investigation graph (`agent/graph.py` + `agent/nodes.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, and `scripts/check_graph.py`.
+- Next: **Step 12 — Add corrective retrieval, grounding, and budgets.**
 

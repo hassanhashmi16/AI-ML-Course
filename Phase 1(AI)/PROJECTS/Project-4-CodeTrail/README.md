@@ -9,12 +9,12 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-10 are complete: reference cases, environment and configuration, the
+Steps 1-11 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
 bounded GitHub readers, the cached evidence collector, source-mapped chunks,
 the local vector index, hybrid retrieval with reranking, the cited baseline
-answer, and the investigator tools.
-Next is Step 11, building the LangGraph investigation workflow.
+answer, the investigator tools, and the LangGraph investigation workflow.
+Next is Step 12, corrective retrieval, grounding checks, and budgets.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

@@ -24,6 +24,7 @@ from langchain_core.documents import Document
 from pydantic import Field
 
 from config import settings
+from console import make_stdout_safe
 from github_source.client import get_github, get_repository, resolve_ref
 from github_source.code import discover_files
 from github_source.collect import Collector
@@ -143,11 +144,14 @@ def answer_question(
     records: list[SourceRecord],
     documents: list[Document],
     coverage: Coverage,
+    llm=None,
 ) -> tuple[Report, list[str]]:
     """One retrieval pass -> a validated, cited Report (plus validation issues)."""
     records_by_id = {record.source_id: record for record in records}
-    llm = build_llm().with_structured_output(AnswerDraft)
-    draft = llm.invoke(PROMPT.format(question=question, evidence=format_evidence(documents)))
+    llm = llm or build_llm()
+    draft = llm.with_structured_output(AnswerDraft).invoke(
+        PROMPT.format(question=question, evidence=format_evidence(documents))
+    )
 
     claims, issues = validate_claims(draft.claims, records_by_id)
     used_ids = {excerpt.source_id for claim in claims for excerpt in claim.excerpts}
@@ -182,6 +186,7 @@ def save_report(report: Report) -> Path:
 
 def main() -> None:
     """The baseline command: collect, index, retrieve, answer, save."""
+    make_stdout_safe()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", required=True, help="public GitHub repository URL")
     parser.add_argument("--ref", default=None, help="branch/tag (default: the repository's default branch)")
