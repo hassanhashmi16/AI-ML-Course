@@ -35,10 +35,12 @@ from ingest.split import CHUNK_OVERLAP, CHUNK_SIZE, split_documents
 from models import RepoSnapshot, SourceRecord
 from retrieval.clients import (
     build_embeddings,
+    build_sparse_embedding,
     build_vector_store,
     collection_name,
     ensure_collection,
     open_qdrant,
+    reset_collection,
 )
 
 
@@ -131,9 +133,9 @@ def index_records(
     current = current_settings(store)
     previous = load_manifest(collection)
     if rebuild:
-        if client.collection_exists(collection):
-            client.delete_collection(collection)
-        previous = None  # an explicit rebuild replaces whatever was stored
+        # The caller deletes the collection first (its schema may have
+        # changed); here a rebuild only means "do not compare manifests".
+        previous = None
     ensure_compatible(previous, current)
 
     chunks = split_documents(to_documents(records))
@@ -200,7 +202,15 @@ def main() -> None:
     collection = collection_name(snapshot)
     client = open_qdrant()
     try:
-        store = build_vector_store(client, build_embeddings(), collection)
+        if args.rebuild:
+            reset_collection(client, collection)
+        store = build_vector_store(
+            client,
+            build_embeddings(),
+            collection,
+            sparse_embedding=build_sparse_embedding(),
+            mode="hybrid",
+        )
         result = index_records(client, store, collection, snapshot, records, rebuild=args.rebuild)
     finally:
         client.close()

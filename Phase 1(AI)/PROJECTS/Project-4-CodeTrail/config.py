@@ -46,6 +46,11 @@ class Settings(BaseSettings):
     embed_model: str = Field(default="gemini-embedding-001", min_length=1)
     embed_dim: int = Field(default=768, gt=0)
     sparse_model: str = Field(default="Qdrant/bm25", min_length=1)
+    # Reranking: local fastembed cross-encoder by default; "cohere" uses
+    # RERANK_MODEL with COHERE_API_KEY; "none" keeps retrieval order (and is
+    # recorded as disabled).
+    rerank_provider: Literal["fastembed", "cohere", "none"] = "fastembed"
+    fastembed_rerank_model: str = Field(default="Xenova/ms-marco-MiniLM-L-6-v2", min_length=1)
     rerank_model: str = Field(default="rerank-v4.0-fast", min_length=1)
 
     # Positive limits prevent accidental zero-size results or unbounded work.

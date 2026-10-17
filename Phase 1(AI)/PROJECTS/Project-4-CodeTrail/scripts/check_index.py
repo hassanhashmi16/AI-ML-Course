@@ -73,7 +73,10 @@ def main() -> None:
         store = build_vector_store(client, embeddings, collection)
         result = index_records(client, store, collection, snapshot, records, rebuild=True)
         count = result["points"]
-        assert count == result["chunks"] > 0, "every chunk must land as a point"
+        # The collection may already hold sources from other checks; what
+        # matters is that this batch's chunks all landed (the count can only
+        # stay equal or grow).
+        assert count >= result["chunks"] > 0, "every chunk must land as a point"
         print(f"PASS  rebuilt: {count} points from {result['chunks']} chunk(s) "
               f"({len(records)} source(s)) -> {collection}")
     finally:

@@ -14,13 +14,18 @@ import re
 
 from langchain_core.embeddings import Embeddings
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams
+from qdrant_client.models import Distance, SparseVectorParams, VectorParams
 
 from config import settings
 from models import RepoSnapshot, repo_slug
 
 # Local model weights live in the project's ignored .cache/ directory.
 FASTEMBED_CACHE = settings.data_dir.parent / ".cache" / "fastembed"
+
+# Name of the sparse vector field in every collection we create. Passed
+# explicitly to the store as well, so the schema we create and the schema we
+# query cannot drift apart.
+SPARSE_VECTOR_NAME = "langchain-sparse"
 
 
 class LocalEmbeddings(Embeddings):
@@ -80,10 +85,11 @@ def collection_name(snapshot: RepoSnapshot) -> str:
 def ensure_collection(client: QdrantClient, embeddings: Embeddings, collection: str) -> None:
     """Create the collection with the embedder's true dimension, if missing.
 
-    Local-mode Qdrant raises "collection not found" (rather than answering a
-    not-found response), and the LangChain store validates the collection on
-    construction -- so the collection has to exist first, sized to the
-    embedder's actual output dimension.
+    Collections are created hybrid-capable (dense + sparse vectors): dense-only
+    search works on the same schema, and switching retrieval modes must not
+    require a rebuild. Local-mode Qdrant raises "collection not found" (rather
+    than answering a not-found response), and the LangChain store validates
+    the collection on construction -- so it has to exist before the store.
     """
     if client.collection_exists(collection):
         return
@@ -91,12 +97,51 @@ def ensure_collection(client: QdrantClient, embeddings: Embeddings, collection: 
     client.create_collection(
         collection_name=collection,
         vectors_config=VectorParams(size=dimension, distance=Distance.COSINE),
+        sparse_vectors_config={SPARSE_VECTOR_NAME: SparseVectorParams()},
     )
 
 
-def build_vector_store(client: QdrantClient, embeddings: Embeddings, collection: str):
-    """The LangChain vector store bound to this client, collection, embedder."""
-    from langchain_qdrant import QdrantVectorStore
+def reset_collection(client: QdrantClient, collection: str) -> None:
+    """Delete the collection if present (an explicit --rebuild)."""
+    if client.collection_exists(collection):
+        client.delete_collection(collection)
+
+
+def build_sparse_embedding():
+    """Local BM25-style sparse embedder for hybrid retrieval."""
+    from langchain_qdrant import FastEmbedSparse
+
+    return FastEmbedSparse(model_name=settings.sparse_model, cache_dir=str(FASTEMBED_CACHE))
+
+
+def build_vector_store(
+    client: QdrantClient,
+    embeddings: Embeddings,
+    collection: str,
+    *,
+    sparse_embedding=None,
+    mode: str = "dense",
+):
+    """A LangChain store for dense or hybrid retrieval over one collection."""
+    from langchain_qdrant import QdrantVectorStore, RetrievalMode
 
     ensure_collection(client, embeddings, collection)
-    return QdrantVectorStore(client=client, collection_name=collection, embedding=embeddings)
+    if sparse_embedding is not None:
+        # A collection created before hybrid support has no sparse field, and
+        # Qdrant cannot add one to an existing collection here -- so the honest
+        # answer is an explicit rebuild.
+        info = client.get_collection(collection_name=collection)
+        if not info.config.params.sparse_vectors:
+            raise ValueError(
+                f"collection {collection} has no sparse vectors (built before hybrid "
+                "retrieval); rerun the ingest command with --rebuild"
+            )
+    retrieval_mode = RetrievalMode.HYBRID if mode == "hybrid" else RetrievalMode.DENSE
+    return QdrantVectorStore(
+        client=client,
+        collection_name=collection,
+        embedding=embeddings,
+        sparse_embedding=sparse_embedding,
+        retrieval_mode=retrieval_mode,
+        sparse_vector_name=SPARSE_VECTOR_NAME,
+    )

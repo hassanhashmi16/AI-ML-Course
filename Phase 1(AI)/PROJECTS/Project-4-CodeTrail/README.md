@@ -9,11 +9,11 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-7 are complete: reference cases, environment and configuration, the
+Steps 1-8 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
 bounded GitHub readers, the cached evidence collector, source-mapped chunks,
-and the local vector index.
-Next is Step 8, hybrid retrieval and reranking.
+the local vector index, and hybrid retrieval with reranking.
+Next is Step 9, producing a cited baseline answer.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 
@@ -93,7 +93,7 @@ Provider integrations will explicitly read the required secret at their boundary
 |---|---|---|
 | `GITHUB_TOKEN` | Public GitHub API reads with appropriate access | No; introduced with GitHub readers |
 | `GEMINI_API_KEY` | Generation; dense embeddings when `EMBED_PROVIDER=google` | No; checked with the provider integration |
-| `COHERE_API_KEY` | Reranking | No; checked with reranking |
+| `COHERE_API_KEY` | Hosted reranking when `RERANK_PROVIDER=cohere` | No; checked with reranking |
 | `LANGSMITH_API_KEY` | Optional cloud traces | No; tracing is off by default |
 
 The configured defaults were checked against official documentation on

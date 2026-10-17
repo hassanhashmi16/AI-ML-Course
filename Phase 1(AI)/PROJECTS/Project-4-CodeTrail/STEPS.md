@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-7 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, and the local vector index ready.
-> **Next:** Step 8.
+> **Status:** Steps 1-8 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, and hybrid retrieval with labelled reranking ready.
+> **Next:** Step 9.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -243,7 +243,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `retrieval/clients.py` (local FastEmbed embedder behind the LangChain interface with Google selectable via `EMBED_PROVIDER`; on-disk Qdrant client; per-snapshot collection naming) and `ingest/index.py` (uuid5 point IDs from the stable chunk IDs, per-source replacement so a changed source leaves no stale chunks, a manifest recording provider/model/dimension/splitter settings, refusal on settings change without `--rebuild`, and the `python -m ingest.index` command), plus `scripts/check_index.py` and the `EMBED_PROVIDER` / `FASTEMBED_EMBED_MODEL` settings. Finding during the check: local-mode Qdrant raises inside the LangChain store's constructor validation, so collections are created explicitly, sized to the embedder's true dimension. Check: a rebuild indexed 22 points from 22 chunks (4 sources); the index survived close/reopen; re-indexing unchanged data kept 22 points; a modified source was replaced cleanly (22 - 18 + 18 points); a settings change was refused with a rebuild hint; the manifest recorded fastembed / BAAI/bge-small-en-v1.5 / dim 384 / chunk 1200-150. No model calls; the local embedding model downloaded once into the ignored `.cache/`.
 
-#### Step 8: Add hybrid retrieval and reranking
+#### Step 8: Add hybrid retrieval and reranking [done]
 
 **What:** Retrieve with dense and sparse search, then rerank the candidate evidence.
 
@@ -256,6 +256,8 @@ Project-4-CodeTrail/
 **Check:** Semantic and symbol-heavy questions retrieve inspectable relevant sources; sources from another repository/ref are excluded.
 
 **Structure:** The retriever returns a small ranked evidence set to either the ordinary RAG path or the agent.
+
+**Completed:** 16 October 2026. Added `retrieval/search.py` (dense/hybrid modes, the repository + SHA scope filter applied in every mode, wide `RETRIEVE_K` candidates, retrieval scores attached) and `retrieval/rerank.py` (local fastembed cross-encoder by default, Cohere selectable, and `none`/failures return a labelled warning while keeping retrieval order), plus `scripts/check_search.py`. Collections are now created dense+sparse (hybrid-capable), pre-hybrid collections demand an explicit rebuild, and rebuild deletion moved ahead of store construction. Check: 142 points from 142 chunks (7 sources); a foreign-repository sentinel ranked first unfiltered but never surfaced through `search_evidence`; a semantic question returned ctx.py/globals.py chunks and a symbol-heavy question returned json/provider.py; every returned chunk mapped back to its record at its offsets; 20 candidates narrowed to 5 with scores; disabled and simulated-failure reranking were both labelled and kept retrieval order. No model API calls (local embedder, sparse embedder, and reranker); `check_index` re-ran green against the hybrid collection.
 
 #### Step 9: Produce a cited baseline answer
 
@@ -467,6 +469,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-7**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), and the clients (`retrieval/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, and `scripts/check_index.py`.
-- Next: **Step 8 — Add hybrid retrieval and reranking.**
+- Completed build steps: **Steps 1-8**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), and retrieval (`retrieval/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, and `scripts/check_search.py`.
+- Next: **Step 9 — Produce a cited baseline answer.**
 
