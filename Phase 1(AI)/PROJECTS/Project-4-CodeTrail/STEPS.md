@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-12 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, and budgets/corrective grading/grounding ready.
-> **Next:** Step 13.
+> **Status:** Steps 1-13 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, budgets/corrective grading/grounding, and durable checkpoints with CLI resume ready.
+> **Next:** Step 14.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -327,7 +327,7 @@ Project-4-CodeTrail/
 
 ### Phase E — Persistence and observability
 
-#### Step 13: Add persistent checkpoints and resume
+#### Step 13: Add persistent checkpoints and resume [done]
 
 **What:** Save investigation progress with a LangGraph checkpointer and expose recovery.
 
@@ -340,6 +340,8 @@ Project-4-CodeTrail/
 **Check:** Kill a fixture-driven run after a durable checkpoint and resume the same investigation without duplicated evidence.
 
 **Structure:** The checkpointer owns saved execution state; source IDs and idempotent application writes make replay consistent.
+
+**Completed:** 16 October 2026. Added `agent/persistence.py` (SQLite checkpointer with managed connection lifetime, application-generated thread IDs, a saved-state reader, and explicit msgpack registration for our models) and `cli.py` (`investigate` and `resume` commands; resume rebuilds the run context from the checkpoint and re-invokes the graph with `None`). `build_graph` now accepts an optional checkpointer and injectable llm/grader/judge for fixtures. Check: a fixture-driven run crashed inside the investigate node after its first tool step, leaving a durable checkpoint (tool_calls=1); fresh runtime objects resumed the same thread, finished the cited report, and replayed the trail as exactly search_evidence then read_discussion with every final source indexed exactly once. Findings: the first crash fixture targeted the grader, which is deliberately swallowed, so the crash now happens in a node without that safety net; point totals in the shared demo collection were contaminated by earlier checks, so the idempotency assertion counts per source. Fixtures make no model calls; the CLI speaks the same persistence and graph APIs exercised by the check.
 
 #### Step 14: Add reusable findings across investigations
 
@@ -477,6 +479,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-12**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), and the policy (`agent/policy.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, and `scripts/check_policy.py`.
-- Next: **Step 13 — Add persistent checkpoints and resume.**
+- Completed build steps: **Steps 1-13**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), and persistence (`agent/persistence.py` + `cli.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, and `scripts/check_resume.py`.
+- Next: **Step 14 — Add reusable findings across investigations.**
 

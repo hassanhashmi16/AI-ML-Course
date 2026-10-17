@@ -31,19 +31,33 @@ from agent.tools import ToolContext, build_tools
 from generation.answer import build_llm
 
 
-def build_graph(context: ToolContext):
-    """Compile the investigation graph bound to one run's context."""
+def build_graph(
+    context: ToolContext,
+    *,
+    llm=None,
+    grader_llm=None,
+    judge_llm=None,
+    checkpointer=None,
+):
+    """Compile the investigation graph bound to one run's context.
+
+    ``llm`` / ``grader_llm`` / ``judge_llm`` accept fakes for fixtures;
+    ``checkpointer`` attaches durable state for resume (Step 13).
+    """
     tools = build_tools(context)
     tool_node = ToolNode(tools)
-    llm = build_llm()
+    llm = llm or build_llm()
     llm_with_tools = llm.bind_tools(tools)
-    grader = build_llm().with_structured_output(Sufficiency)
+    grader = (grader_llm or build_llm()).with_structured_output(Sufficiency)
 
     builder = StateGraph(InvestigationState)
     builder.add_node("investigate", partial(investigate, llm_with_tools=llm_with_tools))
     builder.add_node("tools", partial(run_tools, tool_node=tool_node, context=context))
     builder.add_node("grade", partial(grade_evidence, grader=grader))
-    builder.add_node("synthesize", partial(synthesize, context=context, llm=llm))
+    builder.add_node(
+        "synthesize",
+        partial(synthesize, context=context, llm=llm, judge_llm=judge_llm),
+    )
 
     builder.add_edge(START, "investigate")
     builder.add_conditional_edges(
@@ -58,4 +72,4 @@ def build_graph(context: ToolContext):
         {"investigate": "investigate", "synthesize": "synthesize"},
     )
     builder.add_edge("synthesize", END)
-    return builder.compile()
+    return builder.compile(checkpointer=checkpointer)

@@ -9,13 +9,13 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-12 are complete: reference cases, environment and configuration, the
+Steps 1-13 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
 bounded GitHub readers, the cached evidence collector, source-mapped chunks,
 the local vector index, hybrid retrieval with reranking, the cited baseline
-answer, the investigator tools, the investigation graph, and budgets with
-corrective grading and grounding checks.
-Next is Step 13, persistent checkpoints and resume.
+answer, the investigator tools, the investigation graph, budgets with
+corrective grading and grounding checks, and durable checkpoints with resume.
+Next is Step 14, reusable findings across investigations.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

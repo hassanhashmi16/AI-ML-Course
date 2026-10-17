@@ -278,7 +278,7 @@ def ground_and_finalize(
     return updated, notes
 
 
-def synthesize(state, context, llm=None) -> dict:
+def synthesize(state, context, llm=None, judge_llm=None) -> dict:
     """Retrieve over everything gathered, then build and ground the Report."""
     question = state["request"].question
     records = list(state["sources"].values())
@@ -311,6 +311,7 @@ def synthesize(state, context, llm=None) -> dict:
         documents=ranked,
         coverage=coverage,
         llm=llm,
+        judge_llm=judge_llm,
     )
     return {
         "report": report,
