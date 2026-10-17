@@ -6,6 +6,7 @@ calls or directories; offline development does not require provider credentials.
 """
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -37,6 +38,11 @@ class Settings(BaseSettings):
     # Explicit defaults checked against provider docs on 16 October 2026.
     # These are configuration choices, not a claim of tested account access.
     gen_model: str = Field(default="gemini-3.7-flash", min_length=1)
+    # Dense embeddings: local FastEmbed by default (no API key, no quota --
+    # the model is fixed-dimension). Switch to "google" to use GEMINI_API_KEY
+    # with embed_model/embed_dim instead.
+    embed_provider: Literal["fastembed", "google"] = "fastembed"
+    fastembed_embed_model: str = Field(default="BAAI/bge-small-en-v1.5", min_length=1)
     embed_model: str = Field(default="gemini-embedding-001", min_length=1)
     embed_dim: int = Field(default=768, gt=0)
     sparse_model: str = Field(default="Qdrant/bm25", min_length=1)

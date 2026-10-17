@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-6 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, and source-mapped chunks ready.
-> **Next:** Step 7.
+> **Status:** Steps 1-7 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, and the local vector index ready.
+> **Next:** Step 8.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -227,7 +227,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `ingest/documents.py` (`SourceRecord` to LangChain `Document`, carrying traceable identity metadata) and `ingest/split.py` (language-aware splitters for Python/Markdown, generic otherwise; character offsets plus line numbers per chunk; stable `chunk_id` from `(source_id, start, end)`), plus `scripts/check_chunks.py`. Check: 4 records (ctx.py, PR #4682, 2 reviews) produced 22 chunks (file=18, pull_request=2, review=2); every chunk is an exact substring of its record at its recorded offsets with in-bounds line numbers; re-splitting produced an identical `chunk_id` sequence; the sample chunk ctx.py L229-L256 carries "AppContext". GitHub reads replayed from the Step 5 cache; no model calls.
 
-#### Step 7: Embed and index with Qdrant
+#### Step 7: Embed and index with Qdrant [done]
 
 **What:** Build a persistent searchable index through the provider and vector-store integrations.
 
@@ -240,6 +240,8 @@ Project-4-CodeTrail/
 **Check:** The index survives restart; indexing unchanged data twice preserves counts; incompatible embedding settings require an explicit rebuild.
 
 **Structure:** The index is the bridge from the collected corpus to retrieval. One process owns the local store.
+
+**Completed:** 16 October 2026. Added `retrieval/clients.py` (local FastEmbed embedder behind the LangChain interface with Google selectable via `EMBED_PROVIDER`; on-disk Qdrant client; per-snapshot collection naming) and `ingest/index.py` (uuid5 point IDs from the stable chunk IDs, per-source replacement so a changed source leaves no stale chunks, a manifest recording provider/model/dimension/splitter settings, refusal on settings change without `--rebuild`, and the `python -m ingest.index` command), plus `scripts/check_index.py` and the `EMBED_PROVIDER` / `FASTEMBED_EMBED_MODEL` settings. Finding during the check: local-mode Qdrant raises inside the LangChain store's constructor validation, so collections are created explicitly, sized to the embedder's true dimension. Check: a rebuild indexed 22 points from 22 chunks (4 sources); the index survived close/reopen; re-indexing unchanged data kept 22 points; a modified source was replaced cleanly (22 - 18 + 18 points); a settings change was refused with a rebuild hint; the manifest recorded fastembed / BAAI/bge-small-en-v1.5 / dim 384 / chunk 1200-150. No model calls; the local embedding model downloaded once into the ignored `.cache/`.
 
 #### Step 8: Add hybrid retrieval and reranking
 
@@ -465,6 +467,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-6**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), and the ingest layer (`ingest/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, and `scripts/check_chunks.py`.
-- Next: **Step 7 — Embed and index with Qdrant.**
+- Completed build steps: **Steps 1-7**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), and the clients (`retrieval/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, and `scripts/check_index.py`.
+- Next: **Step 8 — Add hybrid retrieval and reranking.**
 

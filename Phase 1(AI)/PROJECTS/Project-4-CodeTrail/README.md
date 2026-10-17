@@ -9,11 +9,11 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-6 are complete: reference cases, environment and configuration, the
+Steps 1-7 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
-bounded GitHub readers, the cached evidence collector, and source-mapped
-chunks.
-Next is Step 7, embedding and indexing with Qdrant.
+bounded GitHub readers, the cached evidence collector, source-mapped chunks,
+and the local vector index.
+Next is Step 8, hybrid retrieval and reranking.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 
@@ -92,7 +92,7 @@ Provider integrations will explicitly read the required secret at their boundary
 | Setting | Purpose | Needed now? |
 |---|---|---|
 | `GITHUB_TOKEN` | Public GitHub API reads with appropriate access | No; introduced with GitHub readers |
-| `GEMINI_API_KEY` | Generation and dense embeddings | No; checked with the provider integration |
+| `GEMINI_API_KEY` | Generation; dense embeddings when `EMBED_PROVIDER=google` | No; checked with the provider integration |
 | `COHERE_API_KEY` | Reranking | No; checked with reranking |
 | `LANGSMITH_API_KEY` | Optional cloud traces | No; tracing is off by default |
 
@@ -101,8 +101,10 @@ The configured defaults were checked against official documentation on
 [Gemini Embedding](https://ai.google.dev/gemini-api/docs/models/gemini-embedding-001),
 and [Cohere Rerank](https://docs.cohere.com/docs/rerank-overview).
 They are explicit, overridable model choices; setup does not prove availability
-for a particular account. Embedding requests will explicitly use the configured
-768 dimensions and verify that output size when that integration is built.
+for a particular account. Dense embeddings run locally (FastEmbed) by default, so
+indexing needs no provider credentials; `EMBED_PROVIDER=google` switches to the
+configured 768-dimension Gemini embeddings, whose output size is verified
+against `EMBED_DIM`.
 
 Changing an embedding model or dimension later requires an explicit index
 rebuild or a separate collection. It must not silently reuse incompatible vectors.
