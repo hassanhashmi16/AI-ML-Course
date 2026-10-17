@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-9 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, and the cited baseline answer ready.
-> **Next:** Step 10.
+> **Status:** Steps 1-10 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, and the investigator tools ready.
+> **Next:** Step 11.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -277,7 +277,7 @@ Project-4-CodeTrail/
 
 ### Phase D — Agentic investigation
 
-#### Step 10: Expose the readers and retriever as tools
+#### Step 10: Expose the readers and retriever as tools [done]
 
 **What:** Give the investigator typed tools for searching evidence and following history.
 
@@ -290,6 +290,8 @@ Project-4-CodeTrail/
 **Check:** A tool can follow a known evidence lead and return searchable, citable results within the original scope.
 
 **Structure:** This replaces Project 3's handwritten tool schemas/dispatch plumbing while preserving familiar plain-function responsibilities.
+
+**Completed:** 16 October 2026. Added `agent/tools.py`: five LangChain tools (`search_evidence`, `read_code`, `list_file_history`, `read_change`, `read_discussion`) closing over a trusted `ToolContext` (repository, pinned SHA, collector, index client) so repository scope is injected, never model-supplied. Read tools index newly fetched records before returning; all outputs are budgeted. Check: search returned three scoped citable source_ids; `read_discussion(4682)` made the PR searchable in the same run (absent before, found by the follow-up query); `list_file_history` to `read_change(095651b)` followed a real commit trail and included ctx.py among changed files; `read_code` returned file text with its source_id; every output stayed within budget (max 3,403 chars). No model calls; GitHub reads replayed from the Step 5 cache.
 
 #### Step 11: Build the LangGraph investigation workflow
 
@@ -471,6 +473,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-9**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), and the baseline answer (`generation/` + `reporting/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, and `scripts/check_answer.py`.
-- Next: **Step 10 — Expose the readers and retriever as tools.**
+- Completed build steps: **Steps 1-10**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), and the investigator tools (`agent/tools.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, and `scripts/check_tools.py`.
+- Next: **Step 11 — Build the LangGraph investigation workflow.**
 
