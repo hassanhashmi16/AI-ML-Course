@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-8 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, and hybrid retrieval with labelled reranking ready.
-> **Next:** Step 9.
+> **Status:** Steps 1-9 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, and the cited baseline answer ready.
+> **Next:** Step 10.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -259,7 +259,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `retrieval/search.py` (dense/hybrid modes, the repository + SHA scope filter applied in every mode, wide `RETRIEVE_K` candidates, retrieval scores attached) and `retrieval/rerank.py` (local fastembed cross-encoder by default, Cohere selectable, and `none`/failures return a labelled warning while keeping retrieval order), plus `scripts/check_search.py`. Collections are now created dense+sparse (hybrid-capable), pre-hybrid collections demand an explicit rebuild, and rebuild deletion moved ahead of store construction. Check: 142 points from 142 chunks (7 sources); a foreign-repository sentinel ranked first unfiltered but never surfaced through `search_evidence`; a semantic question returned ctx.py/globals.py chunks and a symbol-heavy question returned json/provider.py; every returned chunk mapped back to its record at its offsets; 20 candidates narrowed to 5 with scores; disabled and simulated-failure reranking were both labelled and kept retrieval order. No model API calls (local embedder, sparse embedder, and reranker); `check_index` re-ran green against the hybrid collection.
 
-#### Step 9: Produce a cited baseline answer
+#### Step 9: Produce a cited baseline answer [done]
 
 **What:** Make one retrieval pass produce a structured explanation with source references.
 
@@ -272,6 +272,8 @@ Project-4-CodeTrail/
 **Check:** A known question produces a saved cited report; invented source IDs and altered quotations fail validation.
 
 **Structure:** This is the Project 2-shaped end-to-end system that the next phase extends.
+
+**Completed:** 16 October 2026. Added `generation/answer.py` (Groq by default via `GEN_PROVIDER`/`GROQ_GEN_MODEL` with `with_structured_output`; deterministic timeline and coverage assembly around the model's draft; report saving; the baseline CLI command) and `reporting/citations.py` (source-ID identity check, verbatim quote matching, line numbers derived from the quote's position, rejected claims recorded as issues), plus `scripts/check_answer.py`; added `langchain-groq` to the manifest and regenerated the hash-locked requirements. Check: the LocalStack question produced a saved report with a documented claim whose quote exists verbatim in PR #4682 and status=complete; an invented source ID and an altered quote were both rejected with named issues; the saved JSON reloaded as the shared `Report`; the CLI ran end to end and saved a second report. Generation ran on Groq (`openai/gpt-oss-120b`); embeddings, sparse search, and reranking stayed local.
 
 ### Phase D — Agentic investigation
 
@@ -469,6 +471,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-8**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), and retrieval (`retrieval/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, and `scripts/check_search.py`.
-- Next: **Step 9 — Produce a cited baseline answer.**
+- Completed build steps: **Steps 1-9**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), and the baseline answer (`generation/` + `reporting/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, and `scripts/check_answer.py`.
+- Next: **Step 10 — Expose the readers and retriever as tools.**
 

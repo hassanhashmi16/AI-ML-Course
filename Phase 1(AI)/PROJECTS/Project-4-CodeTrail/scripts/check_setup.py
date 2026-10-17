@@ -22,6 +22,7 @@ IMPORTS = {
     "pydantic-settings": "pydantic_settings",
     "langchain-core": "langchain_core",
     "langchain-google-genai": "langchain_google_genai",
+    "langchain-groq": "langchain_groq",
     "langchain-text-splitters": "langchain_text_splitters",
     "langchain-qdrant": "langchain_qdrant",
     "langchain-cohere": "langchain_cohere",

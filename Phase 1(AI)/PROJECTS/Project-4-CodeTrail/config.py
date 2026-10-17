@@ -37,7 +37,11 @@ class Settings(BaseSettings):
 
     # Explicit defaults checked against provider docs on 16 October 2026.
     # These are configuration choices, not a claim of tested account access.
-    gen_model: str = Field(default="gemini-3.7-flash", min_length=1)
+    # Generation: Groq by default (the configured key); GEN_PROVIDER=google
+    # uses GEN_MODEL with GEMINI_API_KEY instead.
+    gen_provider: Literal["groq", "google"] = "groq"
+    groq_gen_model: str = Field(default="openai/gpt-oss-120b", min_length=1)
+    gen_model: str = Field(default="gemini-3.7-flash", min_length=1)  # google path
     # Dense embeddings: local FastEmbed by default (no API key, no quota --
     # the model is fixed-dimension). Switch to "google" to use GEMINI_API_KEY
     # with embed_model/embed_dim instead.

@@ -192,6 +192,7 @@ anyio==4.15.1 \
     --hash=sha256:6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101 \
     --hash=sha256:9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94
     # via
+    #   groq
     #   httpx
     #   httpx2
     #   langsmith
@@ -599,6 +600,7 @@ distro==1.9.0 \
     --hash=sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed \
     --hash=sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2
     # via
+    #   groq
     #   langsmith
     #   openai
 docstring-parser==0.18.0 \
@@ -828,6 +830,10 @@ googleapis-common-protos==1.75.5 \
     # via
     #   google-api-core
     #   grpcio-status
+groq==0.37.1 \
+    --hash=sha256:7353d6dfb60834fd7aacbb86af106e2dc2aeaff6d0edd65fb2fd0f16bd39314c \
+    --hash=sha256:b49f8c8898c55eaec9f71f1342f3fcacc9560d67a08ce5f35fbfb84e8dacd3da
+    # via langchain-groq
 grpcio==1.84.0 \
     --hash=sha256:026d757df86c5b7a41de8200b9a2cda454aaa5004cb0c7e3374c66eb82f61499 \
     --hash=sha256:06619ba1515e5ee69fb2a514e95dd8be05ce74cb3928d5b34f87f87c86fe3c27 \
@@ -946,6 +952,7 @@ httpx==0.28.1 \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via
     #   cohere
+    #   groq
     #   huggingface-hub
     #   langchain-core
     #   langgraph-sdk
@@ -1142,6 +1149,7 @@ langchain-core==1.6.11 \
     #   langchain-cohere
     #   langchain-community
     #   langchain-google-genai
+    #   langchain-groq
     #   langchain-openai
     #   langchain-qdrant
     #   langchain-text-splitters
@@ -1153,6 +1161,10 @@ langchain-core==1.6.11 \
 langchain-google-genai==3.2.0 \
     --hash=sha256:1fa620ea9c655a37537e95438857c423e1a3599b5a665b8dd87064c76ee95b72 \
     --hash=sha256:689fc159d4623a184678e24771f6d52373e983a8fc8d342e44352aaf28e9445d
+    # via codetrail (pyproject.toml)
+langchain-groq==1.1.3 \
+    --hash=sha256:890c099a55526bceafc3e696d123cb9d36464c6664a3ead34ae6e09e0d50caeb \
+    --hash=sha256:a69bb8212b7a699f407c033bf41ca526db8de68f438d51a41740a72bf6dc09bf
     # via codetrail (pyproject.toml)
 langchain-openai==1.7.2 \
     --hash=sha256:9be7980edf355ca2dd595b795a5125836ccf04515ef9377228913246156e59f5 \
@@ -2436,6 +2448,7 @@ pydantic==2.14.1 \
     #   codetrail (pyproject.toml)
     #   cohere
     #   fastapi
+    #   groq
     #   instructor
     #   langchain
     #   langchain-classic
@@ -3001,6 +3014,7 @@ sniffio==1.3.1 \
     --hash=sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2 \
     --hash=sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc
     # via
+    #   groq
     #   langsmith
     #   openai
 sqlalchemy==2.1.4 \
@@ -3234,6 +3248,7 @@ typing-extensions==4.16.0 \
     #   anyio
     #   cohere
     #   fastapi
+    #   groq
     #   grpcio
     #   huggingface-hub
     #   langchain-core
