@@ -70,6 +70,12 @@ def _locate_tolerant(content: str, quote: str) -> tuple[int, int, str] | None:
         return None
     start = index_map[position]
     end = index_map[position + len(needle) - 1] + 1
+    # A skipped backtick at a boundary belongs to the source's formatting;
+    # include it so the stored span is the full markdown token.
+    while start > 0 and content[start - 1] == "`":
+        start -= 1
+    while end < len(content) and content[end] == "`":
+        end += 1
     return start, end, content[start:end]
 
 

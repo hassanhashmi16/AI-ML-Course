@@ -9,14 +9,15 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-15 are complete: reference cases, environment and configuration, the
+Steps 1-17 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
 bounded GitHub readers, the cached evidence collector, source-mapped chunks,
 the local vector index, hybrid retrieval with reranking, the cited baseline
 answer, the investigator tools, the investigation graph, budgets with
 corrective grading and grounding checks, durable checkpoints with resume,
-reusable findings, and local traces with public progress events.
-Next is Step 16, evaluating the baseline against the investigation.
+reusable findings, local traces with public progress events, the evaluation
+harness with focused tests, and the FastAPI service.
+Next is Step 18, the React investigation interface.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

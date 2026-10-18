@@ -118,6 +118,26 @@ def save_findings(
     return saved
 
 
+def clear_findings(client: QdrantClient, snapshot: RepoSnapshot) -> int:
+    """Delete findings for one repository@snapshot (evaluation hygiene)."""
+    if not client.collection_exists(FINDINGS_COLLECTION):
+        return 0
+    before = client.count(collection_name=FINDINGS_COLLECTION, exact=True).count
+    client.delete(
+        collection_name=FINDINGS_COLLECTION,
+        points_selector=Filter(
+            must=[
+                FieldCondition(
+                    key="repository", match=MatchValue(value=snapshot.repository)
+                ),
+                FieldCondition(key="base_sha", match=MatchValue(value=snapshot.sha)),
+            ]
+        ),
+    )
+    after = client.count(collection_name=FINDINGS_COLLECTION, exact=True).count
+    return before - after
+
+
 def recall_findings(
     client: QdrantClient,
     embeddings: Embeddings,

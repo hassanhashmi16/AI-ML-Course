@@ -2,8 +2,8 @@
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-15 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, budgets/corrective grading/grounding, durable checkpoints with CLI resume, reusable findings memory, and local traces with public progress events ready.
-> **Next:** Step 16.
+> **Status:** Steps 1-17 complete; reference cases, tested environment, shared contracts, GitHub readers, the cached collector, source-mapped chunks, the local vector index, hybrid retrieval with labelled reranking, the cited baseline answer, the investigator tools, the investigation graph, budgets/corrective grading/grounding, durable checkpoints with CLI resume, reusable findings memory, local traces with public progress events, the evaluation harness with focused tests, and the FastAPI service ready.
+> **Next:** Step 18.
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
 ## The project
@@ -377,7 +377,7 @@ Project-4-CodeTrail/
 
 ### Phase F — Evaluation and product surface
 
-#### Step 16: Evaluate baseline versus investigation
+#### Step 16: Evaluate baseline versus investigation [done]
 
 **What:** Build a small labelled evaluation set and compare the two workflows honestly.
 
@@ -391,7 +391,9 @@ Project-4-CodeTrail/
 
 **Structure:** This evaluates both Project 2's retrieval quality and Project 3's agent behavior before UI polish.
 
-#### Step 17: Serve CodeTrail through FastAPI
+**Completed:** 16 October 2026. Added `eval/cases.jsonl` (three verified cases: two documented/multi-hop, one unknown/misleading-evidence; split dev/held-out), `eval/run_eval.py` (both workflows on the same snapshot, model settings, and report contract; metered calls/tokens; per-case rationale, citation, unknown-handling, latency, and evidence metrics; shared-index disclosure; findings reset; per-case reports saved for later Ragas scoring), and a focused pytest suite (15 tests covering claim rules, citation acceptance/rejection, markdown-tolerant repair, budgets, repeated actions, and thread persistence). Fixed two bugs the tests caught (boundary backticks in tolerant quote location; a missing `repo_slug` import in persistence) and added a retry for Groq's `tool_use_failed` structured-output quirk. Check: all three cases ran through both workflows. Baseline: 1 call, 8-21 s. Investigation: 7-12 calls, 58-134 s. On ct-002 the baseline dropped a claim on a citation error while the investigation completed cleanly; on ct-003 (unknown) both returned zero claims with unresolved items; on ct-001 both answered correctly (investigation partial with one claim). The failed check is printed and saved, not averaged. Ragas faithfulness is deferred; the saved per-case reports make it runnable later without re-spending calls.
+
+#### Step 17: Serve CodeTrail through FastAPI [done]
 
 **What:** Expose the existing investigation runner, saved reports, resume, and progress streaming.
 
@@ -404,6 +406,8 @@ Project-4-CodeTrail/
 **Check:** The API returns the CLI's report schema, streams actual stages, retrieves saved results, and can resume an interrupted run.
 
 **Structure:** FastAPI translates requests and events around the existing graph.
+
+**Completed:** 16 October 2026. Added `api/service.py` (synchronous single-active-run service: collect + index + graph via `run_with_events`, report and findings saving, checkpoint rebuild and resume, status including "interrupted"; injectable model factory for fixtures) and `api/main.py` (FastAPI app with `/health`, `POST /investigations`, status, SSE event replay, `POST .../resume`, and `/reports/{name}`; sync endpoints run in the threadpool; a fixture service can be injected). Check: a fixture-driven API run returned the CLI's Report schema, served the saved report through `/reports/{name}`, replayed 9 SSE events (run_started, stage_finished, run_finished), resumed an interrupted thread to a completed report, and returned 404/400 for unknown threads and invalid report names. No provider calls in the check.
 
 #### Step 18: Build the React investigation interface
 
@@ -483,6 +487,6 @@ Reviewed while preparing this plan on 16 October 2026. These links justify tool 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
-- Completed build steps: **Steps 1-15**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), persistence (`agent/persistence.py` + `cli.py`), findings memory (`agent/memory.py`), and observability (`agent/observability.py` + `api/events.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, `scripts/check_resume.py`, `scripts/check_memory.py`, and `scripts/check_traces.py`.
-- Next: **Step 16 — Evaluate baseline versus investigation.**
+- Completed build steps: **Steps 1-17**, 16 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), persistence (`agent/persistence.py` + `cli.py`), findings memory (`agent/memory.py`), observability (`agent/observability.py` + `api/events.py`), the evaluation (`eval/` + `tests/`), and the service (`api/service.py` + `api/main.py`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, `scripts/check_resume.py`, `scripts/check_memory.py`, `scripts/check_traces.py`, `scripts/check_api.py`, and `python -m pytest`.
+- Next: **Step 18 — Build the React investigation interface.**
 

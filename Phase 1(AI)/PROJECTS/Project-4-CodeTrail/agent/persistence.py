@@ -32,6 +32,7 @@ from models import (
     SourceRecord,
     SupportingExcerpt,
     TimelineEvent,
+    repo_slug,
 )
 
 # Types that may appear in checkpointed state. Registering them explicitly

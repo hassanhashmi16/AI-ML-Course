@@ -23,7 +23,7 @@ from pydantic import Field
 
 from agent.policy import should_stop
 from config import settings
-from generation.answer import answer_question
+from generation.answer import answer_question, invoke_with_retry
 from models import Claim, Contract, Coverage, Report, ReportStatus, SourceKind
 from retrieval.rerank import rerank_documents
 from retrieval.search import search_evidence as run_search
@@ -148,8 +148,9 @@ def grade_evidence(state, grader) -> dict:
     recent_tools = [message for message in state["messages"] if message.type == "tool"][-4:]
     evidence = "\n\n".join(str(message.content)[:1500] for message in recent_tools) or "(none yet)"
     try:
-        verdict = grader.invoke(
-            GRADE_PROMPT.format(question=state["request"].question, evidence=evidence)
+        verdict = invoke_with_retry(
+            grader,
+            GRADE_PROMPT.format(question=state["request"].question, evidence=evidence),
         )
     except Exception as exc:  # a broken grader must not kill the investigation
         note = f"evidence grading failed ({exc}); proceeding with gathered evidence"
@@ -207,7 +208,9 @@ def _unsupported_claims(report: Report, judge) -> list[tuple[Claim, str]]:
     unsupported: list[tuple[Claim, str]] = []
     for claim in report.claims:
         quote = claim.excerpts[0].quote if claim.excerpts else ""
-        verdict = judge.invoke(GROUND_PROMPT.format(statement=claim.statement, quote=quote))
+        verdict = invoke_with_retry(
+            judge, GROUND_PROMPT.format(statement=claim.statement, quote=quote)
+        )
         if not verdict.supported:
             unsupported.append((claim, verdict.reason))
     return unsupported

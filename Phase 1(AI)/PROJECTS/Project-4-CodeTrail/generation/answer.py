@@ -17,6 +17,7 @@ Run the baseline with:
 from __future__ import annotations
 
 import argparse
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -92,6 +93,28 @@ class AnswerDraft(Contract):
     unresolved: list[str] = Field(default_factory=list)
 
 
+_TOOL_RETRY_ATTEMPTS = 3
+
+
+def invoke_with_retry(runnable, prompt):
+    """Retry briefly when a provider rejects a malformed structured-output call.
+
+    GPT-OSS on Groq occasionally emits a phantom tool call name for
+    structured-output requests (``tool_use_failed``); re-invoking almost always
+    succeeds. Every other error propagates immediately.
+    """
+    error: Exception | None = None
+    for attempt in range(_TOOL_RETRY_ATTEMPTS):
+        try:
+            return runnable.invoke(prompt)
+        except Exception as exc:  # noqa: BLE001 - re-raised unless the provider quirk
+            if "tool_use_failed" not in str(exc):
+                raise
+            error = exc
+            time.sleep(0.5 * (attempt + 1))
+    raise error
+
+
 def build_llm():
     """The configured generation model (Groq by default)."""
     if settings.gen_provider == "groq":
@@ -162,12 +185,13 @@ def answer_question(
         if feedback
         else ""
     )
-    draft = llm.with_structured_output(AnswerDraft).invoke(
+    draft = invoke_with_retry(
+        llm.with_structured_output(AnswerDraft),
         PROMPT.format(
             question=question,
             evidence=format_evidence(documents),
             feedback_block=feedback_block,
-        )
+        ),
     )
 
     claims, issues = validate_claims(draft.claims, records_by_id)
