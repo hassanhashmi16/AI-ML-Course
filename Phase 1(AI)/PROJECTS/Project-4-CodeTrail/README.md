@@ -9,15 +9,31 @@ will take its repository from each request.
 
 ## Current progress
 
-Steps 1-17 are complete: reference cases, environment and configuration, the
+Steps 1-18 are complete: reference cases, environment and configuration, the
 shared request/evidence/report contracts with the investigation state, the
 bounded GitHub readers, the cached evidence collector, source-mapped chunks,
 the local vector index, hybrid retrieval with reranking, the cited baseline
 answer, the investigator tools, the investigation graph, budgets with
 corrective grading and grounding checks, durable checkpoints with resume,
 reusable findings, local traces with public progress events, the evaluation
-harness with focused tests, and the FastAPI service.
-Next is Step 18, the React investigation interface.
+harness with focused tests, the FastAPI service, and the React workspace.
+Next is Step 19, finishing the demos and project write-up.
+
+## Run the workspace (local)
+
+```powershell
+# terminal 1 — the API
+.\.venv\Scripts\python.exe -m uvicorn api.main:app --port 8000
+
+# terminal 2 — the interface (proxies API paths to :8000)
+cd frontend
+npm install
+npm run dev
+```
+
+Then open the Vite URL (usually http://localhost:5173) and pick a prepared
+case, or paste any public repository link and question. Saved reports are
+listed in the sidebar; an interrupted run can be resumed by its thread id.
 The collector, investigation workflow, API, and interface are
 implemented in the remaining [build steps](STEPS.md).
 

@@ -226,7 +226,10 @@ def main() -> None:
         served = api.get(f"/reports/{report_name}")
         assert served.status_code == 200
         Report.model_validate(served.json())
-        print(f"PASS  /reports/{{name}} serves the same Report schema: {report_name}")
+        listing = api.get("/reports")
+        assert listing.status_code == 200
+        assert report_name in [item["name"] for item in listing.json()["reports"]]
+        print(f"PASS  /reports lists and serves the same Report schema: {report_name}")
 
         with api.stream("GET", f"/investigations/{body['thread_id']}/events") as response:
             assert response.status_code == 200

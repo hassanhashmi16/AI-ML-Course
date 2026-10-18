@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
@@ -110,6 +111,26 @@ def create_app(service: InvestigationService | None = None) -> FastAPI:
                 status_code=404, detail="no checkpoint for this thread"
             ) from exc
         return _public(record)
+
+    @app.get("/reports")
+    def list_reports() -> dict:
+        files = sorted(
+            settings.reports_dir.glob("*.json"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )[:100]
+        return {
+            "reports": [
+                {
+                    "name": path.name,
+                    "modified": datetime.fromtimestamp(
+                        path.stat().st_mtime, tz=timezone.utc
+                    ).isoformat(),
+                    "size": path.stat().st_size,
+                }
+                for path in files
+            ]
+        }
 
     @app.get("/reports/{name}")
     def report_file(name: str):
