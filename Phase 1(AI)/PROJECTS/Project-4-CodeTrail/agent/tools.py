@@ -92,6 +92,7 @@ def build_tools(context: ToolContext) -> list[BaseTool]:
             context.snapshot,
             query,
             mode="hybrid",
+            source_ids=list(context.collector.sources),
         )
         if warning:
             return warning

@@ -2,24 +2,48 @@
 
 **Trace the decisions behind the code.**
 
-CodeTrail will accept a public GitHub repository link and a question, follow the
-relevant code/history/discussions, and produce a cited explanation and timeline.
-The [Flask examples](docs/demo-cases.md) are development cases; the application
-will take its repository from each request.
+CodeTrail accepts a public GitHub repository link and a question, follows the
+relevant code, history, and discussions, and returns a cited explanation with a
+timeline. Every claim is labelled **documented**, **inferred**, or left
+**unresolved**, and every cited quote is checked against its stored source.
 
-## Current progress
+Reading code shows *what* it does. CodeTrail reconstructs *why* it changed.
 
-Steps 1-18 are complete: reference cases, environment and configuration, the
-shared request/evidence/report contracts with the investigation state, the
-bounded GitHub readers, the cached evidence collector, source-mapped chunks,
-the local vector index, hybrid retrieval with reranking, the cited baseline
-answer, the investigator tools, the investigation graph, budgets with
-corrective grading and grounding checks, durable checkpoints with resume,
-reusable findings, local traces with public progress events, the evaluation
-harness with focused tests, the FastAPI service, and the React workspace.
-Next is Step 19, finishing the demos and project write-up.
+## Status
 
-## Run the workspace (local)
+Steps 1–19 of the build are complete (local milestone). Guardrails, packaging,
+and public deployment are roadmap Steps 39–41.
+
+## Quickstart (Windows / PowerShell)
+
+Tested with CPython 3.14 on Windows x86-64.
+
+```powershell
+# one isolated environment; packages are not installed into global Python
+py -3.14 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --require-hashes --only-binary :all: --cache-dir .cache\pip -r requirements.lock
+
+# create local configuration without overwriting an existing credential file
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+
+# import the integrations and validate settings without calling model APIs
+.\.venv\Scripts\python.exe scripts\check_setup.py --with-eval
+```
+
+Add keys to `.env` as needed; all are optional for offline checks:
+
+| Setting | Used for |
+|---|---|
+| `GROQ_API_KEY` | generation (default provider) |
+| `GITHUB_TOKEN` | higher GitHub rate limits |
+| `GEMINI_API_KEY` | generation when `GEN_PROVIDER=google`; embeddings when `EMBED_PROVIDER=google` |
+| `COHERE_API_KEY` | hosted reranking when `RERANK_PROVIDER=cohere` |
+| `LANGSMITH_API_KEY` | optional traces (inputs/outputs hidden) |
+
+Embeddings, sparse search, and reranking run locally by default, so indexing
+and retrieval need no provider credentials.
+
+## Run the workspace
 
 ```powershell
 # terminal 1 — the API
@@ -31,164 +55,71 @@ npm install
 npm run dev
 ```
 
-Then open the Vite URL (usually http://localhost:5173) and pick a prepared
-case, or paste any public repository link and question. Saved reports are
-listed in the sidebar; an interrupted run can be resumed by its thread id.
-The collector, investigation workflow, API, and interface are
-implemented in the remaining [build steps](STEPS.md).
+Open the Vite URL (usually http://localhost:5173), pick a prepared case, or
+paste any public repository link and question. Saved reports are listed in the
+sidebar; an interrupted run can be resumed by its thread id.
 
-## Setup on Windows / PowerShell
-
-Run these commands inside `Phase 1(AI)/PROJECTS/Project-4-CodeTrail`.
-The tested interpreter is **CPython 3.14 on Windows x86-64**; the manifest
-deliberately targets this Python minor version. Compatibility on other Python
-versions/platforms has not been established by this setup check.
+Command-line equivalents:
 
 ```powershell
-# One isolated environment; packages are not installed into global Python.
-py -3.14 -m venv .venv
+# full agent investigation (checkpointed; prints the thread id)
+.\.venv\Scripts\python.exe cli.py investigate --repo https://github.com/pallets/flask --ref 2.2.0 --path src/flask/ctx.py --pull 4682 --question "Why did Flask replace LocalStack?"
 
-# Install exact versions whose downloaded files match the recorded hashes.
-.\.venv\Scripts\python.exe -m pip install --require-hashes --only-binary :all: --cache-dir .cache\pip -r requirements.lock
+# one-pass baseline answer
+.\.venv\Scripts\python.exe -m generation.answer --repo https://github.com/pallets/flask --ref 2.2.0 --path src/flask/ctx.py --pull 4682 --question "Why did Flask replace LocalStack?"
 
-# Create local configuration without overwriting an existing credential file.
-if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+# build or refresh the local index for files
+.\.venv\Scripts\python.exe -m ingest.index --repo https://github.com/pallets/flask --ref 2.2.0 --path src/flask/ctx.py
 
-# Import the integrations and validate settings without calling model APIs.
-.\.venv\Scripts\python.exe scripts\check_setup.py --with-eval
-.\.venv\Scripts\python.exe -m pip check
+# resume an interrupted run
+.\.venv\Scripts\python.exe cli.py resume --thread <thread-id>
 ```
 
-Activation is optional because every command explicitly selects `.venv`'s Python.
-The lock currently includes runtime, development, and evaluation dependencies.
-No sparse-model weights are downloaded by the setup check; FastEmbed's first
-model use will need its configured weights in the later retrieval step.
+## Demo cases
 
-## What Step 2 puts in place
+`docs/demo-cases.md` holds the hand-verified reference cases:
 
-| File | Responsibility |
-|---|---|
-| `pyproject.toml` | Direct libraries and their roles, Python requirement, optional dev/eval groups |
-| `requirements.lock` | Exact resolved direct/transitive versions and file hashes |
-| `config.py` | Typed, validated settings loaded from environment / `.env` / defaults |
-| `.env.example` | Safe template showing supported configuration names |
-| `.gitignore` | Excludes credentials, environment, caches, and generated results |
-| `scripts/check_setup.py` | A repeatable import/settings check with no model construction |
-
-A **direct dependency** is one we choose, such as LangGraph. A **transitive
-dependency** is something that library needs. The manifest explains our choices;
-the generated lock records the entire resolved set so another setup can install
-the same versions. Hashes check that downloaded package files match that lock.
-
-The **virtual environment** keeps these versions separate from Projects 2 and 3.
-Only the manifest, lock, code, and documentation belong in Git; the environment
-and generated caches can be rebuilt.
-
-## Configuration and data flow
-
-```text
-process environment → project .env → defaults in Settings
-                           ↓
-                type conversion + validation
-                           ↓
-                settings imported by app modules
-```
-
-Environment variables take precedence over `.env`, and `.env` takes precedence
-over the defaults. The file path is anchored to `config.py`, so running Python
-from a different working directory does not select another project's `.env`.
-
-Pydantic Settings converts values such as `MAX_FILES=40` into an integer and
-rejects invalid limits. It also rejects `RERANK_K > RETRIEVE_K`: reranking cannot
-select more evidence than retrieval supplied. A misspelled name inside `.env`
-fails validation rather than silently doing nothing.
-
-Credentials use `SecretStr` and are omitted from the settings object's
-representation. That reduces accidental logging; it does not encrypt `.env`.
-Provider integrations will explicitly read the required secret at their boundary.
-
-### Credentials and model defaults
-
-| Setting | Purpose | Needed now? |
+| Case | Question | Expected behavior |
 |---|---|---|
-| `GITHUB_TOKEN` | Public GitHub API reads with appropriate access | No; introduced with GitHub readers |
-| `GEMINI_API_KEY` | Generation when `GEN_PROVIDER=google`; dense embeddings when `EMBED_PROVIDER=google` | No; checked with the provider integration |
-| `GROQ_API_KEY` | Generation (default provider, Steps 9+) | Yes, for live answers |
-| `COHERE_API_KEY` | Hosted reranking when `RERANK_PROVIDER=cohere` | No; checked with reranking |
-| `LANGSMITH_API_KEY` | Optional cloud traces | No; tracing is off by default |
+| **CT-001** | Why direct ContextVar handling? | documented reason, cites PR #4682 |
+| **CT-002** | Why the JSONProvider interface? | documented reason, cites PR #4692 |
+| **CT-003** | Exact % throughput improvement? | scoped unknown, no invented number |
+| **CT-004** | Removed entirely, or kept for compatibility? | both halves: internals replaced, deprecated shim kept |
 
-The configured defaults were checked against official documentation on
-16 October 2026: [Gemini 3.7 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash),
-[Gemini Embedding](https://ai.google.dev/gemini-api/docs/models/gemini-embedding-001),
-and [Cohere Rerank](https://docs.cohere.com/docs/rerank-overview).
-They are explicit, overridable model choices; setup does not prove availability
-for a particular account. Dense embeddings run locally (FastEmbed) by default, so
-indexing needs no provider credentials; `EMBED_PROVIDER=google` switches to the
-configured 768-dimension Gemini embeddings, whose output size is verified
-against `EMBED_DIM`.
+The UI ships these as one-click prepared cases.
 
-Changing an embedding model or dimension later requires an explicit index
-rebuild or a separate collection. It must not silently reuse incompatible vectors.
+## Evaluation
 
-`LANGSMITH_TRACING=false` is the application setting. The later tracing step
-will deliberately connect it to the integration; importing config does not
-enable cloud tracing. Keys stay empty during offline setup checks.
+`eval/run_eval.py` runs the baseline and the investigation over labelled cases
+with the same snapshot, model settings, and output contract, and saves every
+report under `reports/eval/<run>/`. Recorded results and an honest reading are
+in [docs/architecture.md](docs/architecture.md#evaluation-as-recorded-16-october-2026).
 
-### Paths and budgets
+Short version: the investigation fixed a baseline citation failure and matched
+it on the unknown case, at 7–12× the calls and 3–8× the latency. Failures are
+printed per case, never averaged away.
 
-Runtime paths default to this project's `data/` and `reports/`. Relative overrides
-in `.env` resolve against the project directory. Importing settings creates neither
-directory; the component owning a file opens it when needed.
+## How it is built
 
-Collection defaults match the plan: 40 files, 60 commits, 10 discussions, and 20
-comments per discussion. Investigation defaults include 12 tool calls, two
-retrieval-refinement rounds, one answer revision, and 120 seconds. These fields
-only define validated configuration now; the relevant later steps enforce them.
+- Step-by-step build notes and recorded checks: [STEPS.md](STEPS.md)
+- Architecture, invariants, framework comparison, limits: [docs/architecture.md](docs/architecture.md)
+- The larger AI/ML roadmap: [AI_Engineer_StepByStep.html](../../../AI_Engineer_StepByStep.html)
 
-## Verified environment, 16 October 2026
-
-| Component | Tested version |
-|---|---|
-| CPython / platform | 3.14.6 / Windows x86-64 |
-| uv | 0.13.1 |
-| Pydantic / Pydantic Settings | 2.14.1 / 2.16.0 |
-| LangChain Core / Google integration | 1.6.11 / 3.2.0 |
-| LangGraph / SQLite checkpointer | 1.2.15 / 3.1.2 |
-| Qdrant client / FastEmbed | 1.19.1 / 0.9.0 |
-| Ragas / LangChain Community | 0.4.3 / 0.4.1 |
-| FastAPI | 0.143.2 |
-
-All 17 runtime import checks plus Ragas passed, including the actual reranker,
-vector-store, sparse embedding, checkpoint, and tool-executor entry points.
-`pip check` found no broken requirements. Configuration checks covered the
-template, invalid limits, environment precedence, secret masking, and paths after
-a working-directory change. Git ignore rules keep generated files and `.env`
-out while allowing `.env.example` to be tracked.
-
-**Compatibility decision:** Ragas 0.4.3 imports a Vertex AI module that LangChain
-Community 0.4.2 removed. The initial install therefore passed dependency
-resolution but failed `import ragas`. The eval dependency group now bounds
-Community to 0.4.1, and the full setup check passes. This is recorded in the
-manifest and lock rather than patched inside the installed library. See the
-[upstream report](https://github.com/vibrantlabsai/ragas/issues/2745).
-
-The resolver checks declared version requirements; importing actual entry points
-checks an additional compatibility boundary that package metadata can miss.
-
-## Updating the dependency lock
-
-After deliberately changing the manifest, regenerate the lock with the installed
-uv version, then reinstall and rerun the setup check:
+Everything is checkable:
 
 ```powershell
-.\.venv\Scripts\uv.exe --cache-dir .cache\uv pip compile pyproject.toml --extra dev --extra eval --python .venv\Scripts\python.exe --generate-hashes --only-binary :all: --output-file requirements.lock
-.\.venv\Scripts\uv.exe --cache-dir .cache\uv pip install --python .venv\Scripts\python.exe --require-hashes --only-binary :all: --requirements requirements.lock
-.\.venv\Scripts\python.exe scripts\check_setup.py --with-eval
-.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m pytest -q          # contracts, citations, budgets, persistence
+.\.venv\Scripts\python.exe scripts\check_api.py  # FastAPI service (fixtures)
+.\.venv\Scripts\python.exe eval\run_eval.py      # baseline vs investigation (live model calls)
 ```
 
-Use the existing lock for normal installation. Regeneration is a deliberate
-dependency change; inspect its version changes and record the check results.
-See [uv's locking guide](https://docs.astral.sh/uv/pip/compile/) and
-[Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/)
-for the library mechanisms used here.
+The full list of check scripts is in
+[docs/architecture.md](docs/architecture.md#running-the-checks).
+
+## Known limits
+
+Single active investigation with synchronous API requests; local on-disk
+Qdrant and CPU embedding/reranking models; a small (4-case) verified evaluation
+set; no Ragas pass yet; token counts are lower bounds; browser verification is
+manual. Deployment needs a queue, auth, and service-backed storage — roadmap
+Steps 39–41. Details: [docs/architecture.md](docs/architecture.md#known-limits).

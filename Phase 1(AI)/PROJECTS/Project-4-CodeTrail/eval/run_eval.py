@@ -174,7 +174,7 @@ def main() -> None:
             all_records = [union.sources[key] for key in sorted(union.sources)]
         finally:
             union.close()
-        reset_collection(client, collection)
+        reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )
@@ -208,7 +208,13 @@ def main() -> None:
                 baseline_llm = MeteredModel(build_llm(), baseline_meter)
                 started = time.perf_counter()
                 candidates, warning = search_evidence(
-                    client, embeddings, sparse, snapshot, question, mode="hybrid"
+                    client,
+                    embeddings,
+                    sparse,
+                    snapshot,
+                    question,
+                    mode="hybrid",
+                    source_ids=list(case_sources),
                 )
                 if warning:
                     raise SystemExit(warning)

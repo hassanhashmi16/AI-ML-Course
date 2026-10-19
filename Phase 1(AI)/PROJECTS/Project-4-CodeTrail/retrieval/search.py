@@ -15,25 +15,33 @@ from __future__ import annotations
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from qdrant_client import QdrantClient
-from qdrant_client.models import FieldCondition, Filter, MatchValue
+from qdrant_client.models import FieldCondition, Filter, MatchAny, MatchValue
 
 from config import settings
 from models import RepoSnapshot
 from retrieval.clients import build_vector_store, collection_name
 
 
-def scope_filter(snapshot: RepoSnapshot) -> Filter:
-    """Restrict any search to this repository@snapshot."""
-    return Filter(
-        must=[
+def scope_filter(snapshot: RepoSnapshot, source_ids: list[str] | None = None) -> Filter:
+    """Restrict any search to this repository@snapshot.
+
+    ``source_ids`` narrows it further to the evidence this investigation has
+    actually inspected -- so an answer can never cite a chunk from an earlier
+    run that this run never collected, even though the index is shared.
+    """
+    conditions = [
+        FieldCondition(
+            key="metadata.repository", match=MatchValue(value=snapshot.repository)
+        ),
+        FieldCondition(key="metadata.snapshot_sha", match=MatchValue(value=snapshot.sha)),
+    ]
+    if source_ids:
+        conditions.append(
             FieldCondition(
-                key="metadata.repository", match=MatchValue(value=snapshot.repository)
-            ),
-            FieldCondition(
-                key="metadata.snapshot_sha", match=MatchValue(value=snapshot.sha)
-            ),
-        ]
-    )
+                key="metadata.source_id", match=MatchAny(any=list(source_ids))
+            )
+        )
+    return Filter(must=conditions)
 
 
 def search_evidence(
@@ -45,6 +53,7 @@ def search_evidence(
     *,
     mode: str = "hybrid",
     k: int | None = None,
+    source_ids: list[str] | None = None,
 ) -> tuple[list[Document], str | None]:
     """Top-k candidate chunks for a query, with scores attached; warns if unrunnable.
 
@@ -65,7 +74,9 @@ def search_evidence(
         sparse_embedding=sparse_embedding if mode == "hybrid" else None,
         mode=mode,
     )
-    results = store.similarity_search_with_score(query, k=cap, filter=scope_filter(snapshot))
+    results = store.similarity_search_with_score(
+        query, k=cap, filter=scope_filter(snapshot, source_ids)
+    )
     documents: list[Document] = []
     for document, score in results:
         # Cheap provenance for debugging: how strongly this candidate scored.

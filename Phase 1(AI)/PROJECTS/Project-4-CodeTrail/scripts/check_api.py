@@ -157,7 +157,7 @@ def main() -> None:
     context, client = _build_context(repo, snapshot, collector)
     interrupted = f"check-api-{uuid.uuid4().hex[:8]}"
     try:
-        reset_collection(client, context.collection)
+        reset_collection(client, context.embeddings, context.collection)
         index_records(client, context.store, context.collection, snapshot, records, rebuild=True)
         crashing = ScriptedLLM(
             [_tool_call("search_evidence", {"query": "LocalStack overhead"}, "call-1")],

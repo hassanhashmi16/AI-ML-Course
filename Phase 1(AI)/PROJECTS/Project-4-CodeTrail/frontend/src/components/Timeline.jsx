@@ -1,19 +1,21 @@
+import { shortDate, shortSource } from '../format.js'
+
 export default function Timeline({ events, onOpenEvidence }) {
   if (!events || events.length === 0) return null
   return (
-    <section>
-      <h3>Timeline</h3>
-      <ol className="timeline">
+    <section className="doc-section">
+      <h2 className="section-title">Trail</h2>
+      <ol className="trail">
         {events.map((event, index) => (
           <li key={index}>
-            <span className="timeline-date">{String(event.date).slice(0, 10)}</span>
+            <span className="trail-date">{shortDate(event.date)}</span>
             <div>
-              <p>{event.title}</p>
-              {event.summary && <p className="muted">{event.summary}</p>}
+              <p className="trail-title">{event.title}</p>
+              {event.summary && <p className="trail-summary">{event.summary}</p>}
               {event.source_id && (
                 <button
                   type="button"
-                  className="link"
+                  className="cite"
                   onClick={() =>
                     onOpenEvidence({
                       source_id: event.source_id,
@@ -22,7 +24,7 @@ export default function Timeline({ events, onOpenEvidence }) {
                     })
                   }
                 >
-                  {event.source_id}
+                  {shortSource(event.source_id)}
                 </button>
               )}
             </div>

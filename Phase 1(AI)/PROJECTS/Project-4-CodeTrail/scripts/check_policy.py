@@ -133,7 +133,7 @@ def main() -> None:
         collector.add_pull(PR)
         collector.add_reviews(PR)
         records = [collector.sources[key] for key in sorted(collector.sources)]
-        reset_collection(client, collection)
+        reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )

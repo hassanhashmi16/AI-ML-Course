@@ -202,13 +202,15 @@ def main() -> None:
     collection = collection_name(snapshot)
     client = open_qdrant()
     try:
+        embeddings = build_embeddings()
+        sparse = build_sparse_embedding()
         if args.rebuild:
-            reset_collection(client, collection)
+            reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client,
-            build_embeddings(),
+            embeddings,
             collection,
-            sparse_embedding=build_sparse_embedding(),
+            sparse_embedding=sparse,
             mode="hybrid",
         )
         result = index_records(client, store, collection, snapshot, records, rebuild=args.rebuild)

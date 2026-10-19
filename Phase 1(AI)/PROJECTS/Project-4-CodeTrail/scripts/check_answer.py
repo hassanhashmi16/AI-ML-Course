@@ -72,16 +72,22 @@ def main() -> None:
     collection = collection_name(snapshot)
     client = open_qdrant()
     try:
-        reset_collection(client, collection)
         embeddings = build_embeddings()
         sparse = build_sparse_embedding()
+        reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )
         index_records(client, store, collection, snapshot, records, rebuild=True)
 
         candidates, warning = search_evidence(
-            client, embeddings, sparse, snapshot, QUESTION, mode="hybrid"
+            client,
+            embeddings,
+            sparse,
+            snapshot,
+            QUESTION,
+            mode="hybrid",
+            source_ids=[record.source_id for record in records],
         )
         assert warning is None and candidates
         ranked, rerank_warning = rerank_documents(QUESTION, candidates)

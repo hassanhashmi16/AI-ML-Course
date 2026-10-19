@@ -134,7 +134,7 @@ def main() -> None:
         collector.add_file("src/flask/globals.py")
         collector.add_pull(PR)
         records = [collector.sources[key] for key in sorted(collector.sources)]
-        reset_collection(client, context.collection)
+        reset_collection(client, context.embeddings, context.collection)
         index_records(client, context.store, context.collection, snapshot, records, rebuild=True)
 
         thread = f"check-traces-{uuid.uuid4().hex[:8]}"

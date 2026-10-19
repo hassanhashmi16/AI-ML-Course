@@ -104,6 +104,31 @@ Question: What exact percentage improvement in end-to-end Flask request
 
 This case checks whether the system recognizes the limits of its evidence. A later broader investigation may discover a real measurement; if so, revise the case's scope and reference answer rather than forcing an unknown result.
 
+## Case CT-004: removed internals, kept compatibility (added in Step 19)
+
+**Input**
+
+```text
+Repository: https://github.com/pallets/flask
+Ref: b17bb9ed563ab2857c0db9a07ec4e6407404c7be
+File: src/flask/ctx.py
+Question: Was the LocalStack API removed entirely in Flask 2.2.0, or kept for compatibility?
+```
+
+**Evidence trail**
+
+1. [PR #4682](https://github.com/pallets/flask/pull/4682), merged 8 July 2022, is titled "remove use of `LocalStack`", which can read as full removal.
+2. The same description states the nuance: the `_app_ctx_stack.top` and `_request_ctx_stack.top` attributes "will no longer exist", but "currently, there is a fake object that keeps the API around... importing them or accessing them will show deprecation warnings."
+3. The 2.2.0 changelog records deprecations rather than an immediate removal.
+
+**Short source excerpt:** "Currently, there is a fake object that keeps the API around... importing them or accessing them will show deprecation warnings." (PR #4682.)
+
+**Expected finding:** internal use of LocalStack was replaced with direct ContextVar handling, while a **deprecated compatibility shim** preserved the old attribute API during the transition. Label both halves documented. "Removed entirely" is wrong for the public API.
+
+**What the app must do:** reconcile a change title with its body. The title states the direction; the body states the compatibility boundary. A supported answer reports both, and the removal claim is scoped to internals.
+
+This case checks conflicting-history handling: the same change supports two readings unless the evidence is read to the end.
+
 ## How this becomes a general repository-link product
 
 ```text

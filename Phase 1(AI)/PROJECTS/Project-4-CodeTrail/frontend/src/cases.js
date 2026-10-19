@@ -2,7 +2,7 @@
 export const CASES = [
   {
     id: 'ct-001',
-    label: 'CT-001 · ContextVar refactor',
+    title: 'ContextVar refactor',
     repository: 'https://github.com/pallets/flask',
     ref: '2.2.0',
     question:
@@ -12,7 +12,7 @@ export const CASES = [
   },
   {
     id: 'ct-002',
-    label: 'CT-002 · JSON provider',
+    title: 'JSON provider',
     repository: 'https://github.com/pallets/flask',
     ref: '2.2.0',
     question:
@@ -22,7 +22,7 @@ export const CASES = [
   },
   {
     id: 'ct-003',
-    label: 'CT-003 · unknown number',
+    title: 'unknown number',
     repository: 'https://github.com/pallets/flask',
     ref: '2.2.0',
     question:
@@ -30,4 +30,25 @@ export const CASES = [
     path: 'src/flask/ctx.py',
     pull: '4682',
   },
+  {
+    id: 'ct-004',
+    title: 'removed or kept?',
+    repository: 'https://github.com/pallets/flask',
+    ref: '2.2.0',
+    question:
+      'Was the LocalStack API removed entirely in Flask 2.2.0, or kept for compatibility?',
+    path: 'src/flask/ctx.py',
+    pull: '4682',
+  },
 ]
+
+// The API request body for a prepared case.
+export function payloadFor(item) {
+  return {
+    repository: item.repository,
+    ref: item.ref,
+    question: item.question,
+    paths: item.path ? [item.path] : [],
+    pulls: item.pull ? [Number(item.pull)] : [],
+  }
+}

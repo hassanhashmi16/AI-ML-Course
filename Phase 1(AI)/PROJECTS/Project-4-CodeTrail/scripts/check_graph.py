@@ -69,7 +69,7 @@ def main() -> None:
         collector.add_file("src/flask/ctx.py")
         collector.add_file("src/flask/globals.py")
         records = [collector.sources[key] for key in sorted(collector.sources)]
-        reset_collection(client, collection)
+        reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )

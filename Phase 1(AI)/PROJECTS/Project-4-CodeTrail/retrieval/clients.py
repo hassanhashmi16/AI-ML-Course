@@ -101,10 +101,40 @@ def ensure_collection(client: QdrantClient, embeddings: Embeddings, collection: 
     )
 
 
-def reset_collection(client: QdrantClient, collection: str) -> None:
-    """Delete the collection if present (an explicit --rebuild)."""
+def clear_points(client: QdrantClient, collection: str) -> int:
+    """Remove every point in the collection, returning how many were removed."""
+    removed = 0
+    while True:
+        points, _ = client.scroll(
+            collection, limit=512, with_payload=False, with_vectors=False
+        )
+        ids = [point.id for point in points]
+        if not ids:
+            return removed
+        client.delete(collection_name=collection, points_selector=ids)
+        removed += len(ids)
+
+
+def reset_collection(
+    client: QdrantClient, embeddings: Embeddings, collection: str
+) -> int:
+    """Empty the collection for an explicit rebuild, keeping its schema.
+
+    Local-mode Qdrant has been observed to resurrect points from a deleted
+    collection when the same name is recreated right after (Windows can leave
+    segment files behind), so a rebuild clears points instead of deleting and
+    recreating, and then verifies emptiness. The schema is only recreated when
+    the embedder's dimension actually changed.
+    """
+    dimension = len(embeddings.embed_query("dimension probe"))
     if client.collection_exists(collection):
+        info = client.get_collection(collection_name=collection)
+        current = getattr(info.config.params.vectors, "size", None)
+        if current == dimension:
+            return clear_points(client, collection)
         client.delete_collection(collection)
+    ensure_collection(client, embeddings, collection)
+    return clear_points(client, collection)
 
 
 def build_sparse_embedding():

@@ -83,13 +83,18 @@ def main() -> None:
     client = open_qdrant()
     try:
         # The sample index is rebuilt every run (dense + sparse schema).
-        reset_collection(client, collection)
+        reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )
         result = index_records(client, store, collection, snapshot, records, rebuild=True)
         print(f"PASS  index rebuilt: {result['points']} points from {result['chunks']} "
               f"chunk(s), {len(records)} source(s)")
+        expected_points = result["chunks"]
+        assert result["points"] == expected_points, (
+            f"rebuild left {result['points'] - expected_points} stale point(s): "
+            "the collection must be provably empty after reset_collection"
+        )
 
         # 1) Scope filter: prove a foreign-repository point cannot leak.
         sentinel = records[0].model_copy(

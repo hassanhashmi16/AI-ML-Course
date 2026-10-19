@@ -264,17 +264,23 @@ def main() -> None:
     collection = collection_name(snapshot)
     client = open_qdrant()
     try:
-        if args.rebuild:
-            reset_collection(client, collection)
         embeddings = build_embeddings()
         sparse = build_sparse_embedding()
+        if args.rebuild:
+            reset_collection(client, embeddings, collection)
         store = build_vector_store(
             client, embeddings, collection, sparse_embedding=sparse, mode="hybrid"
         )
         index_records(client, store, collection, snapshot, records, rebuild=args.rebuild)
 
         candidates, warning = search_evidence(
-            client, embeddings, sparse, snapshot, args.question, mode="hybrid"
+            client,
+            embeddings,
+            sparse,
+            snapshot,
+            args.question,
+            mode="hybrid",
+            source_ids=list(collector.sources),
         )
         if warning:
             raise SystemExit(warning)

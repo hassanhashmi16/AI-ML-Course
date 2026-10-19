@@ -148,7 +148,7 @@ def main() -> None:
     records1 = [collector1.sources[key] for key in sorted(collector1.sources)]
     context1, client1 = _build_context(repo, snapshot, collector1)
     try:
-        reset_collection(client1, context1.collection)
+        reset_collection(client1, context1.embeddings, context1.collection)
         index_records(
             client1, context1.store, context1.collection, snapshot, records1, rebuild=True
         )

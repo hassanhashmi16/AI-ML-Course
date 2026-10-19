@@ -243,8 +243,12 @@ def ground_and_finalize(
     notes = [f"grounding: {len(unsupported)} claim(s) not supported by their quotes"]
     notes.append("grounding: attempting one revision")
     feedback = (
-        "These claims were not supported by their cited quotes; correct them or remove them:\n"
-        + "\n".join(f"- {claim.statement}" for claim, _ in unsupported)
+        "These claims were not supported by their cited quotes; correct them "
+        "(use a quote that fully establishes the statement) or remove them:\n"
+        + "\n".join(
+            f"- {claim.statement} (grader: {reason or 'quote did not establish it'})"
+            for claim, reason in unsupported
+        )
     )
     revised, issues = answer_question(
         question,
@@ -292,6 +296,7 @@ def synthesize(state, context, llm=None, judge_llm=None) -> dict:
         context.snapshot,
         question,
         mode="hybrid",
+        source_ids=list(state["sources"]),
     )
     if warning:
         return {"failures": [warning]}
