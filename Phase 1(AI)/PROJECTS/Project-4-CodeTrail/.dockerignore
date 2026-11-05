@@ -14,4 +14,6 @@ frontend/dist
 tests
 scripts/*
 !scripts/check_release.py
+!scripts/probe_storage.py
+!scripts/start_server.py
 eval

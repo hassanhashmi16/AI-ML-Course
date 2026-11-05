@@ -153,6 +153,10 @@ Checked 5 November 2026. The current app needs background CPU, RAM for local
 embedding/reranking, and durable storage with SQLite and process-file locking.
 A free static frontend alone does not host the application.
 
+The prepared cloud candidate is documented in [the Hugging Face setup guide](huggingface.md),
+including UID 1000 builds and a fixed startup probe for mounted state. It still
+requires real bucket durability, auth, and worker recovery checks on that host.
+
 - [Hugging Face Spaces](https://huggingface.co/docs/hub/en/spaces-overview)
   supplies free CPU hardware (2 CPU, 16 GB RAM), a provider subdomain, and
   [Docker support](https://huggingface.co/docs/hub/en/spaces-sdks-docker).

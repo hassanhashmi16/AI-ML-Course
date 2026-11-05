@@ -15,10 +15,16 @@ RUN pip install --no-cache-dir --require-hashes --only-binary=:all: -r requireme
     && useradd --uid 10001 --create-home codetrail \
     && mkdir -p /state/data /state/reports /state/.cache \
     && chown -R codetrail:codetrail /state
+ARG RUNTIME_UID=10001
+# Keep the verified dependency layer reusable for the Spaces UID 1000 build.
+RUN if [ "${RUNTIME_UID}" != "10001" ]; then \
+      usermod --uid "${RUNTIME_UID}" codetrail \
+      && chown -R codetrail:codetrail /state /home/codetrail; \
+    fi
 COPY --chown=codetrail:codetrail . .
 COPY --from=frontend --chown=codetrail:codetrail /build/dist ./frontend/dist
 USER codetrail
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
     CMD python -c "import os,urllib.request; r=urllib.request.Request('http://127.0.0.1:8000/health',headers={'Host':__import__('urllib.parse',fromlist=['urlsplit']).urlsplit(os.environ['APP_ORIGIN']).netloc}); urllib.request.urlopen(r,timeout=3)"
-CMD ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--no-proxy-headers", "--no-access-log"]
+CMD ["python", "scripts/start_server.py"]

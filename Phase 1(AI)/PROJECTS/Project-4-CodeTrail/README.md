@@ -1,6 +1,18 @@
+---
+title: CodeTrail
+emoji: 🔎
+colorFrom: green
+colorTo: gray
+sdk: docker
+app_port: 8000
+---
+
 # CodeTrail
 
 **Trace the decisions behind the code.**
+
+Deployment: [public app operations](docs/deployment.md) ·
+[zero-budget Hugging Face setup](docs/huggingface.md).
 
 CodeTrail accepts a public GitHub repository link and a question, follows the
 relevant code, history, and discussions, and returns a cited explanation with a
