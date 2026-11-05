@@ -12,7 +12,7 @@ app_port: 8000
 **Trace the decisions behind the code.**
 
 Deployment: [public app operations](docs/deployment.md) ·
-[zero-budget Hugging Face setup](docs/huggingface.md).
+[Hugging Face setup (paid plan required)](docs/huggingface.md).
 
 CodeTrail accepts a public GitHub repository link and a question, follows the
 relevant code, history, and discussions, and returns a cited explanation with a

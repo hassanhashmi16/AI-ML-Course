@@ -1,15 +1,20 @@
-# Zero-budget cloud launch candidate
+# Hugging Face deployment candidate — paid plan required
 
-Use a public Docker Space on free **CPU Basic**, with a **private** storage
-bucket for account state. Free Spaces can sleep; the next visitor may wait for
-startup. This is public access with bounded usage, not an always-awake SLA.
-No paid hardware, custom domain, or paid inference plan is required for this
-candidate configuration. Platform account creation and actual mount testing
-remain external steps; no live deployment has been verified yet.
+Correction, checked 5 November 2026: [the current Spaces documentation](https://huggingface.co/docs/hub/spaces-overview#creating-a-new-space)
+says creating a new Docker Space requires a paid plan (PRO for personal
+accounts). CPU Basic has no hourly hardware charge, but that does not make
+the overall deployment free. This guide therefore does **not** satisfy a
+zero-dollar budget. Earlier instructions describing it that way were incorrect.
+
+For an account that already has the required plan, a public Docker Space with
+a private storage bucket remains a technical candidate. CPU Basic can sleep;
+the next visitor may wait for startup. Actual mount persistence, authentication,
+and recovery testing remain external steps; no live deployment is verified.
 
 ## Account setup
 
-1. Create a free [Hugging Face account](https://huggingface.co/join), if needed.
+1. Confirm the account already has the plan required for Docker Spaces. This
+   guide does not authorize a purchase or subscription upgrade.
 2. Create a private Docker Space named `codetrail`, selecting **CPU Basic**.
    Upload/sync the standalone CodeTrail repo source, including its README YAML
    and Dockerfile. Never upload `.env`, `data/`, `reports/`, or caches. Keep the
@@ -17,12 +22,12 @@ remain external steps; no live deployment has been verified yet.
 3. Create a **private** bucket for this app and attach it read-write at `/state`.
    The public Space and private bucket must have different visibility. Do not
    put sessions, questions, reports, or checkpoints in a public bucket/repo.
-4. Confirm that the bucket remains within your account's free allowance and
-   that neither paid storage nor paid hardware has been enabled.
+4. Confirm the bucket stays within the account's included allowance and review
+   hardware/storage charges separately from the required account subscription.
 
-Hugging Face currently documents [100 GB private storage for free accounts](https://huggingface.co/docs/hub/en/storage-limits),
-including buckets. Check the console's current terms and usage before enabling
-anything: free-tier availability is not a billing guarantee for another plan.
+Check the account's [private storage allowance](https://huggingface.co/docs/hub/en/storage-limits)
+and console billing terms. An included storage allowance does not remove the
+paid-plan requirement for creating a Docker Space.
 
 ## Space configuration
 
