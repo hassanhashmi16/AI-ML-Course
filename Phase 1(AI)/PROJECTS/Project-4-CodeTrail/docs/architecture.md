@@ -205,3 +205,21 @@ npm run dev
   production host before announcing a public URL.
 - Public repositories only. Private/internal repos are explicitly rejected.
   Non-Python-heavy repositories and very large histories remain less tested.
+
+
+## Workspace follow-up
+
+The signed-in interface now separates the investigation brief from searchable
+history, displays readable questions and durations, restores activity when a
+saved report is reopened, and makes partial/unknown states explicit. History
+metadata is returned only through the existing owner-checked API endpoints.
+Failure categories identify rate limits, timeouts, and invalid model responses
+without echoing provider request details. Earlier generic failures cannot be
+retrospectively classified.
+
+Validation: 35 pytest cases pass, including metadata ownership and error
+redaction. Frontend build/lint pass. An isolated, read-only visual fixture
+verified prepared-case selection, history search, report opening, evidence
+inspection, failure/recovery screens, and narrow-screen layout without model
+calls or changes to account data. This UI work does not change the investigation
+algorithm or claim to reduce model latency.

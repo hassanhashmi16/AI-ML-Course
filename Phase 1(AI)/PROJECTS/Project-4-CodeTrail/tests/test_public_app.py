@@ -53,6 +53,40 @@ def test_account_cannot_read_resume_or_stream_another_accounts_job(store):
     with client_for(store, '1') as client:
         assert client.get('/reports/'+job['id']+'.json').json() == {'private_to_owner': True}
 
+
+def test_history_has_useful_metadata_only_for_its_owner(store):
+    from datetime import datetime, timezone
+    job = store.enqueue('1', PAYLOAD)
+    store.finish(job['id'], report={'status':'partial','created_at':datetime.fromtimestamp(job['created']+69,timezone.utc).isoformat()})
+    with client_for(store,'1') as client:
+        items = client.get('/investigations').json()['investigations']
+        assert items[0]['question'] == PAYLOAD['question']
+        assert items[0]['repository'] == PAYLOAD['repository']
+        assert items[0]['elapsed_seconds'] == 69
+        assert 'owner' not in items[0]
+        assert client.get('/reports').json()['reports'][0]['title'] == PAYLOAD['question']
+    with client_for(store,'2') as client:
+        assert client.get('/investigations').json()['investigations'] == []
+        assert client.get('/reports/'+job['id']+'.json').status_code == 404
+
+
+def test_worker_stores_actionable_errors_without_provider_secrets(store):
+    from api.worker import execute_job, public_failure
+    secret = 'private-key-value-that-must-not-be-shown'
+    class RateLimitError(Exception):
+        status_code = 429
+    class FailingService:
+        def __init__(self): raise RateLimitError(secret)
+    job = store.enqueue('1',PAYLOAD)
+    store.claim()
+    execute_job(store.path,job,FailingService)
+    result = store.job('1',job['id'])
+    assert result['status'] == 'failed'
+    assert 'rate-limiting' in result['error']
+    assert secret not in result['error']
+    assert secret not in public_failure(TimeoutError(secret))
+    assert 'timed out' in public_failure(TimeoutError(secret))
+
 def test_queue_admission_is_atomic_and_recovery_is_durable(store, monkeypatch):
     monkeypatch.setattr(settings, 'daily_global_runs', 1)
     def admit(owner):

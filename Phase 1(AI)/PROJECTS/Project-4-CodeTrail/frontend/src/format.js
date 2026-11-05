@@ -22,6 +22,17 @@ export function shortDateTime(value) {
   return Number.isNaN(date.getTime()) ? String(value) : DATE_TIME.format(date)
 }
 
+export function durationLabel(seconds) {
+  if (seconds == null || !Number.isFinite(Number(seconds))) return ''
+  const total = Math.max(0, Math.floor(Number(seconds)))
+  const minutes = Math.floor(total / 60)
+  return minutes ? `${minutes}m ${String(total % 60).padStart(2, '0')}s` : `${total}s`
+}
+
+export function repositoryLabel(value) {
+  return String(value || '').replace(/^https:\/\/github\.com\//, '')
+}
+
 // "github:pallets/flask:pr:4682" -> "PR #4682"
 // "github:pallets/flask@sha:file:src/flask/ctx.py" -> "src/flask/ctx.py"
 export function shortSource(sourceId) {

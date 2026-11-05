@@ -3,12 +3,12 @@ export default function StatusBanner({ status }) {
   return (
     <div className="status">
       <span className={`stamp ${complete ? 'complete' : 'partial'}`}>
-        {complete ? 'Complete' : 'Partial'}
+        {complete ? 'Supported report' : 'Partial report'}
       </span>
       <p className="status-text">
         {complete
-          ? 'Every claim passed citation and grounding checks and is backed by a quoted source.'
-          : 'Some claims were downgraded because their quotes did not establish them. The unresolved list says what is missing.'}
+          ? 'The surviving findings have citations and passed the report’s grounding checks.'
+          : 'Some questions remain unresolved or the search reached a limit. Review the findings and limitations below.'}
       </p>
     </div>
   )

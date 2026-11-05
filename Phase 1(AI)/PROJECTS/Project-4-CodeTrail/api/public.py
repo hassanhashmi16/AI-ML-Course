@@ -92,7 +92,16 @@ def create_public_app(*, store=None, worker=None):
             raise HTTPException(404, 'Investigation not found') from None
 
     def shape(job):
-        return {'thread_id': job['id'], 'status': job['status'], 'report': json.loads(job['report']) if job['report'] else None, 'error': job['error']}
+        payload = json.loads(job['payload'])
+        report = json.loads(job['report']) if job['report'] else None
+        elapsed = None
+        if report and report.get('created_at'):
+            elapsed = max(0, round(datetime.fromisoformat(report['created_at']).timestamp()-job['created']))
+        return {'thread_id': job['id'], 'status': job['status'], 'report': report,
+                'error': job['error'], 'question': payload.get('question', ''),
+                'repository': payload.get('repository', ''), 'ref': payload.get('ref'),
+                'created_at': datetime.fromtimestamp(job['created'], timezone.utc).isoformat(),
+                'elapsed_seconds': elapsed}
 
     @app.get('/health')
     def health():
@@ -200,7 +209,15 @@ def create_public_app(*, store=None, worker=None):
 
     @app.get('/reports')
     def reports(request: Request):
-        return {'reports': [{'name': job['id']+'.json', 'modified': datetime.fromtimestamp(job['created'], timezone.utc).isoformat(), 'size': len(job['report'])} for job in store.jobs(user(request)['id']) if job['report']]}
+        items = []
+        for job in store.jobs(user(request)['id']):
+            if job['report']:
+                record = shape(job)
+                items.append({'name': job['id']+'.json', 'modified': record['created_at'],
+                              'size': len(job['report']), 'title': record['question'],
+                              'repository': record['repository'], 'status': record['report'].get('status'),
+                              'elapsed_seconds': record['elapsed_seconds']})
+        return {'reports': items}
 
     @app.get('/reports/{name}')
     def report(name: str, request: Request):

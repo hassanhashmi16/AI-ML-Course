@@ -50,8 +50,8 @@ export default function ReportView({ report, threadId, onOpenEvidence }) {
         </h2>
         {report.claims.length === 0 ? (
           <p className="error-hint">
-            No claim survived citation and grounding checks. The unresolved list below
-            says what could not be supported.
+            No supported finding was established for this question. The unresolved
+            list below explains what the inspected evidence could not establish.
           </p>
         ) : (
           <ol className="findings">

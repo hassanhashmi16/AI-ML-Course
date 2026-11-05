@@ -13,6 +13,23 @@ from config import settings
 from runtime import user_workspace
 
 
+def public_failure(exc):
+    """Useful failure categories without echoing provider URLs or request data."""
+    kind = type(exc).__name__
+    status = getattr(exc, 'status_code', None) or getattr(exc, 'status', None)
+    if status == 429 or kind in {'RateLimitError', 'RateLimitExceededException'}:
+        return 'The provider is rate-limiting requests. Wait a little before trying again.'
+    if kind in {'TimeoutError', 'ReadTimeout', 'ConnectTimeout', 'APITimeoutError'}:
+        return 'A source or AI request timed out. Try resuming the investigation.'
+    if isinstance(status, int) and status >= 500:
+        return 'An external service is temporarily unavailable. Please try again shortly.'
+    if kind in {'OutputParserException', 'ValidationError'}:
+        return 'The AI response could not be validated. Try resuming or starting a new investigation.'
+    if isinstance(exc, ValueError) and str(exc) == 'only public repositories are supported':
+        return 'This repository is not public. CodeTrail supports public GitHub repositories only.'
+    return 'The investigation could not finish. Try resuming it, or start a new run.'
+
+
 def execute_job(store_path, job, service_factory=None):
     from api.store import Store
     from api.service import InvestigationRequestIn, InvestigationService
@@ -29,9 +46,9 @@ def execute_job(store_path, job, service_factory=None):
             if report is None:
                 raise RuntimeError('no report')
             store.finish(job['id'], report=report.model_dump(mode='json'))
-        except Exception:
-            logging.getLogger(__name__).warning('Investigation %s failed', job['id'])
-            store.finish(job['id'], error='Investigation failed. Try resuming it, or start a new run.')
+        except Exception as exc:
+            logging.getLogger(__name__).warning('Investigation %s failed (%s)', job['id'], type(exc).__name__)
+            store.finish(job['id'], error=public_failure(exc))
         finally:
             if service:
                 try:

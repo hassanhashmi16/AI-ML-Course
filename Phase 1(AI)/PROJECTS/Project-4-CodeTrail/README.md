@@ -81,6 +81,18 @@ Command-line equivalents:
 .\.venv\Scripts\python.exe cli.py resume --thread <thread-id>
 ```
 
+## Workspace
+
+Use **New investigation** to write a brief or load a prepared case. Selecting a
+case fills the form; it does not start a paid run. **History** shows your own
+questions, repositories, status, dates, and completed durations, with search and
+one-click reopening or recovery actions. Opening a report makes no model call.
+
+While an investigation runs, the workspace shows elapsed time from submission,
+the latest completed stage, and expandable activity. Investigations can take a
+few minutes; repeated model and evidence-grading calls usually dominate latency.
+Report labels distinguish supported findings from partial/unknown results.
+
 ## Demo cases
 
 `docs/demo-cases.md` holds the hand-verified reference cases:

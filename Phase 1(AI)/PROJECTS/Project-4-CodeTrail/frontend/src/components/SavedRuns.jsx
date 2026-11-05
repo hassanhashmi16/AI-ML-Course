@@ -1,6 +1,6 @@
-import { describeReport } from '../format.js'
+import { describeReport, shortDateTime } from '../format.js'
 
-export default function SavedRuns({ runs, onOpen }) {
+export default function SavedRuns({ runs, onOpen, disabled = false }) {
   return (
     <section className="rail-block">
       <h2 className="rail-title">Saved runs</h2>
@@ -18,10 +18,11 @@ export default function SavedRuns({ runs, onOpen }) {
                   type="button"
                   className="run"
                   onClick={() => onOpen(item.name)}
+                  disabled={disabled}
                   title={item.name}
                 >
-                  <span className="run-title">{title}</span>
-                  <span className="run-when">{when}</span>
+                  <span className="run-title">{item.title || title}</span>
+                  <span className="run-when">{item.modified ? shortDateTime(item.modified) : when}</span>
                 </button>
               </li>
             )

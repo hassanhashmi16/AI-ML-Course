@@ -1,4 +1,4 @@
-// The three verified demo cases from docs/demo-cases.md and eval/cases.jsonl.
+// Four prepared investigations from docs/demo-cases.md and eval/cases.jsonl.
 export const CASES = [
   {
     id: 'ct-001',
@@ -22,7 +22,7 @@ export const CASES = [
   },
   {
     id: 'ct-003',
-    title: 'unknown number',
+    title: 'Benchmark uncertainty',
     repository: 'https://github.com/pallets/flask',
     ref: '2.2.0',
     question:
@@ -32,7 +32,7 @@ export const CASES = [
   },
   {
     id: 'ct-004',
-    title: 'removed or kept?',
+    title: 'Compatibility boundary',
     repository: 'https://github.com/pallets/flask',
     ref: '2.2.0',
     question:
