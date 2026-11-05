@@ -6,6 +6,7 @@ env/
 # Secrets. `.env.example` is the template and IS committed; real keys are not.
 .env
 .env.*
+!.env.example
 
 # Python bytecode
 __pycache__/
