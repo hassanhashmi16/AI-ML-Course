@@ -133,9 +133,13 @@ def score_report(report: Report, expect: dict, issues: list[str]) -> dict:
     }
 
 
-def save_case_report(run_dir: Path, case_id: str, workflow: str, report: Report) -> None:
+def save_case_report(run_dir: Path, case_id: str, workflow: str, report: Report, records=None) -> None:
     path = run_dir / f"{case_id}-{workflow}.json"
     path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    if records is not None:
+        path.with_suffix('.evidence.json').write_text(
+            json.dumps([record.model_dump(mode='json') for record in records]), encoding='utf-8'
+        )
 
 
 def main() -> None:
@@ -242,7 +246,7 @@ def main() -> None:
                 )
                 baseline_ms = int((time.perf_counter() - started) * 1000)
                 baseline_score = score_report(baseline_report, case["expect"], baseline_issues)
-                save_case_report(run_dir, case["id"], "baseline", baseline_report)
+                save_case_report(run_dir, case["id"], "baseline", baseline_report, list(case_sources.values()))
                 baseline_score.update(
                     {
                         "case": case["id"],
@@ -300,7 +304,7 @@ def main() -> None:
                         investigation_report, case["expect"], []
                     )
                     save_case_report(
-                        run_dir, case["id"], "investigation", investigation_report
+                        run_dir, case["id"], "investigation", investigation_report, list(case_collector.sources.values())
                     )
                 investigation_score.update(
                     {

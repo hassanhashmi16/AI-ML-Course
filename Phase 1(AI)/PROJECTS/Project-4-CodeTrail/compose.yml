@@ -1,0 +1,33 @@
+services:
+  codetrail:
+    build: .
+    init: true
+    restart: unless-stopped
+    # Terminate HTTPS at a trusted reverse proxy; do not expose this port publicly.
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      PUBLIC_APP: "true"
+      APP_ORIGIN: ${APP_ORIGIN:?Set the public HTTPS origin}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:?Create a GitHub OAuth application}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:?Set the OAuth secret}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      DAILY_USER_RUNS: ${DAILY_USER_RUNS:-5}
+      DAILY_GLOBAL_RUNS: ${DAILY_GLOBAL_RUNS:-30}
+      MAX_QUEUED_RUNS: ${MAX_QUEUED_RUNS:-20}
+      MAX_JOB_SECONDS: ${MAX_JOB_SECONDS:-600}
+    volumes:
+      - codetrail_state:/state
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    mem_limit: 3g
+    cpus: 2
+    stop_grace_period: 60s
+
+volumes:
+  codetrail_state:

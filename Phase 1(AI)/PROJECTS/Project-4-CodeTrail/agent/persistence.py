@@ -20,6 +20,7 @@ from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 from config import settings
+from runtime import data_dir
 from models import (
     Claim,
     ClaimLabel,
@@ -58,7 +59,7 @@ _ALLOWED_MSGPACK_TYPES = {
 
 def checkpoints_path() -> Path:
     """Where investigations are checkpointed (under the ignored data/ dir)."""
-    return settings.data_dir / "checkpoints.sqlite"
+    return data_dir() / "checkpoints.sqlite"
 
 
 @contextmanager
@@ -82,7 +83,15 @@ def new_thread_id(snapshot: RepoSnapshot) -> str:
 
 def saved_state(saver, thread_id: str) -> dict | None:
     """The last checkpointed channel values for a thread, or None."""
+    validate_thread_id(thread_id)
     checkpoint = saver.get_tuple({"configurable": {"thread_id": thread_id}})
     if checkpoint is None:
         return None
     return checkpoint.checkpoint.get("channel_values", {})
+
+
+def validate_thread_id(value: str) -> str:
+    import re
+    if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.@-]{0,179}', value) or '..' in value:
+        raise ValueError("invalid investigation id")
+    return value

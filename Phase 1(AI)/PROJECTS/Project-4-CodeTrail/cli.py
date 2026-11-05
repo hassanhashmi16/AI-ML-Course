@@ -16,7 +16,7 @@ import argparse
 from langchain_core.messages import HumanMessage
 
 from agent.graph import build_graph
-from agent.memory import save_findings
+from agent.memory import save_findings, opening_messages
 from agent.observability import configure_tracing, run_with_events
 from agent.persistence import new_thread_id, open_checkpointer, saved_state
 from agent.state import new_state
@@ -110,7 +110,7 @@ def investigate(args) -> None:
                     snapshot,
                 )
                 state["sources"] = dict(collector.sources)
-                state["messages"] = [HumanMessage(content=args.question)]
+                state["messages"] = opening_messages(context, args.question)
                 events, result, log_path = run_with_events(
                     graph, state, config, thread_id=thread
                 )

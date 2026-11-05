@@ -25,6 +25,7 @@ from github import GithubException
 from github.Repository import Repository
 
 from config import settings
+from runtime import data_dir
 from github_source import code, discussions
 from models import (
     Coverage,
@@ -51,7 +52,7 @@ class Collector:
         self.warnings: list[str] = []               # truncations and failed reads
         self.cache_hits = 0
         self.cache_misses = 0
-        directory = cache_dir if cache_dir is not None else settings.data_dir / "cache"
+        directory = cache_dir if cache_dir is not None else data_dir() / "cache"
         self.cache = Cache(directory=str(directory))
 
     def close(self) -> None:
@@ -173,7 +174,7 @@ class Collector:
         """Write the evidence, coverage, and warnings to one reusable JSON file."""
         if path is None:
             slug = repo_slug(self.snapshot.repository).replace("/", "-")
-            path = settings.data_dir / "bundles" / f"{slug}@{self.snapshot.sha[:12]}.json"
+            path = data_dir() / "bundles" / f"{slug}@{self.snapshot.sha[:12]}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         bundle = {
             "repository": self.snapshot.repository,

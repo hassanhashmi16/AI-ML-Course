@@ -37,15 +37,18 @@ def get_github() -> Github:
     """
     token = settings.github_token.get_secret_value()
     if token:
-        return Github(auth=Auth.Token(token))  # the SDK never logs the token
-    return Github()  # anonymous fallback, for a smoke check only
+        return Github(auth=Auth.Token(token), timeout=max(1, int(settings.github_timeout_seconds)), retry=0)
+    return Github(timeout=max(1, int(settings.github_timeout_seconds)), retry=0)
 
 
 def get_repository(gh: Github, repository: str) -> Repository:
     """Return the repository for a canonical GitHub URL, or fail clearly."""
     slug = repo_slug(repository)
     try:
-        return gh.get_repo(slug)
+        repo = gh.get_repo(slug)
+        if repo.private or getattr(repo, "visibility", "public") != "public":
+            raise ValueError("only public repositories are supported")
+        return repo
     except GithubException as exc:
         if exc.status == 404:
             raise ValueError(f"repository not found or not public: {slug}") from exc
@@ -59,6 +62,10 @@ def resolve_ref(gh: Github, repository: str, ref: str | None) -> RepoSnapshot:
     (an old commit, an old comment) keeps its own dates; the snapshot pins
     *scope*, not time.
     """
+    if ref is not None:
+        import re
+        if not re.fullmatch(r'[A-Za-z0-9_.\-/]{1,200}', ref) or ref.startswith('/') or '..' in ref:
+            raise ValueError('unsupported branch, tag, or commit ref')
     repo = get_repository(gh, repository)
     ref_name = ref or repo.default_branch
     try:

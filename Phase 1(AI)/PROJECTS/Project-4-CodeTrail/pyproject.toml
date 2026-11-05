@@ -25,6 +25,8 @@ dependencies = [
     # Public GitHub reads and an on-disk cache of normalized evidence.
     "PyGithub",
     "diskcache",
+    "httpx",
+    "portalocker",
     # API and streaming response support; the React app comes in Step 18.
     "fastapi",
     "uvicorn",

@@ -42,23 +42,42 @@ export async function resumeInvestigation(threadId) {
   )
 }
 
-// The API replays the recorded stage log as SSE. Parse the small event stream
-// into plain objects the UI can render.
-export async function fetchEvents(threadId) {
-  const response = await fetch(
-    `/investigations/${encodeURIComponent(threadId)}/events`,
-  )
+// Consume complete SSE frames as they arrive, including frames split across reads.
+export async function fetchEvents(threadId, onEvent, signal) {
+  const response = await fetch(`/investigations/${encodeURIComponent(threadId)}/events`, { signal })
   if (!response.ok) return { events: [] }
-  const text = await response.text()
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
   const events = []
-  for (const block of text.split(/\r?\n\r?\n/)) {
-    const line = block.split(/\r?\n/).find((item) => item.startsWith('data:'))
-    if (!line) continue
-    try {
-      events.push(JSON.parse(line.slice(5).trim()))
-    } catch {
-      // skip a malformed event rather than failing the whole view
+  let buffer = ''
+  function parse() {
+    buffer = buffer.replaceAll('\r\n', '\n')
+    let end
+    while ((end = buffer.indexOf('\n\n')) !== -1) {
+      const frame = buffer.slice(0, end)
+      buffer = buffer.slice(end + 2)
+      const data = frame.split('\n').filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trimStart()).join('\n')
+      if (!data) continue
+      try {
+        const event = JSON.parse(data)
+        if (event.kind) { events.push(event); onEvent?.(event) }
+      } catch { /* ignore incomplete/unrecognized public events */ }
     }
   }
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      buffer += decoder.decode(value, { stream: !done })
+      parse()
+      if (done) break
+    }
+  } finally { reader.releaseLock() }
   return { events }
 }
+
+export async function investigation(id) {
+  return readJson(await fetch(`/investigations/${encodeURIComponent(id)}`))
+}
+export async function account() { return readJson(await fetch('/auth/me')) }
+export async function logout() { return readJson(await fetch('/auth/logout', { method: 'POST' })) }
+export async function listInvestigations() { return readJson(await fetch('/investigations')) }

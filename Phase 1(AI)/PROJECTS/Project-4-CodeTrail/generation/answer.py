@@ -25,6 +25,7 @@ from langchain_core.documents import Document
 from pydantic import Field
 
 from config import settings
+from runtime import reports_dir
 from console import make_stdout_safe
 from github_source.client import get_github, get_repository, resolve_ref
 from github_source.code import discover_files
@@ -93,6 +94,11 @@ class AnswerDraft(Contract):
     unresolved: list[str] = Field(default_factory=list)
 
 
+def supported_summary(claims) -> str:
+    """The prominent summary must not preserve rejected model assertions."""
+    return ' '.join(claim.statement for claim in claims) or 'The inspected evidence does not establish an answer within this investigation\'s scope.'
+
+
 _TOOL_RETRY_ATTEMPTS = 3
 
 
@@ -123,14 +129,14 @@ def build_llm():
             raise ValueError("GEN_PROVIDER=groq requires GROQ_API_KEY in .env")
         from langchain_groq import ChatGroq
 
-        return ChatGroq(model=settings.groq_gen_model, api_key=api_key, temperature=0)
+        return ChatGroq(model=settings.groq_gen_model, api_key=api_key, temperature=0, timeout=settings.provider_timeout_seconds, max_retries=1, max_tokens=settings.max_output_tokens)
     if settings.gen_provider == "google":
         api_key = settings.gemini_api_key.get_secret_value()
         if not api_key:
             raise ValueError("GEN_PROVIDER=google requires GEMINI_API_KEY in .env")
         from langchain_google_genai import ChatGoogleGenerativeAI
 
-        return ChatGoogleGenerativeAI(model=settings.gen_model, google_api_key=api_key, temperature=0)
+        return ChatGoogleGenerativeAI(model=settings.gen_model, google_api_key=api_key, temperature=0, timeout=settings.provider_timeout_seconds, max_retries=1, max_output_tokens=settings.max_output_tokens)
     raise ValueError(f"unsupported GEN_PROVIDER: {settings.gen_provider!r}")
 
 
@@ -206,7 +212,7 @@ def answer_question(
         question=question,
         snapshot=snapshot,
         status=status,
-        summary=draft.summary,
+        summary=supported_summary(claims),
         claims=claims,
         timeline=build_timeline(records, used_ids),
         unresolved=unresolved,
@@ -219,7 +225,7 @@ def save_report(report: Report) -> Path:
     """Write the report JSON under reports/ (gitignored) and return its path."""
     slug = repo_slug(report.snapshot.repository).replace("/", "-")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path = settings.reports_dir / f"{slug}@{report.snapshot.sha[:12]}-{stamp}.json"
+    path = reports_dir() / f"{slug}@{report.snapshot.sha[:12]}-{stamp}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     return path

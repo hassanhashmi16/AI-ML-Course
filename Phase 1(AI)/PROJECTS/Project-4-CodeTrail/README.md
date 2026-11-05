@@ -11,8 +11,14 @@ Reading code shows *what* it does. CodeTrail reconstructs *why* it changed.
 
 ## Status
 
-Steps 1–19 of the build are complete (local milestone). Guardrails, packaging,
-and public deployment are roadmap Steps 39–41.
+The original local milestone is implemented. Public-app preparation now adds
+GitHub sign-in, account-isolated storage and findings, a durable bounded queue,
+live progress, public-repository enforcement, request/quota limits, and Docker
+packaging. Hosting and real OAuth configuration are still required.
+
+See [public deployment](docs/deployment.md) for the single-server architecture,
+setup, operational limits, and checks before announcing a public URL.
+See [Ragas results](docs/faithfulness-results.md) for measured scores and limits.
 
 ## Quickstart (Windows / PowerShell)
 
@@ -46,10 +52,10 @@ and retrieval need no provider credentials.
 ## Run the workspace
 
 ```powershell
-# terminal 1 — the API
+# terminal 1 â€” the API
 .\.venv\Scripts\python.exe -m uvicorn api.main:app --port 8000
 
-# terminal 2 — the interface (proxies API paths to :8000)
+# terminal 2 â€” the interface (proxies API paths to :8000)
 cd frontend
 npm install
 npm run dev
@@ -96,14 +102,14 @@ report under `reports/eval/<run>/`. Recorded results and an honest reading are
 in [docs/architecture.md](docs/architecture.md#evaluation-as-recorded-16-october-2026).
 
 Short version: the investigation fixed a baseline citation failure and matched
-it on the unknown case, at 7–12× the calls and 3–8× the latency. Failures are
+it on the unknown case, at 7â€“12Ã— the calls and 3â€“8Ã— the latency. Failures are
 printed per case, never averaged away.
 
 ## How it is built
 
 - Step-by-step build notes and recorded checks: [STEPS.md](STEPS.md)
 - Architecture, invariants, framework comparison, limits: [docs/architecture.md](docs/architecture.md)
-- The larger AI/ML roadmap: [AI_Engineer_StepByStep.html](../../../AI_Engineer_StepByStep.html)
+- The larger AI/ML roadmap: [AI_Engineer_StepByStep.html](https://github.com/hassanhashmi16/AI-ML-Course/blob/main/AI_Engineer_StepByStep.html)
 
 Everything is checkable:
 
@@ -118,8 +124,10 @@ The full list of check scripts is in
 
 ## Known limits
 
-Single active investigation with synchronous API requests; local on-disk
+In local mode: single active investigation with synchronous API requests; local on-disk
 Qdrant and CPU embedding/reranking models; a small (4-case) verified evaluation
 set; no Ragas pass yet; token counts are lower bounds; browser verification is
-manual. Deployment needs a queue, auth, and service-backed storage — roadmap
-Steps 39–41. Details: [docs/architecture.md](docs/architecture.md#known-limits).
+manual. Public mode queues work, isolates accounts, and streams progress; it is
+limited to one server/worker with persistent SQLite and local Qdrant. Real OAuth
+and HTTPS rollout checks, retention policy, and operational monitoring remain.
+Details: [deployment](docs/deployment.md).

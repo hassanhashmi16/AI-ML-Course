@@ -17,7 +17,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import Field, field_validator
 
 from agent.graph import build_graph
-from agent.memory import save_findings
+from agent.memory import save_findings, opening_messages
 from agent.observability import run_with_events
 from agent.persistence import new_thread_id, open_checkpointer, saved_state
 from agent.state import new_state
@@ -51,15 +51,37 @@ class InvestigationRequestIn(Contract):
     """The API's request body (validated before any GitHub access)."""
 
     repository: str
-    question: str = Field(min_length=1)
-    ref: str | None = None
-    paths: list[str] = Field(default_factory=list)
-    pulls: list[int] = Field(default_factory=list)
+    question: str = Field(min_length=1, max_length=2000)
+    ref: str | None = Field(default=None, max_length=200)
+    paths: list[str] = Field(default_factory=list, max_length=10)
+    pulls: list[int] = Field(default_factory=list, max_length=10)
 
     @field_validator("repository")
     @classmethod
     def _canonical(cls, value: str) -> str:
         return canonical_repo_url(value)
+
+    @field_validator("question")
+    @classmethod
+    def _question(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("question cannot be blank")
+        return value.strip()
+
+    @field_validator("paths")
+    @classmethod
+    def _paths(cls, values):
+        from github_source.code import validate_source_path
+        for value in values:
+            validate_source_path(value)
+        return values
+
+    @field_validator("pulls")
+    @classmethod
+    def _pulls(cls, values):
+        if any(number <= 0 or number > 2147483647 for number in values):
+            raise ValueError("pull request numbers must be positive integers")
+        return values
 
 
 def _resolve(repository: str, ref: str | None):
@@ -132,7 +154,7 @@ class InvestigationService:
         self.runs[thread] = record
         return record
 
-    def start(self, payload: InvestigationRequestIn) -> dict:
+    def start(self, payload: InvestigationRequestIn, *, thread_id: str | None = None) -> dict:
         """Collect, index, and run one investigation to completion."""
         if not self._lock.acquire(blocking=False):
             raise RunBusy("another investigation is running")
@@ -159,7 +181,7 @@ class InvestigationService:
                     snapshot,
                     list(collector.sources.values()),
                 )
-                thread = new_thread_id(snapshot)
+                thread = thread_id or new_thread_id(snapshot)
                 config = {"configurable": {"thread_id": thread}}
                 with open_checkpointer() as saver:
                     graph = build_graph(
@@ -176,7 +198,7 @@ class InvestigationService:
                         snapshot,
                     )
                     state["sources"] = dict(collector.sources)
-                    state["messages"] = [HumanMessage(content=payload.question)]
+                    state["messages"] = opening_messages(context, payload.question)
                     _events, result, log_path = run_with_events(
                         graph, state, config, thread_id=thread
                     )

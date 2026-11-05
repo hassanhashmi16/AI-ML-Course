@@ -71,6 +71,19 @@ class Settings(BaseSettings):
     token_budget: int = Field(default=40000, gt=0)
     max_output_tokens: int = Field(default=2048, gt=0)
     github_timeout_seconds: float = Field(default=20, gt=0)
+    provider_timeout_seconds: float = Field(default=45, gt=0, le=120)
+
+    # Public mode uses GitHub identity, durable admission control, and isolated data.
+    public_app: bool = False
+    app_origin: str = "http://localhost:8000"
+    oauth_client_id: str = ""
+    oauth_client_secret: SecretStr = Field(default=SecretStr(""), repr=False)
+    session_hours: int = Field(default=24, ge=1, le=168)
+    daily_user_runs: int = Field(default=5, ge=1)
+    daily_global_runs: int = Field(default=30, ge=1)
+    max_queued_runs: int = Field(default=20, ge=1)
+    max_job_seconds: int = Field(default=600, ge=30, le=1800)
+    requests_per_minute: int = Field(default=120, ge=1)
 
     # No runtime directories are created merely by importing configuration.
     data_dir: Path = BASE_DIR / "data"
@@ -83,6 +96,16 @@ class Settings(BaseSettings):
             raise ValueError("RERANK_K must not exceed RETRIEVE_K")
         if self.max_output_tokens > self.token_budget:
             raise ValueError("MAX_OUTPUT_TOKENS must not exceed TOKEN_BUDGET")
+        from urllib.parse import urlsplit
+        origin = urlsplit(self.app_origin)
+        if origin.scheme not in {"https", "http"} or not origin.hostname or origin.path not in {"", "/"} or origin.query or origin.fragment or origin.username:
+            raise ValueError("APP_ORIGIN must be an http(s) origin")
+        if self.public_app:
+            if origin.scheme != "https" and origin.hostname not in {"localhost", "127.0.0.1"}:
+                raise ValueError("Public deployment requires HTTPS")
+            if not self.oauth_client_id or not self.oauth_client_secret.get_secret_value():
+                raise ValueError("PUBLIC_APP requires GitHub OAuth client credentials")
+        self.app_origin = self.app_origin.rstrip("/")
         # Joining an absolute override keeps that absolute path; a relative one
         # is anchored to CodeTrail, so changing the shell's cwd changes nothing.
         self.data_dir = (BASE_DIR / self.data_dir).resolve()

@@ -18,7 +18,7 @@ Three checkpoints, deliberately separate (Step 12):
 
 from __future__ import annotations
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from pydantic import Field
 
 from agent.policy import should_stop
@@ -127,12 +127,28 @@ def run_tools(state, tool_node, context) -> dict:
         (message for message in reversed(state["messages"]) if isinstance(message, AIMessage)),
         None,
     )
-    requested = len(last_ai.tool_calls) if last_ai and last_ai.tool_calls else 0
-    result = tool_node.invoke(state)
+    calls = last_ai.tool_calls if last_ai else []
+    executed = 0
+    messages = []
+    notes = []
+    # ToolNode can normally dispatch a whole batch concurrently. Our local
+    # Qdrant store has one owner; enforce budgets before *each* sequential call.
+    for call in calls:
+        probe = {**state, 'tool_calls': state['tool_calls']+executed, 'sources': dict(context.collector.sources)}
+        stopped, reason = should_stop(probe)
+        if stopped:
+            messages.append(ToolMessage(content='Not executed: '+reason, tool_call_id=call['id'], name=call['name']))
+            notes.append('stopping early: '+reason)
+            continue
+        single = last_ai.model_copy(update={'tool_calls':[call]})
+        result = tool_node.invoke({**probe, 'messages': [*state['messages'][:-1], single]})
+        messages.extend(result['messages'])
+        executed += 1
     return {
-        **result,
+        "messages": messages,
+        "notes": notes,
         "sources": dict(context.collector.sources),
-        "tool_calls": state["tool_calls"] + requested,
+        "tool_calls": state["tool_calls"] + executed,
     }
 
 
@@ -153,7 +169,7 @@ def grade_evidence(state, grader) -> dict:
             GRADE_PROMPT.format(question=state["request"].question, evidence=evidence),
         )
     except Exception as exc:  # a broken grader must not kill the investigation
-        note = f"evidence grading failed ({exc}); proceeding with gathered evidence"
+        note = f"evidence grading failed ({type(exc).__name__}); proceeding with gathered evidence"
         return {"evidence_sufficient": True, "notes": [note]}
 
     note = "sufficient" if verdict.sufficient else f"missing {verdict.missing or 'unspecified'}"
@@ -267,10 +283,13 @@ def ground_and_finalize(
         return revised, notes
 
     kept = [claim for claim in revised.claims if all(claim is not bad for bad, _ in unsupported)]
+    from generation.answer import supported_summary, build_timeline
     downgraded = [claim.statement for claim, _ in unsupported]
     updated = revised.model_copy(
         update={
             "claims": kept,
+            "summary": supported_summary(kept),
+            "timeline": build_timeline(records, {excerpt.source_id for claim in kept for excerpt in claim.excerpts}),
             "status": ReportStatus.PARTIAL,
             "unresolved": [
                 *revised.unresolved,

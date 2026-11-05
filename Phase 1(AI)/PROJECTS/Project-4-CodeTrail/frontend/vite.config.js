@@ -10,6 +10,7 @@ export default defineConfig({
     // http://127.0.0.1:5173 refused connections. Listen on both stacks.
     host: true,
     proxy: {
+      '/auth': 'http://127.0.0.1:8000',
       '/health': 'http://127.0.0.1:8000',
       '/investigations': 'http://127.0.0.1:8000',
       '/reports': 'http://127.0.0.1:8000',

@@ -1,4 +1,4 @@
-# CodeTrail — Architecture
+# CodeTrail â€” Architecture
 
 **Trace the decisions behind the code.** CodeTrail accepts a public GitHub
 repository link and a question, follows the relevant code, history, and
@@ -16,14 +16,14 @@ are.
 
 ```
 GitHub repo + question (+ optional path/ref)
-   │
-   ▼  github_source/         validate repo, resolve ref → SHA, collect evidence (cached)
-   ▼  ingest/                records → LangChain Documents → chunks → vectors in Qdrant
-   ▼  retrieval/             hybrid search (dense + sparse) + cross-encoder rerank
-   ▼  agent/                 investigate → tools → grade → investigate|synthesize
-   ▼  generation/ + reporting/  structured claims → citation validation → grounding
-   ▼  Report                  summary, claims, timeline, unresolved, coverage
-   ▼  api/ + frontend/        FastAPI service, SSE stage events, React workspace
+   â”‚
+   â–¼  github_source/         validate repo, resolve ref â†’ SHA, collect evidence (cached)
+   â–¼  ingest/                records â†’ LangChain Documents â†’ chunks â†’ vectors in Qdrant
+   â–¼  retrieval/             hybrid search (dense + sparse) + cross-encoder rerank
+   â–¼  agent/                 investigate â†’ tools â†’ grade â†’ investigate|synthesize
+   â–¼  generation/ + reporting/  structured claims â†’ citation validation â†’ grounding
+   â–¼  Report                  summary, claims, timeline, unresolved, coverage
+   â–¼  api/ + frontend/        FastAPI service, SSE stage events, React workspace
 ```
 
 Everything before generation answers one question: **which five pieces of
@@ -43,7 +43,7 @@ evidence best explain this change, and where exactly did each come from?**
 | `retrieval/` | local embedders, Qdrant clients, hybrid/dense search with scope filters, local cross-encoder reranking |
 | `agent/tools.py` | five LangChain tools bound to a trusted run context; each read indexes what it fetched |
 | `agent/nodes.py` | investigation strategy: tool-driven loop, evidence grading, budgets, synthesis, grounding with one revision |
-| `agent/graph.py` | LangGraph wiring: `investigate → tools → grade → investigate | synthesize` |
+| `agent/graph.py` | LangGraph wiring: `investigate â†’ tools â†’ grade â†’ investigate | synthesize` |
 | `agent/policy.py` | tool/source/token/time budgets and repeated-action detection, each returning a reason |
 | `agent/persistence.py` + `cli.py` | SQLite checkpointing, thread IDs, resume, the command line |
 | `agent/memory.py` | findings saved after reports; recall filtered by repo + base SHA; revalidation (supported/stale/unverified) |
@@ -60,7 +60,7 @@ evidence best explain this change, and where exactly did each come from?**
 1. **One identity per source.** `make_source_id` is deterministic; re-collection
    and re-indexing replace instead of duplicating (idempotent replay).
 2. **Scope filters on every retrieval.** Every search is restricted to the
-   repository and pinned SHA — and, since Step 19, to the **source IDs this
+   repository and pinned SHA â€” and, since Step 19, to the **source IDs this
    investigation actually inspected**. A shared index can therefore never leak
    an earlier run's chunks into a new answer.
 3. **Verbatim citations.** A claim cites a `source_id` plus a quote that must
@@ -121,10 +121,10 @@ Three labelled cases, both workflows, same snapshot/model/report contract:
 
 | case | flow | status | claims | cites | rationale | unknown | calls | tokens | ms |
 |---|---|---|---|---|---|---|---|---|---|
-| ct-001 | baseline | complete | 2 | ok | ok | – | 1 | 0 | 8567 |
-| ct-001 | investigation | partial | 1 | ok | ok | – | 12 | 2721 | 58473 |
-| ct-002 | baseline | partial | 3 | FAIL | ok | – | 1 | 0 | 20951 |
-| ct-002 | investigation | complete | 2 | ok | ok | – | 7 | 2599 | 74097 |
+| ct-001 | baseline | complete | 2 | ok | ok | â€“ | 1 | 0 | 8567 |
+| ct-001 | investigation | partial | 1 | ok | ok | â€“ | 12 | 2721 | 58473 |
+| ct-002 | baseline | partial | 3 | FAIL | ok | â€“ | 1 | 0 | 20951 |
+| ct-002 | investigation | complete | 2 | ok | ok | â€“ | 7 | 2599 | 74097 |
 | ct-003 | baseline | partial | 0 | ok | ok | ok | 1 | 0 | 17498 |
 | ct-003 | investigation | partial | 0 | ok | ok | ok | 10 | 10460 | 133703 |
 
@@ -133,7 +133,7 @@ Reading honestly:
 - The investigation **fixed** a citation failure on ct-002 that the baseline
   hit, and both handled the unknown case (ct-003) by refusing to invent a
   number.
-- The investigation cost **7–12× the calls and 3–8× the latency**. On ct-001 it
+- The investigation cost **7â€“12Ã— the calls and 3â€“8Ã— the latency**. On ct-001 it
   needed the full tool budget and still ended `partial`.
 - Tokens are provider-reported and undercount for structured calls (they often
   report none); calls are exact.
@@ -145,8 +145,9 @@ documented claim quoting PR #4682's compatibility paragraph and honestly
 downgraded one overreaching claim (status `partial`). The baseline could not
 answer it before the Step 19 scope fix; the case is now part of the harness.
 
-Ragas faithfulness scoring is **not yet run**; per-case reports are saved under
-`reports/eval/<run>/` so it can be added without re-spending generation calls.
+The original run did not include Ragas scoring. The 5 November follow-up now
+scores those saved reports without regenerating answers; see
+[faithfulness results and context limitations](faithfulness-results.md).
 
 ---
 
@@ -158,14 +159,14 @@ Ragas faithfulness scoring is **not yet run**; per-case reports are saved under
 .\.venv\Scripts\python.exe scripts\check_models.py            # shared contracts
 .\.venv\Scripts\python.exe scripts\check_github.py            # readers against the pinned Flask snapshot
 .\.venv\Scripts\python.exe scripts\check_collect.py           # cached collector + bundle
-.\.venv\Scripts\python.exe scripts\check_chunks.py            # chunk → source offsets
+.\.venv\Scripts\python.exe scripts\check_chunks.py            # chunk â†’ source offsets
 .\.venv\Scripts\python.exe scripts\check_index.py             # embeddings + Qdrant manifest
 .\.venv\Scripts\python.exe scripts\check_search.py            # hybrid retrieval + reranking
 .\.venv\Scripts\python.exe scripts\check_answer.py            # baseline cited answer
 .\.venv\Scripts\python.exe scripts\check_tools.py             # investigator tools
 .\.venv\Scripts\python.exe scripts\check_graph.py             # live investigation workflow
 .\.venv\Scripts\python.exe scripts\check_policy.py            # budgets + grounding fixtures
-.\.venv\Scripts\python.exe scripts\check_resume.py            # crash → checkpoint → resume
+.\.venv\Scripts\python.exe scripts\check_resume.py            # crash â†’ checkpoint â†’ resume
 .\.venv\Scripts\python.exe scripts\check_memory.py            # findings save/recall/revalidate
 .\.venv\Scripts\python.exe scripts\check_traces.py            # event stream + JSONL log
 .\.venv\Scripts\python.exe scripts\check_api.py               # FastAPI service (fixtures)
@@ -184,22 +185,23 @@ npm run dev
 
 ---
 
-## Known limits
+## Current limits (5 November 2026)
 
-- **Single active investigation**, synchronous API requests. Fine for a local
-  single-user workspace; deployment (roadmap Steps 39–41) needs a queue,
-  concurrency limits, auth, and service-backed storage.
-- **Local-first infrastructure.** Qdrant runs on disk with one process owning
-  it; the embedder/reranker are CPU ONNX models. Quality is good, not identical
-  to hosted frontier embeddings.
-- **Small verified evaluation set** (4 cases, 1 dev / 3 held-out). Enough to
-  catch regressions and honesty failures, not enough to claim generalization.
-- **No Ragas pass yet**; faithfulness is measured by the runtime grounding
-  judge and the harness's citation checks.
-- **Token accounting** is provider-reported; structured-output calls often
-  report none, so token numbers are lower bounds.
-- **Browser verification is manual.** The UI builds and lints cleanly and the
-  API contract is covered by fixtures; a click-through demo pass is a manual
-  step before publishing.
-- **Scope**: public GitHub repositories; very large histories, private repos,
-  and non-Python-heavy explanations need additional scope decisions.
+- Public mode now has GitHub identity, private account workspaces, a durable
+  queue, and live event streaming. It remains a **single-server, single-active-
+  investigation** deployment, with a supervised process per job and persistent
+  SQLite/local Qdrant. See [public deployment](deployment.md).
+- Findings are now recalled by normal CLI/API investigations as untrusted
+  leads, filtered by repository and SHA, and revalidated against this run's
+  evidence. Public accounts have separate stores for the complete pipeline.
+- The verified evaluation set is still four cases from Flask. The legacy
+  Ragas scores use reconstructed cited-source contexts; they do not measure
+  broad generalization or the quality of newly generated reports.
+- Token accounting remains incomplete. Admission quotas and process deadlines
+  bound usage; configure provider billing limits separately.
+- The sign-in screen was checked in a browser; OAuth/PKCE and live events are
+  covered by tests. Real GitHub sign-in, a complete browser investigation,
+  HTTPS/proxy behavior, backups, and retention must be checked on the chosen
+  production host before announcing a public URL.
+- Public repositories only. Private/internal repos are explicitly rejected.
+  Non-Python-heavy repositories and very large histories remain less tested.

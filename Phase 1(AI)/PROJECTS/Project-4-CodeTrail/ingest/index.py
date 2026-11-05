@@ -27,6 +27,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import FieldCondition, Filter, MatchValue
 
 from config import settings
+from runtime import data_dir
 from github_source.client import get_github, get_repository, resolve_ref
 from github_source.code import discover_files
 from github_source.collect import Collector
@@ -49,7 +50,7 @@ class IndexConfigMismatch(ValueError):
 
 
 def manifest_path(collection: str) -> Path:
-    return settings.data_dir / "index" / f"{collection}.manifest.json"
+    return data_dir() / "index" / f"{collection}.manifest.json"
 
 
 def load_manifest(collection: str) -> dict | None:

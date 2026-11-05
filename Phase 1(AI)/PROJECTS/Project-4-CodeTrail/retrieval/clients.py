@@ -17,6 +17,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, SparseVectorParams, VectorParams
 
 from config import settings
+from runtime import data_dir
 from models import RepoSnapshot, repo_slug
 
 # Local model weights live in the project's ignored .cache/ directory.
@@ -73,7 +74,7 @@ def build_embeddings() -> Embeddings:
 
 def open_qdrant() -> QdrantClient:
     """The local on-disk vector store. One process owns it at a time."""
-    return QdrantClient(path=str(settings.data_dir / "qdrant"))
+    return QdrantClient(path=str(data_dir() / "qdrant"))
 
 
 def collection_name(snapshot: RepoSnapshot) -> str:

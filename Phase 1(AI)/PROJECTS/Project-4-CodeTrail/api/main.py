@@ -90,6 +90,11 @@ def create_app(service: InvestigationService | None = None) -> FastAPI:
 
     @app.get("/investigations/{thread_id}/events")
     async def events(thread_id: str):
+        from agent.persistence import validate_thread_id
+        try:
+            validate_thread_id(thread_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="invalid investigation id") from None
         path = settings.data_dir / "traces" / f"{thread_id}.jsonl"
         if not path.exists():
             raise HTTPException(status_code=404, detail="no events for this thread")
@@ -144,4 +149,8 @@ def create_app(service: InvestigationService | None = None) -> FastAPI:
     return app
 
 
-app = create_app()
+if settings.public_app:
+    from api.public import create_public_app
+    app = create_public_app()
+else:
+    app = create_app()

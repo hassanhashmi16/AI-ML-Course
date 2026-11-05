@@ -69,8 +69,16 @@ def _commit_record(
     )
 
 
+def validate_source_path(path: str) -> str:
+    from pathlib import PurePosixPath
+    if not path or len(path) > 300 or any(char in path for char in ('\\', '%', '?', '#', '\x00', ':')) or PurePosixPath(path).is_absolute() or '..' in PurePosixPath(path).parts:
+        raise ValueError('unsupported repository-relative path')
+    return path
+
+
 def read_file(repo: Repository, snapshot: RepoSnapshot, path: str) -> SourceRecord:
     """Read one file at the pinned snapshot into a retained source record."""
+    validate_source_path(path)
     try:
         content = repo.get_contents(path, ref=snapshot.sha)
     except GithubException as exc:
@@ -81,7 +89,7 @@ def read_file(repo: Repository, snapshot: RepoSnapshot, path: str) -> SourceReco
         raise ValueError(f"path is a directory, not a file: {path}")
     # The contents API only serves base64 for files up to ~1 MB. Anything it
     # declines must fail loudly here, not become an empty record downstream.
-    if content.encoding != "base64":
+    if content.encoding != "base64" or content.size > 100000:
         raise ValueError(f"file too large for the contents API ({content.size} bytes): {path}")
     try:
         text = content.decoded_content.decode("utf-8")
@@ -106,6 +114,7 @@ def list_file_history(
     limit: int | None = None,
 ) -> tuple[list[SourceRecord], str | None]:
     """Commits that touched ``path``, newest first, capped with a visible warning."""
+    validate_source_path(path)
     cap = limit if limit is not None else settings.max_commits
     commits = repo.get_commits(path=path, sha=snapshot.sha)
     total = commits.totalCount  # forces one page fetch; islice walks lazily
@@ -126,6 +135,9 @@ def inspect_change(
     sha: str,
 ) -> tuple[SourceRecord, list[ChangedFile], str | None]:
     """Inspect one commit: its record, changed-file metadata, and warnings."""
+    import re
+    if not re.fullmatch(r'[a-fA-F0-9]{7,40}', sha):
+        raise ValueError('commit must be a hexadecimal SHA (7-40 characters)')
     try:
         commit = repo.get_commit(sha=sha)
     except GithubException as exc:

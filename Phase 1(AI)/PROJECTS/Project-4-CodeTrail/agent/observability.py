@@ -25,6 +25,7 @@ from langchain_core.messages import ToolMessage
 
 from api.events import EventKind, ProgressEvent
 from config import settings
+from runtime import data_dir
 
 # Node name -> public stage name. Kept explicit so the contract does not
 # change silently when the graph is refactored.
@@ -57,7 +58,9 @@ class StageLog:
 
     def __init__(self, thread_id: str | None = None) -> None:
         name = thread_id or f"run-{uuid.uuid4().hex[:10]}"
-        self.path: Path = settings.data_dir / "traces" / f"{name}.jsonl"
+        from agent.persistence import validate_thread_id
+        validate_thread_id(name)
+        self.path: Path = data_dir() / "traces" / f"{name}.jsonl"
         self.path.parent.mkdir(parents=True, exist_ok=True)
 
     def write(self, event: ProgressEvent) -> None:

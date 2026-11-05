@@ -82,6 +82,9 @@ def canonical_repo_url(url: str) -> str:
     parts = text[len(prefix):].split("/")
     if len(parts) != 2 or not all(parts):
         raise ValueError("expected exactly https://github.com/owner/repo")
+    import re
+    if not all(re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', part) and part not in {'.', '..'} for part in parts):
+        raise ValueError("invalid GitHub owner or repository name")
     return prefix + parts[0] + "/" + parts[1]
 
 
