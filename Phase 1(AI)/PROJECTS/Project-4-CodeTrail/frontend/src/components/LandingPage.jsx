@@ -103,7 +103,7 @@ export default function LandingPage({ checkingSession }) {
         <section className="lp-final-cta"><div><p className="lp-eyebrow">Your next rabbit hole, with a map</p><h2>Start with “why?”</h2><p>Your investigations and saved reports stay in your account.</p></div><SignIn checking={checkingSession} /></section>
       </main>
 
-      <footer className="lp-footer"><span>CodeTrail <span aria-hidden="true">/</span> Trace the decisions.</span><div><a href="https://github.com/hassanhashmi16/codetrail" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a><details><summary>Privacy & access</summary><p>Sign-in does not request private-repository access. Your questions and public source excerpts are sent to the configured AI provider. Saved reports are private to your account; the server operator can access the underlying storage. Shared usage limits apply.</p></details></div></footer>
+      <footer className="lp-footer"><span>CodeTrail <span aria-hidden="true">/</span> Trace the decisions.</span><div><a href="https://github.com/hassanhashmi16/codetrail" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a><details><summary>Privacy & access</summary><p>Sign-in does not request private-repository access. Your questions and public source excerpts are sent to the configured AI provider. Saved reports are private to your account; the server operator can access the underlying storage. Open your account menu → Your data to see this server’s expiry policy or delete your account. Shared usage limits apply.</p></details></div></footer>
     </div>
   )
 }

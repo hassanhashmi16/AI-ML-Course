@@ -17,6 +17,7 @@ services:
       DAILY_GLOBAL_RUNS: ${DAILY_GLOBAL_RUNS:-30}
       MAX_QUEUED_RUNS: ${MAX_QUEUED_RUNS:-20}
       MAX_JOB_SECONDS: ${MAX_JOB_SECONDS:-600}
+      RETENTION_DAYS: ${RETENTION_DAYS:-0}
     volumes:
       - codetrail_state:/state
     read_only: true

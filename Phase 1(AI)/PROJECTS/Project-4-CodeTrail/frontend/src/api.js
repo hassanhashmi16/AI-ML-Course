@@ -80,4 +80,7 @@ export async function investigation(id) {
 }
 export async function account() { return readJson(await fetch('/auth/me')) }
 export async function logout() { return readJson(await fetch('/auth/logout', { method: 'POST' })) }
+export async function deleteAccount(confirmation) {
+  return readJson(await fetch('/auth/account', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmation }) }))
+}
 export async function listInvestigations() { return readJson(await fetch('/investigations')) }

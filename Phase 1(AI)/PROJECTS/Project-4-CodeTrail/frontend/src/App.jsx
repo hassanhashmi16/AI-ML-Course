@@ -9,6 +9,7 @@ import StageLog from './components/StageLog.jsx'
 import LandingPage from './components/LandingPage.jsx'
 import WorkspaceHeader from './components/WorkspaceHeader.jsx'
 import JobHistory from './components/JobHistory.jsx'
+import DataControls from './components/DataControls.jsx'
 import { RunningPanel, ErrorPanel } from './components/RunState.jsx'
 import { durationLabel } from './format.js'
 import './workspace.css'
@@ -17,6 +18,8 @@ export default function App() {
   const [api, setApi] = useState(null)
   const [identity, setIdentity] = useState(undefined)
   const [jobs, setJobs] = useState([])
+  const [retentionDays, setRetentionDays] = useState(0)
+  const [dataControls, setDataControls] = useState(false)
   const [runs, setRuns] = useState([])
   const [phase, setPhase] = useState('idle')
   const [sidebar, setSidebar] = useState('new')
@@ -53,6 +56,7 @@ export default function App() {
           const auth = await account()
           if (canceled) return
           setIdentity(auth.user)
+          setRetentionDays(auth.retention_days || 0)
           if (!auth.user) return
         }
         const [saved, history] = await Promise.allSettled([listReports(), info.public_app ? listInvestigations() : Promise.resolve({ investigations: [] })])
@@ -194,7 +198,7 @@ export default function App() {
     <a className="skip-link" href="#workspace">Skip to the report</a>
     <p className="sr-only" role="status">{live}</p>
     <div inert={drawer ? true : undefined}>
-      <WorkspaceHeader identity={identity} connected={api.status === 'ok'} running={phase === 'running'} disabled={busy} onNew={startOver} onSignOut={async () => { await logout(); window.location.reload() }} />
+      <WorkspaceHeader identity={identity} connected={api.status === 'ok'} running={phase === 'running'} disabled={busy} onNew={startOver} onDataControls={() => setDataControls(true)} onSignOut={async () => { await logout(); window.location.reload() }} />
       <div className="ws-intro"><div><p className="ws-kicker">Your investigation desk</p><h1>Follow the evidence.</h1></div><div className="ws-intro-note"><span>{api.public_app ? `${jobs.length} investigations` : 'Local workspace'}</span><span>{runs.length} saved reports</span></div></div>
       {api.status !== 'ok' && <p className="ws-service-note" role="alert">The service is unavailable. Check that the backend is running, then refresh.</p>}
       <main className="layout ws-layout">
@@ -217,5 +221,6 @@ export default function App() {
       <footer className="ws-footer"><span>CodeTrail / Trace the decisions.</span><span>Public sources. Inspectable findings.</span></footer>
     </div>
     {drawer && <EvidenceDrawer evidence={drawer} onClose={() => setDrawer(null)} />}
+    {dataControls && <DataControls retentionDays={retentionDays} onClose={() => setDataControls(false)} />}
   </div>
 }

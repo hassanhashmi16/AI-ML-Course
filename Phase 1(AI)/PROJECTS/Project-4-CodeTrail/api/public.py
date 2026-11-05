@@ -7,6 +7,7 @@ import secrets
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlencode
 
 import httpx
@@ -14,14 +15,20 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sse_starlette.sse import EventSourceResponse
+from pydantic import BaseModel, ConfigDict
 
 from api.service import InvestigationRequestIn
-from api.store import AdmissionError, Store
+from api.store import AdmissionError, AccountBusy, SessionExpired, Store
+from api.privacy import delete_account
 from api.worker import Worker
 from config import BASE_DIR, settings
 
 COOKIE = 'codetrail_session'
 TERMINAL = {'completed', 'failed', 'interrupted'}
+
+class DeleteAccountIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    confirmation: Literal['DELETE']
 
 def validate_id(value):
     import re
@@ -111,7 +118,14 @@ def create_public_app(*, store=None, worker=None):
 
     @app.get('/auth/me')
     def me(request: Request):
-        return {'user': store.user(request.cookies.get(COOKIE)), 'public_app': True}
+        return {'user': store.user(request.cookies.get(COOKIE)), 'public_app': True, 'retention_days': settings.retention_days}
+
+    @app.delete('/auth/account', status_code=202)
+    def remove_account(payload: DeleteAccountIn, request: Request):
+        complete = delete_account(store, user(request)['id'], session_token=request.cookies.get(COOKIE, ''))
+        response = JSONResponse({'deleted': complete, 'cleanup_pending': not complete}, status_code=202)
+        response.delete_cookie(COOKIE)
+        return response
 
     @app.get('/auth/login')
     def login():
@@ -143,6 +157,8 @@ def create_public_app(*, store=None, worker=None):
                 # The OAuth token is used only to prove identity, never persisted,
                 # sent to the model, or used to read repositories.
                 session = store.login(str(profile['id']), profile['login'])
+        except AccountBusy:
+            raise
         except (httpx.HTTPError, ValueError, KeyError):
             raise HTTPException(502, 'GitHub sign-in failed. Please try again.') from None
         response = RedirectResponse('/', status_code=303)
@@ -161,9 +177,17 @@ def create_public_app(*, store=None, worker=None):
     async def admission_error(_request, exc):
         return JSONResponse({'detail': str(exc)}, status_code=429, headers={'Retry-After': '60'})
 
+    @app.exception_handler(AccountBusy)
+    async def account_busy(_request, exc):
+        return JSONResponse({'detail': str(exc)}, status_code=409)
+
+    @app.exception_handler(SessionExpired)
+    async def expired_session(_request, exc):
+        return JSONResponse({'detail': str(exc)}, status_code=401)
+
     @app.post('/investigations', status_code=202)
     def start(payload: InvestigationRequestIn, request: Request):
-        return shape(store.enqueue(user(request)['id'], payload.model_dump(mode='json')))
+        return shape(store.enqueue(user(request)['id'], payload.model_dump(mode='json'), session_token=request.cookies.get(COOKIE, '')))
 
     @app.get('/investigations')
     def jobs(request: Request):
@@ -176,7 +200,7 @@ def create_public_app(*, store=None, worker=None):
     @app.post('/investigations/{identifier}/resume', status_code=202)
     def resume(identifier: str, request: Request):
         job = owned(request, identifier)
-        return shape(store.enqueue(job['owner'], resume=job['id']))
+        return shape(store.enqueue(job['owner'], resume=job['id'], session_token=request.cookies.get(COOKIE, '')))
 
     @app.get('/investigations/{identifier}/events')
     async def events(identifier: str, request: Request):
@@ -198,7 +222,11 @@ def create_public_app(*, store=None, worker=None):
                             offset += len(line)
                             event = json.loads(line)
                             yield {'event': event['kind'], 'data': json.dumps(event)}
-                current = store.job(job['owner'], job['id'])
+                try:
+                    current = store.job(job['owner'], job['id'])
+                except LookupError:
+                    # A completed account may have been erased during replay.
+                    return
                 if current['status'] in TERMINAL:
                     # Emit final job state as well, including failure before
                     # the graph could write its first event.

@@ -15,6 +15,12 @@ from config import settings
 class AdmissionError(ValueError):
     pass
 
+class SessionExpired(ValueError):
+    pass
+
+class AccountBusy(ValueError):
+    pass
+
 def digest(value):
     return hashlib.sha256(value.encode()).hexdigest()
 
@@ -33,12 +39,18 @@ class Store:
             CREATE TABLE IF NOT EXISTS rates (key TEXT PRIMARY KEY, window INTEGER NOT NULL, count INTEGER NOT NULL);
             CREATE INDEX IF NOT EXISTS jobs_owner ON jobs(owner, created);
             CREATE INDEX IF NOT EXISTS usage_time ON usage(created);
+            CREATE TABLE IF NOT EXISTS deletions (owner TEXT PRIMARY KEY);
             """)
+            if 'last_active' not in {row[1] for row in db.execute('PRAGMA table_info(users)')}:
+                db.execute('ALTER TABLE users ADD COLUMN last_active REAL NOT NULL DEFAULT 0')
+                # Give existing accounts a full retention window after migration.
+                db.execute('UPDATE users SET last_active=?', (time.time(),))
 
     @contextmanager
     def connect(self):
         db = sqlite3.connect(self.path, timeout=10)
         db.row_factory = sqlite3.Row
+        db.execute('PRAGMA secure_delete=ON')
         try:
             with db:
                 yield db
@@ -50,7 +62,10 @@ class Store:
             raise ValueError("invalid GitHub identity")
         token = secrets.token_urlsafe(32)
         with self.connect() as db:
-            db.execute("INSERT OR REPLACE INTO users VALUES (?, ?)", (owner, login))
+            db.execute('BEGIN IMMEDIATE')
+            if db.execute('SELECT 1 FROM deletions WHERE owner=?', (owner,)).fetchone():
+                raise AccountBusy('Account data is being deleted. Please try signing in later.')
+            db.execute("INSERT OR REPLACE INTO users (id,login,last_active) VALUES (?, ?, ?)", (owner, login, time.time()))
             db.execute("DELETE FROM sessions WHERE expires < ?", (time.time(),))
             db.execute("INSERT INTO sessions VALUES (?, ?, ?)", (digest(token), owner, time.time()+settings.session_hours*3600))
         return token
@@ -59,7 +74,7 @@ class Store:
         if not token:
             return None
         with self.connect() as db:
-            row = db.execute("SELECT users.* FROM users JOIN sessions ON users.id=sessions.owner WHERE token=? AND expires>?", (digest(token), time.time())).fetchone()
+            row = db.execute("SELECT users.id,users.login FROM users JOIN sessions ON users.id=sessions.owner WHERE token=? AND expires>?", (digest(token), time.time())).fetchone()
         return dict(row) if row else None
 
     def logout(self, token):
@@ -91,16 +106,20 @@ class Store:
             db.execute("INSERT OR REPLACE INTO rates VALUES (?, ?, ?)", (key, window, count))
         return count <= settings.requests_per_minute
 
-    def enqueue(self, owner, payload=None, *, resume=None):
+    def enqueue(self, owner, payload=None, *, resume=None, session_token=None):
         now = time.time()
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
+            if session_token is not None and not db.execute('SELECT 1 FROM sessions WHERE token=? AND owner=? AND expires>?', (digest(session_token), owner, now)).fetchone():
+                raise SessionExpired('Your session expired. Please sign in again.')
+            if db.execute('SELECT 1 FROM deletions WHERE owner=?', (owner,)).fetchone():
+                raise AccountBusy('Account data is being deleted.')
             if db.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running')").fetchone()[0] >= settings.max_queued_runs:
                 raise AdmissionError("The queue is full. Try again later.")
             if db.execute("SELECT 1 FROM jobs WHERE owner=? AND status IN ('queued','running')", (owner,)).fetchone():
                 raise AdmissionError("You already have an investigation queued or running.")
             db.execute("DELETE FROM usage WHERE created < ?", (now-86400,))
-            global_count, user_count = db.execute("SELECT count(*),coalesce(sum(owner=?),0) FROM usage", (owner,)).fetchone()
+            global_count, user_count = db.execute("SELECT count(*),coalesce(sum(owner IN (?,?)),0) FROM usage", (owner, digest('quota:'+owner))).fetchone()
             if global_count >= settings.daily_global_runs or user_count >= settings.daily_user_runs:
                 raise AdmissionError("The daily investigation limit has been reached. Try again later.")
             if resume:
@@ -114,8 +133,44 @@ class Store:
             else:
                 identifier = uuid.uuid4().hex
                 db.execute("INSERT INTO jobs VALUES (?, ?, ?, 'start','queued', ?, NULL, NULL)", (identifier, owner, json.dumps(payload), now))
-            db.execute("INSERT INTO usage VALUES (?, ?)", (owner, now))
-        return self.job(owner, identifier)
+            db.execute("INSERT INTO usage VALUES (?, ?)", (digest('quota:'+owner), now))
+            db.execute('UPDATE users SET last_active=? WHERE id=?', (now, owner))
+            job = dict(db.execute('SELECT * FROM jobs WHERE id=? AND owner=?', (identifier, owner)).fetchone())
+        return job
+
+    def request_deletion(self, owner, *, session_token=None, inactive_before=None):
+        """Persist intent before erasing files; a restart retries pending deletion."""
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            if session_token is not None and not db.execute('SELECT 1 FROM sessions WHERE token=? AND owner=? AND expires>?', (digest(session_token), owner, time.time())).fetchone():
+                raise SessionExpired('Your session expired. Please sign in again.')
+            if inactive_before is not None:
+                row = db.execute('SELECT last_active FROM users WHERE id=?', (owner,)).fetchone()
+                if not row or row[0] >= inactive_before:
+                    return False
+                if db.execute("SELECT 1 FROM jobs WHERE owner=? AND status IN ('queued','running')", (owner,)).fetchone():
+                    return False
+            if db.execute("SELECT 1 FROM jobs WHERE owner=? AND status='running'", (owner,)).fetchone():
+                raise AccountBusy('Wait for your running investigation to finish before deleting your account.')
+            db.execute('INSERT OR IGNORE INTO deletions VALUES (?)', (owner,))
+            db.execute('DELETE FROM sessions WHERE owner=?', (owner,))
+            db.execute('DELETE FROM jobs WHERE owner=?', (owner,))
+            db.execute('DELETE FROM users WHERE id=?', (owner,))
+            # Keep the rolling 24-hour quota, including pre-migration records.
+            db.execute('UPDATE usage SET owner=? WHERE owner=?', (digest('quota:'+owner), owner))
+        return True
+
+    def pending_deletions(self):
+        with self.connect() as db:
+            return [row[0] for row in db.execute('SELECT owner FROM deletions')]
+
+    def finish_deletion(self, owner):
+        with self.connect() as db:
+            db.execute('DELETE FROM deletions WHERE owner=?', (owner,))
+
+    def inactive_accounts(self, before):
+        with self.connect() as db:
+            return [row[0] for row in db.execute('SELECT id FROM users WHERE last_active<?', (before,))]
 
     def job(self, owner, identifier):
         with self.connect() as db:

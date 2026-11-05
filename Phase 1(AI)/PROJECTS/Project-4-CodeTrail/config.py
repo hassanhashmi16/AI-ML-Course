@@ -84,6 +84,8 @@ class Settings(BaseSettings):
     max_queued_runs: int = Field(default=20, ge=1)
     max_job_seconds: int = Field(default=600, ge=30, le=1800)
     requests_per_minute: int = Field(default=120, ge=1)
+    # Zero disables scheduled deletion. Enable only after choosing a policy.
+    retention_days: int = Field(default=0, ge=0, le=3650)
 
     # No runtime directories are created merely by importing configuration.
     data_dir: Path = BASE_DIR / "data"

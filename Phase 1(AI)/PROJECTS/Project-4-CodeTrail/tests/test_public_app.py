@@ -255,3 +255,135 @@ def test_overall_timeout_stops_the_job_and_keeps_it_resumable(store, monkeypatch
     assert process.terminated
     assert store.job('1', job['id'])['status'] == 'interrupted'
     assert store.enqueue('1', resume=job['id'])['operation'] == 'resume'
+
+
+def test_account_deletion_requires_confirmation_and_erases_only_its_owner(store, monkeypatch):
+    from api.store import SessionExpired
+    monkeypatch.setattr(settings, 'daily_user_runs', 1)
+    other_token = store.login('2', 'bob')
+    old_token = store.login('1', 'alice')
+    job = store.enqueue('1', PAYLOAD)
+    for owner in ['1', '2']:
+        path = settings.data_dir/'users'/owner/'reports'/'saved.json'
+        path.parent.mkdir(parents=True)
+        path.write_text('research')
+    with client_for(store, '1') as client:
+        assert client.request('DELETE', '/auth/account', json={'confirmation':'wrong'}).status_code == 422
+        assert client.request('DELETE', '/auth/account', json={'confirmation':'DELETE', 'owner':'2'}).status_code == 422
+        result = client.request('DELETE', '/auth/account', json={'confirmation':'DELETE'})
+        assert result.status_code == 202
+        assert result.json() == {'deleted':True, 'cleanup_pending':False}
+        assert client.get('/reports').status_code == 401
+    assert not store.user(old_token)
+    assert store.user(other_token)['id'] == '2'
+    assert not (settings.data_dir/'users'/'1').exists()
+    assert (settings.data_dir/'users'/'2'/'reports'/'saved.json').exists()
+    assert not store.pending_deletions()
+    with pytest.raises(LookupError): store.job('1', job['id'])
+    # Already-authenticated requests cannot resurrect work with revoked cookies.
+    with pytest.raises(SessionExpired): store.enqueue('1', PAYLOAD, session_token=old_token)
+    new_token = store.login('1', 'alice')
+    with pytest.raises(AdmissionError): store.enqueue('1', PAYLOAD, session_token=new_token)
+
+
+def test_deletion_refuses_running_jobs_and_worker_cleanup_handles(store):
+    from api.privacy import workspace_lease
+    job = store.enqueue('1', PAYLOAD)
+    store.claim()
+    with client_for(store, '1') as client:
+        assert client.request('DELETE', '/auth/account', json={'confirmation':'DELETE'}).status_code == 409
+        store.finish(job['id'], report={'ok': True})
+        # Job status can be completed before the service closes its files.
+        with workspace_lease(store.path.parent, '1'):
+            assert client.request('DELETE', '/auth/account', json={'confirmation':'DELETE'}).status_code == 409
+        assert client.get('/auth/me').json()['user']['id'] == '1'
+
+
+def test_pending_erasure_recovers_after_restart_without_allowing_login(store, monkeypatch):
+    from api.privacy import maintain_accounts
+    from api.store import AccountBusy
+    real_erase = __import__('api.privacy', fromlist=['erase_workspace']).erase_workspace
+    path = settings.data_dir/'users'/'1'/'trace.json'
+    path.parent.mkdir(parents=True)
+    path.write_text('private research')
+    monkeypatch.setattr('api.privacy.erase_workspace', lambda *args: (_ for _ in ()).throw(PermissionError()))
+    with client_for(store, '1') as client:
+        result = client.request('DELETE', '/auth/account', json={'confirmation':'DELETE'})
+        assert result.json() == {'deleted':False, 'cleanup_pending':True}
+    with pytest.raises(AccountBusy): store.login('1', 'alice')
+    reopened = Store(store.path)
+    monkeypatch.setattr('api.privacy.erase_workspace', real_erase)
+    maintain_accounts(reopened)
+    assert not path.exists()
+    assert reopened.pending_deletions() == []
+    assert reopened.user(reopened.login('1', 'alice'))['id'] == '1'
+
+
+def test_retention_is_opt_in_and_preserves_recent_and_pending_accounts(store, monkeypatch):
+    import time
+    from api.privacy import maintain_accounts
+    for owner in ['1', '2', '3']:
+        store.login(owner, 'user'+owner)
+        path = settings.data_dir/'users'/owner/'saved.json'
+        path.parent.mkdir(parents=True)
+        path.write_text('saved')
+    store.enqueue('3', PAYLOAD)
+    with store.connect() as db:
+        db.execute("UPDATE users SET last_active=? WHERE id IN ('1','3')", (time.time()-31*86400,))
+    monkeypatch.setattr(settings, 'retention_days', 0)
+    with store.connect() as db:
+        db.execute('INSERT INTO usage VALUES (?,?)', ('expired-reservation', time.time()-25*3600))
+    maintain_accounts(store)
+    assert (settings.data_dir/'users'/'1').exists()
+    with store.connect() as db:
+        assert not db.execute('SELECT 1 FROM usage WHERE owner=?', ('expired-reservation',)).fetchone()
+    monkeypatch.setattr(settings, 'retention_days', 30)
+    maintain_accounts(store)
+    assert not (settings.data_dir/'users'/'1').exists()
+    assert (settings.data_dir/'users'/'2').exists()
+    assert (settings.data_dir/'users'/'3').exists()
+    with store.connect() as db:
+        assert [row[0] for row in db.execute('SELECT id FROM users ORDER BY id')] == ['2', '3']
+
+
+def test_erasure_refuses_path_escape_and_redirected_users_directory(store, tmp_path, monkeypatch):
+    from pathlib import Path
+    from api.privacy import erase_workspace
+    target = settings.data_dir/'users'/'1'
+    target.mkdir(parents=True)
+    marker = target/'keep'
+    marker.write_text('safe')
+    for owner in ['../2', '/2', '１２']:
+        with pytest.raises(ValueError): erase_workspace(settings.data_dir, owner)
+    original_resolve = Path.resolve
+    def redirected(path, *args, **kwargs):
+        if path == target:
+            return tmp_path/'outside'
+        return original_resolve(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'resolve', redirected)
+    with pytest.raises(ValueError, match='redirected'): erase_workspace(settings.data_dir, '1')
+    assert marker.read_text() == 'safe'
+
+
+def test_stopped_snapshot_restore_keeps_ownership_and_recovers_running_jobs(store, tmp_path):
+    import shutil
+    token = store.login('1', 'alice')
+    completed = store.enqueue('1', PAYLOAD)
+    store.finish(completed['id'], report={'question': 'restored report'})
+    running = store.enqueue('2', PAYLOAD)
+    store.claim()
+    queued = store.enqueue('3', PAYLOAD)
+    source = tmp_path/'users'/'1'/'reports'/'saved.json'
+    source.parent.mkdir(parents=True)
+    source.write_text('saved report bytes')
+    # No open connections or actual worker; simulate a stopped volume snapshot.
+    snapshot = tmp_path.parent/(tmp_path.name+'-snapshot')
+    shutil.copytree(tmp_path, snapshot)
+    restored = Store(snapshot/'app.sqlite')
+    restored.recover()
+    assert restored.user(token)['login'] == 'alice'
+    assert json.loads(restored.job('1', completed['id'])['report'])['question'] == 'restored report'
+    with pytest.raises(LookupError): restored.job('2', completed['id'])
+    assert (snapshot/'users'/'1'/'reports'/'saved.json').read_text() == 'saved report bytes'
+    assert restored.job('2', running['id'])['status'] == 'interrupted'
+    assert restored.job('3', queued['id'])['status'] == 'queued'

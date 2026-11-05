@@ -11,6 +11,7 @@ import threading
 import time
 from config import settings
 from runtime import user_workspace
+from api.privacy import workspace_lease, maintain_accounts
 
 
 def public_failure(exc):
@@ -34,7 +35,7 @@ def execute_job(store_path, job, service_factory=None):
     from api.store import Store
     from api.service import InvestigationRequestIn, InvestigationService
     store = Store(store_path)
-    with user_workspace(job['owner']):
+    with workspace_lease(store.path.parent, job['owner']), user_workspace(job['owner']):
         service = None
         try:
             service = (service_factory or InvestigationService)()
@@ -102,7 +103,14 @@ class Worker:
             process.close()
 
     def run(self):
+        next_maintenance = 0
         while not self.stop.is_set():
+            if time.monotonic() >= next_maintenance:
+                try:
+                    maintain_accounts(self.store)
+                except Exception:
+                    logging.getLogger(__name__).warning('Account maintenance deferred')
+                next_maintenance = time.monotonic()+3600
             job = self.store.claim()
             if not job:
                 self.stop.wait(0.5)

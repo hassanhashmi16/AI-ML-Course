@@ -17,6 +17,19 @@ It is an initial public release architecture, with bounded throughput.
   are not imported into public accounts.
 - Account-scoped source caches, vector indexes, findings, checkpoints, reports,
   and traces under `DATA_DIR/users/<GitHub numeric id>/`.
+- Account menu → Your data explains the current expiry policy and offers
+  confirmed account deletion. All sessions are revoked, queued runs cancelled,
+  and that account's metadata and research files erased. Running investigations
+  must finish first. Cleanup failures persist as tombstones, block sign-in,
+  and retry hourly between jobs, including after restart. A workspace lease
+  protects files until the job process has closed its clients.
+- Optional `RETENTION_DAYS` deletes accounts and research after that many days
+  without a sign-in or investigation submission. Zero (the default) disables
+  automatic deletion. Cleanup runs hourly between jobs and skips pending runs.
+  Set the value deliberately before launch; migration gives existing accounts
+  a fresh inactivity window. It is an account inactivity policy, not a per-run TTL.
+  Hashed usage reservations survive account deletion for their rolling 24-hour
+  limit. Existing operator backups and external provider records are separate.
 - Public-only repository checks even when the server's GitHub token can see
   private repositories. Use a token limited to public reads anyway.
 - Durable SQLite job admission and a single background worker. Requests return
@@ -96,8 +109,8 @@ the Compose allocation (2 CPU / 3 GB memory) and measure the actual workload.
 - Check queue/full/quota responses, model/provider outages, and crash-resume.
 - Set provider spending caps; monitor queue length, errors, latency, CPU/RAM,
   and remaining disk. Back up the state volume while the app is stopped.
-- Choose a retention/deletion policy before accumulating user data; automatic
-  account deletion and scheduled retention cleanup are not implemented yet.
+- Choose `RETENTION_DAYS` before accumulating user data and disclose backup
+  expiry separately. Test account deletion using a disposable account.
 - Test restore from backup and restart on the actual host. Run only one server
   process; this SQLite/local-Qdrant design is not a multi-replica deployment.
 
@@ -112,3 +125,59 @@ The source code does not create a GitHub OAuth application, buy a domain,
 provision a host, configure HTTPS, or set the provider's billing caps. Those
 need the owner's hosting/provider accounts and chosen URL. Mocked OAuth tests
 and local container checks do not substitute for the deployed checks above.
+
+## Release preflight and recovery drill
+
+Run `python scripts/check_release.py` inside the release environment. It is
+read-only, makes no provider calls, prints no credential values, and exits
+nonzero for failed configuration checks. Local HTTP intentionally fails the
+final HTTPS check. Passing does not verify hosting persistence or public auth.
+
+Stop the app and wait for its worker to exit before copying the **entire**
+`/state` volume to a private backup. It contains account identity, hashed
+sessions, research, checkpoints, and indexes; restrict access and define an
+expiry. Never put it in a public repository. Do not copy live SQLite/Qdrant
+files individually. Preserve file ownership for UID 10001 on restore.
+
+For the drill, restore into a separate volume and isolated instance using
+disposable accounts and test provider credentials. Confirm saved reports and
+ownership survive, queued jobs remain queued, and formerly running jobs become
+interrupted/resumable. Restoring an older backup can resurrect deleted records
+and sessions: apply all deletion requests since that backup and revoke restored
+sessions before reopening traffic. Keep the production instance stopped until
+you have chosen exactly one authoritative state volume.
+
+## A zero-dollar deployment budget
+
+Checked 5 November 2026. The current app needs background CPU, RAM for local
+embedding/reranking, and durable storage with SQLite and process-file locking.
+A free static frontend alone does not host the application.
+
+- [Hugging Face Spaces](https://huggingface.co/docs/hub/en/spaces-overview)
+  supplies free CPU hardware (2 CPU, 16 GB RAM), a provider subdomain, and
+  [Docker support](https://huggingface.co/docs/hub/en/spaces-sdks-docker).
+  Default disk is ephemeral and free hardware sleeps. Its
+  [storage buckets](https://huggingface.co/docs/hub/en/spaces-storage) provide
+  a persistence mechanism, but that does not establish compatibility with this
+  app's live SQLite/Qdrant files and process leases. Treat Spaces as a candidate
+  requiring a tested storage adaptation, not a ready durable deployment.
+- [Render Free](https://render.com/docs/free) cannot attach a persistent disk.
+  Do not deploy this local-storage architecture there with promises of durable
+  history, quotas, or sessions.
+- [Oracle Always Free](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+  offers VMs/storage that could fit the architecture, subject to capacity and
+  idle-instance reclamation. [Signup requires a supported card](https://www.oracle.com/cloud/free/faq/).
+  Use only Always Free resources; trial credits are temporary. The current
+  Linux dependency lock/container has been tested on x86-64, not Ampere ARM;
+  do not assume that image works on an ARM free VM without a separate build.
+- Hosting on an existing computer can retain the current files without buying
+  a VM, but needs a secure public HTTPS route and only stays available while
+  the machine and connection are up. Electricity/network costs still apply.
+
+For inference, stay on the [Groq Free plan](https://console.groq.com/docs/billing-faqs)
+and check its [organization-wide rate limits](https://console.groq.com/docs/rate-limits).
+Use conservative app quotas, for example `DAILY_USER_RUNS=2` and
+`DAILY_GLOBAL_RUNS=5`, initially. Run counts do not guarantee token-limit
+availability; expect 429s when shared provider limits are exhausted. Do not
+enable a paid provider plan or automatic upgrades to make a zero-dollar launch.
+No custom domain purchase is required if a suitable host supplies an HTTPS URL.

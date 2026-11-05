@@ -12,5 +12,6 @@ reports
 frontend/node_modules
 frontend/dist
 tests
-scripts
+scripts/*
+!scripts/check_release.py
 eval
