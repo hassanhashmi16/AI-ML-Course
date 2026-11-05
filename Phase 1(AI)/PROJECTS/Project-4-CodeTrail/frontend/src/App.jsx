@@ -14,6 +14,7 @@ import InvestigationForm from './components/InvestigationForm.jsx'
 import ReportView from './components/ReportView.jsx'
 import SavedRuns from './components/SavedRuns.jsx'
 import StageLog from './components/StageLog.jsx'
+import LandingPage from './components/LandingPage.jsx'
 
 function RunningPanel({ question, elapsed, threadId, jobStatus }) {
   return (
@@ -202,14 +203,7 @@ export default function App() {
           ? `Investigation finished: ${report.status}.`
           : ''
 
-  if (api?.public_app && !identity) return (
-    <main className="app" style={{ maxWidth: 700, margin: '4rem auto' }}>
-      <h1>CodeTrail</h1><p>Trace the decisions behind public GitHub code.</p>
-      <p>Sign in to start investigations and keep your reports in your own workspace.</p>
-      {identity === undefined ? <p>Checking your session…</p> : <a className="btn btn-primary" href="/auth/login">Sign in with GitHub</a>}
-      <p>CodeTrail does not request access to your private repositories. Investigations use limited shared API capacity. Your questions and public source excerpts are sent to the configured AI provider; reports are kept in your account workspace.</p>
-    </main>
-  )
+  if (!api || (api.public_app && !identity)) return <LandingPage checkingSession={!api || identity === undefined} />
   return (
     <div className="app">
       <a className="skip-link" href="#workspace">
