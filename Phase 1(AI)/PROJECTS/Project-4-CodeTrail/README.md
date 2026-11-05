@@ -52,10 +52,10 @@ and retrieval need no provider credentials.
 ## Run the workspace
 
 ```powershell
-# terminal 1 â€” the API
+# terminal 1 — the API
 .\.venv\Scripts\python.exe -m uvicorn api.main:app --port 8000
 
-# terminal 2 â€” the interface (proxies API paths to :8000)
+# terminal 2 — the interface (proxies API paths to :8000)
 cd frontend
 npm install
 npm run dev
@@ -102,7 +102,7 @@ report under `reports/eval/<run>/`. Recorded results and an honest reading are
 in [docs/architecture.md](docs/architecture.md#evaluation-as-recorded-16-october-2026).
 
 Short version: the investigation fixed a baseline citation failure and matched
-it on the unknown case, at 7â€“12Ã— the calls and 3â€“8Ã— the latency. Failures are
+it on the unknown case, at 7–12× the calls and 3–8× the latency. Failures are
 printed per case, never averaged away.
 
 ## How it is built

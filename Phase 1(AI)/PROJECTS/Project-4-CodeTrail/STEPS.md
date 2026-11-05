@@ -1,8 +1,8 @@
-# Project 4: CodeTrail â€” Build Plan
+# Project 4: CodeTrail — Build Plan
 
 > **Trace the decisions behind the code.**
 >
-> **Status:** Steps 1-19 complete â€” the project runs end to end: a trimmed GitHub snapshot, honest retrieval, a cited investigation report, durable resume, reusable findings, evaluation, an API, and a React workspace. Deployment, guardrails, and packaging continue in roadmap Steps 39-41.
+> **Status:** Steps 1-19 complete — the project runs end to end: a trimmed GitHub snapshot, honest retrieval, a cited investigation report, durable resume, reusable findings, evaluation, an API, and a React workspace. Deployment, guardrails, and packaging continue in roadmap Steps 39-41.
 > **Next:** None in this project (Step 19 was the last).
 > **Updated:** 16 October 2026. Consolidated into **19 steps** following the user's request to match Projects 2 and 3.
 
@@ -63,13 +63,13 @@ A **checkpoint** resumes one investigation. A **saved finding** helps a later in
 
 ```text
 GitHub URL + question + optional file/ref
-  â†’ validate and resolve snapshot
-  â†’ collect bounded code/history/discussions and cache sources
-  â†’ LangChain Documents â†’ split â†’ embed â†’ Qdrant
-  â†’ retrieve â†’ investigate through tools â†’ grade evidence
-                  â†‘ retry/follow leads when needed â†“
-  â†’ synthesize â†’ check citations and support â†’ finalize
-  â†’ cited report + timeline â†’ FastAPI â†’ React
+  → validate and resolve snapshot
+  → collect bounded code/history/discussions and cache sources
+  → LangChain Documents → split → embed → Qdrant
+  → retrieve → investigate through tools → grade evidence
+                  ↑ retry/follow leads when needed ↓
+  → synthesize → check citations and support → finalize
+  → cited report + timeline → FastAPI → React
 ```
 
 Start development with one reference corpus and three verified examples. This is a repeatable development fixture, not a restriction to that repository. Each user's repository/ref determines its own collected evidence, cache/index namespace, and retrieval filters. The agent can fetch and index additional evidence through the same bounded readers. Exact known IDs use direct lookups; retrieval helps find relevant text. Add another repository to evaluation to check generalization.
@@ -125,7 +125,7 @@ Project-4-CodeTrail/
 
 ## Build steps
 
-### Phase A â€” Foundation
+### Phase A — Foundation
 
 #### Step 1: Pick the demo repository and evidence cases [done]
 
@@ -175,7 +175,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `models.py` (request, snapshot, source record, supporting excerpt, claim, timeline event, coverage, and report models; the `make_source_id` helper; validators that enforce the honesty rules) and `agent/state.py` (typed LangGraph state with reducers for accumulating collections, budget counters, and a `new_state` factory), plus `scripts/check_models.py` as the repeatable check. Check: the CT-001 demo case passes through the schemas end to end; a documented claim carries its excerpt while the CT-003-style unknown stays structurally distinct; and the schemas reject a documented claim with no excerpt, an unknown claim carrying excerpts, a non-GitHub URL, a `..` path, a partial report with no stated limitation, and a misspelled field. No provider calls or later-step implementation.
 
-### Phase B â€” GitHub evidence
+### Phase B — GitHub evidence
 
 #### Step 4: Read repository code and file history [done]
 
@@ -209,7 +209,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `github_source/discussions.py` (`read_pull`, `read_issue`, `read_comments`, `read_reviews`; PR state and edit markers retained, comments keep their parent thread) and `github_source/collect.py` (diskcache-backed `Collector`: cache-first single reads and listings keyed by stable IDs, visible truncation/failure warnings, computed `Coverage`, JSON bundle export), plus `scripts/check_collect.py`. Also added the `state` field to `SourceRecord` and fixed a latent PyGithub `PaginatedList` slicing bug in `list_file_history` (islice, not `[:cap]`). Check: one demo trail collected (ctx.py + bounded history + PR #4682 with state=merged and its merge-commit lead converted to `cbebdae`, matching docs/demo-cases.md, plus 2 reviews); the repeat collection replayed with 5 hits / 0 misses and identical sources; a deliberately missing PR produced a visible warning; coverage reported incomplete with notes; the saved bundle reloaded and matched. Live GitHub reads only; no model calls.
 
-### Phase C â€” Retrieval and a working RAG baseline
+### Phase C — Retrieval and a working RAG baseline
 
 #### Step 6: Turn evidence into searchable documents [done]
 
@@ -275,7 +275,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `generation/answer.py` (Groq by default via `GEN_PROVIDER`/`GROQ_GEN_MODEL` with `with_structured_output`; deterministic timeline and coverage assembly around the model's draft; report saving; the baseline CLI command) and `reporting/citations.py` (source-ID identity check, verbatim quote matching, line numbers derived from the quote's position, rejected claims recorded as issues), plus `scripts/check_answer.py`; added `langchain-groq` to the manifest and regenerated the hash-locked requirements. Check: the LocalStack question produced a saved report with a documented claim whose quote exists verbatim in PR #4682 and status=complete; an invented source ID and an altered quote were both rejected with named issues; the saved JSON reloaded as the shared `Report`; the CLI ran end to end and saved a second report. Generation ran on Groq (`openai/gpt-oss-120b`); embeddings, sparse search, and reranking stayed local.
 
-### Phase D â€” Agentic investigation
+### Phase D — Agentic investigation
 
 #### Step 10: Expose the readers and retriever as tools [done]
 
@@ -325,7 +325,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `agent/policy.py` (tool/source/token/time budgets plus repeated-action detection, each returning a reason) and extended `agent/nodes.py`: grading is skipped when a budget is spent and repeats the reason; insufficient grades hand the missing evidence back to the investigator as guidance; `investigate` accumulates provider token usage; synthesis now runs a separate grounding pass (`ClaimSupport`) that judges whether each claim is supported by its quote, attempts one revision with reviewer feedback, and downgrades claims still unsupported into `unresolved` with status=partial. State gained `started_at` and `tokens_used`; `answer_question` accepts revision feedback. Check: fixtures proved budget stops (tool cap, repeated action) with the grader skipped, a failed grade routing back to investigation and a sufficient one routing to synthesis, an exhausted budget producing an honest partial report, and a citation-valid but semantically unsupported claim being revised then downgraded. Findings: the initial grounding judge was too strict (rejected quotes that plainly stated the reasons), so its prompt now judges substance rather than wording. The live graph regression kept one documented claim and downgraded one, status=partial, report saved and reloaded. Fixtures make no model calls; the graph regression used Groq for decisions, grading, grounding, and synthesis.
 
-### Phase E â€” Persistence and observability
+### Phase E — Persistence and observability
 
 #### Step 13: Add persistent checkpoints and resume [done]
 
@@ -375,7 +375,7 @@ Project-4-CodeTrail/
 
 **Completed:** 16 October 2026. Added `api/events.py` (the small public `ProgressEvent` contract: kind, stage, short message, thread, duration, scalar data, timestamp -- no prompts or completions) and `agent/observability.py` (`StageLog` JSONL traces under `data/traces/`, graph streaming projected into events with per-stage durations and tool names, termination status/reason in `run_finished`, and `configure_tracing()` that enables LangSmith only when explicitly configured and hides inputs/outputs). `cli.py` now runs investigations through `run_with_events` and prints the event count and log path. Check: a fixture run produced the ordered stream run, model, tools, grading, model, tools, grading, synthesis, run; named both tools; recorded durations; wrote a 9-line JSONL file matching the events; leaked no prompt text; and ran with tracing off. No model calls.
 
-### Phase F â€” Evaluation and product surface
+### Phase F — Evaluation and product surface
 
 #### Step 16: Evaluate baseline versus investigation [done]
 
@@ -417,7 +417,7 @@ Project-4-CodeTrail/
 
 **How:** Use React/Vite with small components. Accept repository/question/path/ref, consume the progress events, render the shared report, and open exact evidence on citation clicks. Include three prepared cases, documented/inferred/unknown labels, recoverable errors, saved-report reload/resume, and result export.
 
-**Artifact:** frontend/ â€” investigation workspace.
+**Artifact:** frontend/ — investigation workspace.
 
 **Check:** A visitor can run a prepared case, follow the timeline, inspect sources, and distinguish a partial result from a supported explanation.
 
@@ -437,14 +437,14 @@ Project-4-CodeTrail/
 
 **Check:** A clean setup reaches a working demo and the documented claims match the recorded results.
 
-**Structure:** This completes the local Project 4 milestone; roadmap Steps 39â€“41 cover the guardrails, packaging, and public deployment work.
+**Structure:** This completes the local Project 4 milestone; roadmap Steps 39–41 cover the guardrails, packaging, and public deployment work.
 
-**Completed:** 18 October 2026. Added `docs/architecture.md` (pipeline, components, invariants, library-versus-ours comparison, stores, evaluation findings, limits) and rewrote `README.md` (quickstart, workspace run, demo cases, evaluation summary, checks, limits). Added CT-004, the conflicting-history demo ("removed entirely, or kept for compatibility?"), to the reference cases, the evaluation set, and the UI; hand-verified against PR #4682 and smoke-tested live (the agent produced a documented claim quoting the compatibility paragraph and honestly downgraded one overreaching claim). The live smoke exposed two real defects, both fixed: (1) synthesis and the tools searched the whole shared index, so a run could cite evidence it never collected â€” `search_evidence` now accepts `source_ids` and every caller (tools, synthesis, baseline CLI, evaluation) passes the inspected set; (2) `reset_collection` relied on delete-and-recreate, which in local-mode Qdrant resurrected leftover points (142 fresh plus 13 stale observed after a rebuild) â€” it now clears points explicitly, recreates only when the embedder's dimension changed, and `check_search` asserts the collection is provably empty after a rebuild. Grounding revision feedback now carries the judge's reason, which is what let the CT-004 claim survive. Recorded checks: `pytest` 15 passed; `check_search`, `check_policy`, `check_tools`, `check_traces`, `check_api`, and `check_answer` all green (including check_search's new stale-point assertion); frontend build and lint green. `check_resume` re-ran green after the GitHub rate-limit window reset (its first attempt hung on PyGithub's backoff because the unauthenticated quota is 60 requests/hour; setting `GITHUB_TOKEN` removes that ceiling). The step's check â€” a clean setup reaching a working demo, with documented claims matching recorded results â€” is satisfied by the README quickstart plus the recorded outputs above.
+**Completed:** 18 October 2026. Added `docs/architecture.md` (pipeline, components, invariants, library-versus-ours comparison, stores, evaluation findings, limits) and rewrote `README.md` (quickstart, workspace run, demo cases, evaluation summary, checks, limits). Added CT-004, the conflicting-history demo ("removed entirely, or kept for compatibility?"), to the reference cases, the evaluation set, and the UI; hand-verified against PR #4682 and smoke-tested live (the agent produced a documented claim quoting the compatibility paragraph and honestly downgraded one overreaching claim). The live smoke exposed two real defects, both fixed: (1) synthesis and the tools searched the whole shared index, so a run could cite evidence it never collected — `search_evidence` now accepts `source_ids` and every caller (tools, synthesis, baseline CLI, evaluation) passes the inspected set; (2) `reset_collection` relied on delete-and-recreate, which in local-mode Qdrant resurrected leftover points (142 fresh plus 13 stale observed after a rebuild) — it now clears points explicitly, recreates only when the embedder's dimension changed, and `check_search` asserts the collection is provably empty after a rebuild. Grounding revision feedback now carries the judge's reason, which is what let the CT-004 claim survive. Recorded checks: `pytest` 15 passed; `check_search`, `check_policy`, `check_tools`, `check_traces`, `check_api`, and `check_answer` all green (including check_search's new stale-point assertion); frontend build and lint green. `check_resume` re-ran green after the GitHub rate-limit window reset (its first attempt hung on PyGithub's backoff because the unauthenticated quota is 60 requests/hour; setting `GITHUB_TOKEN` removes that ceiling). The step's check — a clean setup reaching a working demo, with documented claims matching recorded results — is satisfied by the README quickstart plus the recorded outputs above.
 
 ## Definition of done
 
 - The CLI and API accept a public repository/question and return a validated report tied to a pinned snapshot.
-- A demonstrated investigation follows a real code â†’ change â†’ discussion trail through multiple tool calls.
+- A demonstrated investigation follows a real code → change → discussion trail through multiple tool calls.
 - Supported explanations cite inspectable sources; inferences and unknowns are explicit, with search limitations.
 - Process-restart recovery and reuse of findings across separate runs are demonstrated.
 - The evaluation compares ordinary RAG with investigation on the same source snapshots and held-out cases, including costs and failure cases.
@@ -476,23 +476,23 @@ CodeTrail reconstructs explanations from a verifiable trail. Retrieval discovers
 
 Reviewed while preparing this plan on 16 October 2026. These links justify tool capabilities and coverage; the project design and step boundaries are our choices. Follow the pinned version's documentation again when implementing each integration.
 
-- [MIT Missing Semester: version control](https://missing.csail.mit.edu/2020/version-control/) â€” review Git's object/history model before treating commits as a meaningful trail.
-- [PyGithub Repository reference](https://pygithub.readthedocs.io/en/stable/github_objects/Repository.html) and [Commit reference](https://pygithub.readthedocs.io/en/stable/github_objects/Commit.html) â€” supported file/history/commit-to-PR access.
-- [GitHub REST API limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) â€” bounded calls, pagination, and rate-limit-aware operation; inspect current headers instead of assuming a fixed allowance.
-- [LangChain's Google chat integration](https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai) and [embedding integration](https://docs.langchain.com/oss/python/integrations/embeddings/google_generative_ai) â€” model/tool/structured-output and embedding interfaces.
-- [Qdrant's LangChain guide](https://qdrant.tech/documentation/frameworks/langchain/) â€” local on-disk mode and dense/sparse/hybrid integration.
-- [Cohere reranker integration](https://docs.langchain.com/oss/python/integrations/retrievers/cohere-reranker/) â€” the framework reranking component; avoid copying unrelated legacy chain examples.
-- [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers), and [SQLite saver reference](https://reference.langchain.com/python/langgraph.checkpoint.sqlite) â€” persistent run state and its distinction from cross-thread data.
-- [LangGraph streaming](https://docs.langchain.com/oss/python/langgraph/streaming) â€” use the stream/event API supported by our pinned version and project it into our public event contract.
-- [LangSmith tracing quickstart](https://docs.langchain.com/langsmith/observability-quickstart) â€” integration-based trace collection, configured deliberately.
-- [Ragas context recall](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/) and [faithfulness](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/) â€” separate retrieval completeness from support for generated claims; verify the current metrics API.
-- Curriculum cross-check: [RAG](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/06-rag/docs/en.md), [advanced retrieval](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/07-advanced-rag/docs/en.md), and [agent state machines](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/16-langgraph-state-machines/docs/en.md) â€” checked for missing retrieval, provenance, state, checkpoint, and evaluation concepts. Library behavior is verified against the maintainers' references above.
+- [MIT Missing Semester: version control](https://missing.csail.mit.edu/2020/version-control/) — review Git's object/history model before treating commits as a meaningful trail.
+- [PyGithub Repository reference](https://pygithub.readthedocs.io/en/stable/github_objects/Repository.html) and [Commit reference](https://pygithub.readthedocs.io/en/stable/github_objects/Commit.html) — supported file/history/commit-to-PR access.
+- [GitHub REST API limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) — bounded calls, pagination, and rate-limit-aware operation; inspect current headers instead of assuming a fixed allowance.
+- [LangChain's Google chat integration](https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai) and [embedding integration](https://docs.langchain.com/oss/python/integrations/embeddings/google_generative_ai) — model/tool/structured-output and embedding interfaces.
+- [Qdrant's LangChain guide](https://qdrant.tech/documentation/frameworks/langchain/) — local on-disk mode and dense/sparse/hybrid integration.
+- [Cohere reranker integration](https://docs.langchain.com/oss/python/integrations/retrievers/cohere-reranker/) — the framework reranking component; avoid copying unrelated legacy chain examples.
+- [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers), and [SQLite saver reference](https://reference.langchain.com/python/langgraph.checkpoint.sqlite) — persistent run state and its distinction from cross-thread data.
+- [LangGraph streaming](https://docs.langchain.com/oss/python/langgraph/streaming) — use the stream/event API supported by our pinned version and project it into our public event contract.
+- [LangSmith tracing quickstart](https://docs.langchain.com/langsmith/observability-quickstart) — integration-based trace collection, configured deliberately.
+- [Ragas context recall](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/) and [faithfulness](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/) — separate retrieval completeness from support for generated claims; verify the current metrics API.
+- Curriculum cross-check: [RAG](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/06-rag/docs/en.md), [advanced retrieval](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/07-advanced-rag/docs/en.md), and [agent state machines](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/11-llm-engineering/16-langgraph-state-machines/docs/en.md) — checked for missing retrieval, provenance, state, checkpoint, and evaluation concepts. Library behavior is verified against the maintainers' references above.
 
 ## Progress
 
 - Plan consolidated: 16 October 2026, using the granularity of Projects 2 and 3.
 - Completed build steps: **Steps 1-19**, 18 October 2026. See [reference cases](docs/demo-cases.md), the [setup guide](README.md) and [architecture notes](docs/architecture.md), the shared contracts (`models.py` / `agent/state.py`), the GitHub readers and collector (`github_source/`), the ingest and index layer (`ingest/`), retrieval (`retrieval/`), the baseline answer (`generation/` + `reporting/`), the investigator tools (`agent/tools.py`), the investigation graph (`agent/graph.py` + `agent/nodes.py`), the policy (`agent/policy.py`), persistence (`agent/persistence.py` + `cli.py`), findings memory (`agent/memory.py`), observability (`agent/observability.py` + `api/events.py`), the evaluation (`eval/` + `tests/`), the service (`api/service.py` + `api/main.py`), and the workspace (`frontend/`), checked by `scripts/check_models.py`, `scripts/check_github.py`, `scripts/check_collect.py`, `scripts/check_chunks.py`, `scripts/check_index.py`, `scripts/check_search.py`, `scripts/check_answer.py`, `scripts/check_tools.py`, `scripts/check_graph.py`, `scripts/check_policy.py`, `scripts/check_resume.py`, `scripts/check_memory.py`, `scripts/check_traces.py`, `scripts/check_api.py`, `python -m pytest`, and the frontend build/lint.
-- Next: **none â€” the project's 19 steps are complete.** Roadmap Steps 39â€“41 continue with guardrails, packaging, and deployment.
+- Next: **none — the project's 19 steps are complete.** Roadmap Steps 39–41 continue with guardrails, packaging, and deployment.
 
 
 
