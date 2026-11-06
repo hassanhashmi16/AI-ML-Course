@@ -1,0 +1,119 @@
+"""WhyTheDiff's settings: one validated boundary between the environment and app.
+
+Project 3 read os.getenv values directly. Pydantic Settings now loads .env,
+converts types, and rejects invalid values. Importing this file makes no network
+calls or directories; offline development does not require provider credentials.
+"""
+
+from pathlib import Path
+from typing import Literal
+
+from pydantic import Field, SecretStr, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Anchor configuration to the project, even when Python runs from another cwd.
+BASE_DIR = Path(__file__).resolve().parent
+
+
+class Settings(BaseSettings):
+    """Environment variables override the project .env file and these defaults."""
+
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / ".env",  # Never accidentally read another project's .env.
+        env_file_encoding="utf-8",
+        extra="forbid",  # Catch misspelled setting names inside our .env file.
+        hide_input_in_errors=True,  # Validation errors must not echo secret input.
+    )
+
+    # Empty secrets allow offline checks; live integrations validate their needs.
+    # SecretStr masks values in representations; repr=False omits these fields.
+    github_token: SecretStr = Field(default=SecretStr(""), repr=False)
+    gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    groq_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    cohere_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    langsmith_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    langsmith_tracing: bool = False
+    langsmith_project: str = "whythediff"
+
+    # Explicit defaults checked against provider docs on 16 October 2026.
+    # These are configuration choices, not a claim of tested account access.
+    # Generation: Groq by default (the configured key); GEN_PROVIDER=google
+    # uses GEN_MODEL with GEMINI_API_KEY instead.
+    gen_provider: Literal["groq", "google"] = "groq"
+    groq_gen_model: str = Field(default="openai/gpt-oss-120b", min_length=1)
+    gen_model: str = Field(default="gemini-3.7-flash", min_length=1)  # google path
+    # Dense embeddings: local FastEmbed by default (no API key, no quota --
+    # the model is fixed-dimension). Switch to "google" to use GEMINI_API_KEY
+    # with embed_model/embed_dim instead.
+    embed_provider: Literal["fastembed", "google"] = "fastembed"
+    fastembed_embed_model: str = Field(default="BAAI/bge-small-en-v1.5", min_length=1)
+    embed_model: str = Field(default="gemini-embedding-001", min_length=1)
+    embed_dim: int = Field(default=768, gt=0)
+    sparse_model: str = Field(default="Qdrant/bm25", min_length=1)
+    # Reranking: local fastembed cross-encoder by default; "cohere" uses
+    # RERANK_MODEL with COHERE_API_KEY; "none" keeps retrieval order (and is
+    # recorded as disabled).
+    rerank_provider: Literal["fastembed", "cohere", "none"] = "fastembed"
+    fastembed_rerank_model: str = Field(default="Xenova/ms-marco-MiniLM-L-6-v2", min_length=1)
+    rerank_model: str = Field(default="rerank-v4.0-fast", min_length=1)
+
+    # Positive limits prevent accidental zero-size results or unbounded work.
+    retrieve_k: int = Field(default=20, gt=0)
+    rerank_k: int = Field(default=5, gt=0)
+    max_files: int = Field(default=40, gt=0)
+    max_commits: int = Field(default=60, gt=0)
+    max_discussions: int = Field(default=10, gt=0)
+    max_comments: int = Field(default=20, gt=0)
+    max_tool_calls: int = Field(default=12, gt=0)
+    max_retrieval_rounds: int = Field(default=2, ge=0)  # Zero disables refinement.
+    max_answer_revisions: int = Field(default=1, ge=0)
+    max_run_seconds: float = Field(default=120, gt=0)
+    token_budget: int = Field(default=40000, gt=0)
+    max_output_tokens: int = Field(default=2048, gt=0)
+    github_timeout_seconds: float = Field(default=20, gt=0)
+    provider_timeout_seconds: float = Field(default=45, gt=0, le=120)
+
+    # Public mode uses GitHub identity, durable admission control, and isolated data.
+    public_app: bool = False
+    app_origin: str = "http://localhost:8000"
+    oauth_client_id: str = ""
+    oauth_client_secret: SecretStr = Field(default=SecretStr(""), repr=False)
+    session_hours: int = Field(default=24, ge=1, le=168)
+    daily_user_runs: int = Field(default=5, ge=1)
+    daily_global_runs: int = Field(default=30, ge=1)
+    max_queued_runs: int = Field(default=20, ge=1)
+    max_job_seconds: int = Field(default=600, ge=30, le=1800)
+    requests_per_minute: int = Field(default=120, ge=1)
+    # Zero disables scheduled deletion. Enable only after choosing a policy.
+    retention_days: int = Field(default=0, ge=0, le=3650)
+
+    # No runtime directories are created merely by importing configuration.
+    data_dir: Path = BASE_DIR / "data"
+    reports_dir: Path = BASE_DIR / "reports"
+
+    @model_validator(mode="after")
+    def validate_pipeline(self) -> "Settings":
+        """Check relationships between fields, then normalize relative paths."""
+        if self.rerank_k > self.retrieve_k:
+            raise ValueError("RERANK_K must not exceed RETRIEVE_K")
+        if self.max_output_tokens > self.token_budget:
+            raise ValueError("MAX_OUTPUT_TOKENS must not exceed TOKEN_BUDGET")
+        from urllib.parse import urlsplit
+        origin = urlsplit(self.app_origin)
+        if origin.scheme not in {"https", "http"} or not origin.hostname or origin.path not in {"", "/"} or origin.query or origin.fragment or origin.username:
+            raise ValueError("APP_ORIGIN must be an http(s) origin")
+        if self.public_app:
+            if origin.scheme != "https" and origin.hostname not in {"localhost", "127.0.0.1"}:
+                raise ValueError("Public deployment requires HTTPS")
+            if not self.oauth_client_id or not self.oauth_client_secret.get_secret_value():
+                raise ValueError("PUBLIC_APP requires GitHub OAuth client credentials")
+        self.app_origin = self.app_origin.rstrip("/")
+        # Joining an absolute override keeps that absolute path; a relative one
+        # is anchored to WhyTheDiff, so changing the shell's cwd changes nothing.
+        self.data_dir = (BASE_DIR / self.data_dir).resolve()
+        self.reports_dir = (BASE_DIR / self.reports_dir).resolve()
+        return self
+
+
+# Other modules import this instance instead of reading environment variables.
+settings = Settings()

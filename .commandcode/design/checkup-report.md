@@ -1,6 +1,6 @@
-# Checkup report — CodeTrail investigation workspace
+# Checkup report — WhyTheDiff investigation workspace
 
-- **Project:** CodeTrail (`Phase 1(AI)/PROJECTS/Project-4-CodeTrail/frontend/`)
+- **Project:** WhyTheDiff (`Phase 1(AI)/PROJECTS/Project-4-WhyTheDiff/frontend/`)
 - **Mode:** checkup (bare `/design` routing; no prior report existed)
 - **Register:** product — an operator runs an investigation and inspects its evidence
 - **Date:** 18 October 2026
