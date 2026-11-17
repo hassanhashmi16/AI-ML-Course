@@ -1465,13 +1465,17 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
     <li><span class="onum">40.3</span> Image layers &amp; caching</li>
     <li><span class="onum">40.4</span> Volumes (persistent data)</li>
     <li><span class="onum">40.5</span> Networking between containers</li>
+    <li><span class="onum">40.6</span> Multi-stage builds — keep compilers and build tools out of the runtime image</li>
+    <li><span class="onum">40.7</span> Image hygiene &amp; container security — <code>.dockerignore</code>, non-root users, pinned bases, scanning</li>
+    <li><span class="onum">40.8</span> Docker Compose — one app, several containers, one network</li>
+    <li><span class="onum">40.9</span> Registries, tags &amp; shipping the image (plus when you need GPU containers)</li>
   </ol>
 </div>
 
 <div class="step-block p1" id="step-41">
   <div class="step-head">
     <span class="step-num-badge">41</span>
-    <div><h3>Deploy (Fly.io / Render / Railway)</h3><p class="why">Gets Project 4 onto a real, working URL.</p></div>
+    <div><h3>Deploy (Fly.io / Render / Railway)</h3><p class="why">Gets Project 4 onto a real, working URL.</p><p class="why"><strong>Tracking note — 7 November 2026:</strong> Marked done at Hassan's request so Step 42 can proceed. Live deployment is deferred: Oracle's Dubai Ampere A1 allocation failed with an out-of-capacity error; the network and Resource Manager stack are saved. WhyTheDiff is not yet publicly hosted.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">41.1</span> Picking one platform</li>
@@ -1485,12 +1489,16 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
 <div class="step-block p1" id="step-42">
   <div class="step-head">
     <span class="step-num-badge">42</span>
-    <div><h3>Case studies &amp; resume</h3><p class="why">Makes the work legible to someone who didn't watch you build it.</p></div>
+    <div><h3>Case studies &amp; resume</h3><p class="why">Makes the work legible to someone who didn't watch you build it.</p><p class="why"><strong>Tracking note — 9 November 2026:</strong> Marked done for roadmap tracking; the case-study and evidence docs are complete. The personal resume is still in progress on the side.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">42.1</span> Architecture write-up structure</li>
     <li><span class="onum">42.2</span> Leading with eval numbers</li>
     <li><span class="onum">42.3</span> Resume bullet rewrite</li>
+    <li><span class="onum">42.4</span> Selecting projects and matching evidence to the target role</li>
+    <li><span class="onum">42.5</span> Reproducible proof: repository links, recorded demos, provenance, and honest deployment status</li>
+    <li><span class="onum">42.6</span> Resume structure, readable exports, and applicant tracking systems</li>
+    <li><span class="onum">42.7</span> Explaining ownership, failures, and trade-offs in an interview</li>
   </ol>
 </div>
 
@@ -1501,7 +1509,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
 <div class="step-block p2" id="step-43">
   <div class="step-head">
     <span class="step-num-badge">43</span>
-    <div><h3>NumPy</h3><p class="why">The array math underneath every ML library. <a href="https://numpy.org/doc/stable/user/quickstart.html">numpy.org</a></p></div>
+    <div><h3>NumPy</h3><p class="why">The array math underneath every ML library. <a href="https://numpy.org/doc/stable/user/quickstart.html">numpy.org</a></p><p class="why"><strong>Tracking note — 9 November 2026:</strong> Marked done after the NumPy study pass. The <code>step43-numpy</code> lab remains the step's build artifact.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">43.1</span> ndarray creation</li>
@@ -1509,13 +1517,18 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
     <li><span class="onum">43.3</span> Matrix multiplication</li>
     <li><span class="onum">43.4</span> linalg module</li>
     <li><span class="onum">43.5</span> Vectorization vs. Python loops</li>
+    <li><span class="onum">43.6</span> Views, copies &amp; memory layout (strides, C vs. Fortran order)</li>
+    <li><span class="onum">43.7</span> Axis semantics, reductions &amp; indexing</li>
+    <li><span class="onum">43.8</span> dtypes, precision &amp; numerical stability</li>
+    <li><span class="onum">43.9</span> Random number generation &amp; reproducibility</li>
+    <li><span class="onum">43.10</span> einsum &amp; complex contractions</li>
   </ol>
 </div>
 
 <div class="step-block p2" id="step-44">
   <div class="step-head">
     <span class="step-num-badge">44</span>
-    <div><h3>pandas</h3><p class="why">How you'll load and clean real datasets. <a href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas.pydata.org</a></p></div>
+    <div><h3>pandas</h3><p class="why">How you'll load and clean real datasets. <a href="https://pandas.pydata.org/docs/user_guide/10min.html">pandas.pydata.org</a></p><p class="why"><strong>Tracking note — 9 November 2026:</strong> Marked done after the pandas study pass. The <code>step44-pandas</code> lab remains the step's build artifact.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">44.1</span> DataFrame / Series basics</li>
@@ -1524,36 +1537,43 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
     <li><span class="onum">44.4</span> groupby</li>
     <li><span class="onum">44.5</span> Merges</li>
     <li><span class="onum">44.6</span> Missing data &amp; dtypes</li>
+    <li><span class="onum">44.7</span> Reshaping (pivot/melt) &amp; time series</li>
+    <li><span class="onum">44.8</span> Memory, chunks &amp; performance</li>
   </ol>
 </div>
 
 <div class="step-block p2" id="step-45">
   <div class="step-head">
     <span class="step-num-badge">45</span>
-    <div><h3>Matplotlib &amp; exploratory data analysis</h3><p class="why">How you'll visualize what a model is actually doing — and catch a broken dataset before you train on it. <a href="https://matplotlib.org/stable/tutorials/pyplot.html">matplotlib.org</a></p></div>
+    <div><h3>Matplotlib &amp; exploratory data analysis</h3><p class="why">How you'll visualize what a model is actually doing — and catch a broken dataset before you train on it. <a href="https://matplotlib.org/stable/tutorials/pyplot.html">matplotlib.org</a></p><p class="why"><strong>Tracking note — 9 November 2026:</strong> Marked done after the Matplotlib/EDA study pass. The <code>step45-matplotlib</code> lab remains the step's build artifact.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">45.1</span> pyplot interface</li>
     <li><span class="onum">45.2</span> plot / scatter / histograms</li>
     <li><span class="onum">45.3</span> Subplots</li>
     <li><span class="onum">45.4</span> EDA workflow: distributions, correlations, outliers, label balance</li>
+    <li><span class="onum">45.5</span> Object-oriented API (fig/ax), layout &amp; saving</li>
+    <li><span class="onum">45.6</span> Statistical plots: box, violin, heatmap, pairplot</li>
+    <li><span class="onum">45.7</span> Time series, categorical &amp; image axes</li>
+    <li><span class="onum">45.8</span> Chart traps &amp; misleading visuals</li>
   </ol>
 </div>
 
 <div class="step-block p2" id="step-46">
   <div class="step-head">
     <span class="step-num-badge">46</span>
-    <div><h3>ML fundamentals &amp; model evaluation</h3><p class="why">The largest gap in the original roadmap and the most-tested block in every ML interview: bias-variance, regularization, leakage, class imbalance, and picking the right metric. Without it you can call <code>.fit()</code> and still ship a model that's silently wrong. <a href="https://developers.google.com/machine-learning/crash-course">developers.google.com</a></p></div>
+    <div><h3>ML fundamentals &amp; model evaluation</h3><p class="why">Start with how models learn from examples, then learn how to evaluate their predictions honestly. <a href="https://developers.google.com/machine-learning/crash-course">developers.google.com</a></p><p class="why"><strong>Learning order:</strong> Step 46 builds intuition without requiring calculus. Use scikit-learn (Step 47) to implement the workflow, then develop the mathematics in Steps 50–53. The Step 46 notes use standard topic headings and include YouTube search phrases for each section.</p></div>
   </div>
   <ol class="outline">
-    <li><span class="onum">46.1</span> Supervised vs. unsupervised; train / validation / test discipline</li>
+    <li><span class="onum">46.1</span> Learning from data: features, targets, models, parameters, loss, training vs. prediction; supervised vs. unsupervised, classification vs. regression; train / validation / test discipline</li>
     <li><span class="onum">46.2</span> Overfitting, underfitting &amp; the bias-variance tradeoff</li>
     <li><span class="onum">46.3</span> Regularization (L1/L2) &amp; model capacity</li>
     <li><span class="onum">46.4</span> Cross-validation &amp; hyperparameter search</li>
     <li><span class="onum">46.5</span> Data leakage — the #1 cause of "great offline, useless in production"</li>
-    <li><span class="onum">46.6</span> Metrics: accuracy, precision/recall, F1, ROC-AUC vs. PR-AUC, calibration</li>
+    <li><span class="onum">46.6</span> Metrics: confusion matrix, accuracy, precision/recall, F1, ROC-AUC vs. PR-AUC and average precision, calibration; regression metrics (MAE, MSE/RMSE, R²)</li>
     <li><span class="onum">46.7</span> Class imbalance &amp; threshold selection</li>
     <li><span class="onum">46.8</span> Choosing a baseline and proving you beat it</li>
+    <li><span class="onum">46.9</span> Error analysis: inspect misclassifications, slices &amp; confusion patterns</li>
   </ol>
 </div>
 
@@ -1590,7 +1610,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
 <div class="step-block p2" id="step-49">
   <div class="step-head">
     <span class="step-num-badge">49</span>
-    <div><h3>Unsupervised learning &amp; dimensionality reduction</h3><p class="why">Half of real data has no labels. PCA is also the direct mathematical bridge to what an embedding <i>is</i> (Step 20), and clustering is how you actually explore an embedding space or de-duplicate a corpus. <a href="https://scikit-learn.org/stable/modules/clustering.html">scikit-learn.org</a></p></div>
+    <div><h3>Unsupervised learning &amp; dimensionality reduction</h3><p class="why">Find structure when target labels are unavailable. Clustering groups similar examples; dimensionality reduction creates a smaller representation. <a href="https://scikit-learn.org/stable/modules/clustering.html">scikit-learn.org</a></p><p class="why"><strong>Prerequisites:</strong> Start with clustering intuition and experiments. Before the mathematical treatment of PCA, study vectors, projections and eigenvectors in linear algebra (Step 50), and variance in probability &amp; statistics (Step 51), then return here. A practical PCA preview can come first; its derivation should follow those foundations.</p></div>
   </div>
   <ol class="outline">
     <li><span class="onum">49.1</span> k-means, hierarchical &amp; density-based clustering (DBSCAN)</li>
@@ -1612,6 +1632,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
     <li><span class="onum">50.3</span> Dot product</li>
     <li><span class="onum">50.4</span> Norms, projections &amp; why cosine works</li>
     <li><span class="onum">50.5</span> Rank &amp; low-rank approximation (the idea LoRA is built on)</li>
+    <li><span class="onum">50.6</span> Eigenvalues, eigenvectors &amp; singular value decomposition (SVD): foundations for PCA</li>
   </ol>
 </div>
 
@@ -1656,6 +1677,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
     <li><span class="onum">53.2</span> Sigmoid function</li>
     <li><span class="onum">53.3</span> Decision boundary</li>
     <li><span class="onum">53.4</span> Implementing both from scratch</li>
+    <li><span class="onum">53.5</span> Other classical model families: k-nearest neighbors (KNN), support vector machines (SVMs), and Naive Bayes — intuition, assumptions, scaling needs &amp; comparison with linear models</li>
   </ol>
 </div>
 
@@ -2217,7 +2239,7 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
 <div class="checkpoint"><b>Complete:</b> a production-grade, monitored, agentic RAG system with a full eval suite — plus the math, training, and infrastructure understanding underneath it — plus cost-optimized inference, multimodal capability, and the system-design vocabulary to defend all of it in an interview.</div>
 
 <div class="risk-box" id="risk">
-  <b>One standing risk:</b> stopping at Phase 1 because it "works well enough" and never doing Phase 2 or 3. Put a real date on Step 43 now, before Phase 1 feels finished.
+  <b>One standing risk:</b> treating Phase 2 as definitions to read instead of artifacts to build. Every step has a deliverable; the notes are not the output.
 </div>
 
 <footer class="foot">
@@ -2234,7 +2256,12 @@ details.phase-group summary { border-radius: 4px; background: var(--phase-fill);
   // PROGRESS: All steps from 1 through this number are completed (inclusive).
   // Future agents: change only this number when Hassan finishes the next step.
   // Use 0 for no completed steps. No browser storage or other edits are needed.
-  const COMPLETED_THROUGH_STEP = 38;
+  // Step 41 is checked off by request; its live deployment remains deferred (see its tracking note).
+  // Step 42 is checked off for tracking; the personal resume is still in progress on the side.
+  // Step 43 is checked off after the NumPy study pass; the step43-numpy lab remains the build artifact.
+  // Step 44 is checked off after the pandas study pass; the step44-pandas lab remains the build artifact.
+  // Step 45 is checked off after the Matplotlib/EDA study pass; the step45-matplotlib lab remains the build artifact.
+  const COMPLETED_THROUGH_STEP = 45;
   const phases = ['p0', 'p1', 'p2', 'p3'];
   const modules = Array.from(document.querySelectorAll('.step-block')).map((card) => {
     const title = card.querySelector('h3').textContent.trim();
